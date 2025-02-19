@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Text, View, Image, StyleSheet, FlatList, StatusBar } from "react-native";
+import Toast from 'react-native-toast-message';
 
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -14,14 +15,15 @@ const categories = [
     { id: '3', title: 'Lunch', image: require('../../assets/mayuri.jpg') },
     { id: '4', title: 'Rice', image: require('../../assets/mayuri.jpg') },
     { id: '5', title: 'Dessert', image: require('../../assets/mayuri.jpg') },
-    { id: '6', title: 'Drinks', image: require('../../assets/mayuri.jpg') },
+    { id: '6', title: 'Quick Bites', image: require('../../assets/mayuri.jpg') },
     { id: '7', title: 'Sushi', image: require('../../assets/mayuri.jpg') },
     { id: '8', title: 'Steak', image: require('../../assets/mayuri.jpg') },
     { id: '9', title: 'Tacos', image: require('../../assets/mayuri.jpg') },
     { id: '10', title: 'Noodles', image: require('../../assets/mayuri.jpg') },
 ];
+
 const productItems = [
-    { id: '1', title: 'FarmFresh Cheese Pizza ', image: require('../../assets/pepper.jpg'), price: '₹45' },
+    { id: '1', title: 'FarmFresh Cheese Pizza', image: require('../../assets/pepper.jpg'), price: '₹45' },
     { id: '2', title: 'Cheese Burger', image: require('../../assets/pepper.jpg'), price: '₹40' },
     { id: '3', title: 'Creamy Pasta', image: require('../../assets/pepper.jpg'), price: '₹30' },
     { id: '4', title: 'Fresh Salad', image: require('../../assets/pepper.jpg'), price: '₹20' },
@@ -29,6 +31,42 @@ const productItems = [
     { id: '6', title: 'Cold Coffee', image: require('../../assets/pepper.jpg'), price: '₹80' },
 ];
 
+
+// const showSuccessToast = () => {
+//     Toast.show({
+//         type: 'success',
+//         text1: 'Success!',
+//         text2: 'Your order has been placed.',
+//         position: 'top',
+//         visibilityTime: 4000,
+//         autoHide: true,
+//         topOffset: 50,
+//     });
+// };
+
+// const showErrorToast = () => {
+//     Toast.show({
+//         type: 'error',
+//         text1: 'Error!',
+//         text2: 'Something went wrong.',
+//         position: 'top',
+//         visibilityTime: 4000,
+//         autoHide: true,
+//         topOffset: 50,
+//     });
+// };
+
+const showToast = (productName, msg) => {
+    Toast.show({
+        type: 'success',
+        text1: productName,
+        text2: msg,
+        position: 'top',
+        visibilityTime: 4000,
+        autoHide: true,
+        topOffset: 50,
+    });
+};
 
 const HomeScreen = () => {
     const [text, setText] = useState('');
@@ -68,7 +106,7 @@ const HomeScreen = () => {
             </View> {/* searchContainer end */}
             <View style={styles.categoryContainer}>
                 <Text style={styles.heading}>Categories</Text>
-                <FlatList style={{marginHorizontal: -10, marginVertical: 0}}
+                <FlatList style={{ marginHorizontal: -10, marginVertical: 0 }}
                     data={categories}
                     keyExtractor={(item) => item.id}
                     horizontal={true} // Enable horizontal scrolling
@@ -84,12 +122,12 @@ const HomeScreen = () => {
             <View style={styles.productContainer}>
                 <Text style={styles.heading}>Recommended for you</Text>
                 <FlatList style={{ marginHorizontal: -20, paddingHorizontal: 20 }}
-                data={productItems}
-                keyExtractor={(item) => item.id}
-                horizontal={true}
-                showsHorizontalScrollIndicator={false}
-                renderItem={({ item }) => <ProductCard image={item.image} title={item.title} price={item.price} />}
-            />
+                    data={productItems}
+                    keyExtractor={(item) => item.id}
+                    horizontal={true}
+                    showsHorizontalScrollIndicator={false}
+                    renderItem={({ item }) => <ProductCard image={item.image} title={item.title} price={item.price} onAddtoCart={showToast} />}
+                />
             </View>
         </View> // container end
     );
@@ -102,7 +140,7 @@ const styles = StyleSheet.create({
         padding: 20,
     },
     header: {
-        marginTop: 30,
+        marginTop: 40,
         flexDirection: 'row', // Ensures Profile and Icons are in the same row
         alignItems: 'center', // Vertically centers the content within the row
         justifyContent: 'space-between', // Space between profile and icons
@@ -112,12 +150,13 @@ const styles = StyleSheet.create({
     },
     profileSection: {
         backgroundColor: "",
+        marginLeft: -10,
         flexDirection: 'row', // Horizontally align profile image and name
         alignItems: 'center', // Vertically align profile image and name
     },
     profileImage: {
-        width: 60,  // Set the image width
-        height: 60, // Set the image height
+        width: 58,  // Set the image width
+        height: 58, // Set the image height
         borderRadius: 50, // Make it a circle
         borderColor: 'orangered',
         borderWidth: 2,
@@ -156,23 +195,23 @@ const styles = StyleSheet.create({
         marginTop: 30,
     },
     heading: {
-        backgroundColor:"",
+        backgroundColor: "",
         fontSize: 24,
         fontWeight: 'bold',
         marginVertical: '7%',
         marginHorizontal: 5,
     },
     categoryContainer: {
-        backgroundColor:"",
+        backgroundColor: "",
         height: 'auto',
-        marginTop: 10,
+        marginTop: 0,
     },
     categoryItem: { alignItems: 'center', marginHorizontal: 10 },
     categoryImage: { width: 80, height: 80, borderRadius: 50 },
     categoryTitle: { marginTop: 5, fontSize: 14, fontWeight: 'bold', color: '#333' },
 
     productContainer: {
-        backgroundColor:'',
+        backgroundColor: '',
         height: 'auto',
     },
 });
