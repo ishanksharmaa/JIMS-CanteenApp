@@ -1,10 +1,10 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Text, View, FlatList } from "react-native";
-import ProductCard from "../components/ProductCard";
 import CartItem from "../components/CartItem";
+import { CartContext } from "../components/CartContext";  // ✅ Context se Data Fetch karenge
 
-const CartScreen = ({ route }) => {
-    const cartItems = route.params?.cartItems || []; // ✅ Get Cart Data
+const CartScreen = () => {
+    const { cartItems } = useContext(CartContext);  // ✅ Cart Items Receive
 
     return (
         <View>

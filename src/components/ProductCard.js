@@ -1,21 +1,36 @@
-import React from "react";
+import React, { useContext } from "react";
 import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 import FontAwesome from 'react-native-vector-icons/FontAwesome6';
+import { useNavigation } from "@react-navigation/native"; 
+import { CartContext } from "../components/CartContext";  // ✅ Cart Data ke liye
 
 const ProductCard = ({ image, title, price, onAddtoCart }) => {
+  const navigation = useNavigation(); 
+  const { addToCart } = useContext(CartContext);  // ✅ CartScreen ke liye function
+
   return (
-    <View style={styles.productCard}>
+    <TouchableOpacity 
+      style={styles.productCard} 
+      onPress={() => navigation.navigate("ProductDetail", { image, title, price })}
+    >
       <Image source={image} style={styles.productImage} />
       <View style={styles.textContainer}>
         <Text style={styles.productTitle}>{title}</Text>
         <Text style={styles.productPrice}>{price}</Text>
       </View>
 
-      {/* ✅ Call addToCart function on Press */}
-      <TouchableOpacity style={styles.addIconContainer} onPress={() => onAddtoCart(title, "Added to cart")}>
+      {/* ✅ Add to Cart Button (Jo Bhi Item Click Hoga, CartScreen me Data Chala Jayega) */}
+      <TouchableOpacity 
+        style={styles.addIconContainer} 
+        onPress={(event) => {
+          event.stopPropagation();  // ✅ Prevent Click on Whole Card
+          onAddtoCart(title, "Added to cart");  // ✅ Toast Show Hoga
+          addToCart({ image, title, price });   // ✅ CartScreen ko Data Jayega
+        }}
+      >
         <FontAwesome name="circle-plus" size={45} color="green" />
       </TouchableOpacity>
-    </View>
+    </TouchableOpacity>
   );
 };
 
