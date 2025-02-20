@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Text, View, Image, StyleSheet, FlatList, StatusBar, TouchableOpacity } from "react-native";
 import Toast from 'react-native-toast-message';
 import { useNavigation } from "@react-navigation/native";
+import { useTheme } from "../components/ThemeContext";
 
 
 
@@ -75,6 +76,8 @@ const showToast = (productName, msg) => {
 const HomeScreen = () => {
     const [text, setText] = useState('');
     const navigation = useNavigation();
+    const { theme, toggleTheme } = useTheme();
+    const styles = dynamicTheme(theme);
 
     return (
         <View style={styles.container}>
@@ -82,7 +85,7 @@ const HomeScreen = () => {
             <View style={styles.header}>
                 {/* Profile Section */}
                 <View style={styles.profileSection}>
-                    <TouchableOpacity onPress={() => navigation.navigate("Profile") }>
+                    <TouchableOpacity onPress={() => navigation.navigate("Profile")}>
                         <Image
                             source={require('../../assets/mayuri.jpg')} // Replace with your profile image path
                             style={styles.profileImage}
@@ -90,20 +93,18 @@ const HomeScreen = () => {
                     </TouchableOpacity>
                     <View>
                         <Text style={styles.profileName}>Ishank Sharma</Text>
-                        <Text style={{ fontSize: 12, }}>Room A202</Text>
+                        <Text style={{ fontSize: 12, color: theme.text }}>Room A202</Text>
                     </View>
                 </View>
 
                 {/* Header Icons */}
                 <View style={styles.headerIcons}>
-                    <MaterialIcons name="near-me" size={28} color="black" style={styles.trackIcon} />
-                    <Ionicons
-                        name="notifications"
-                        size={28}
-                        color="black"
-                        style={styles.bellIcon}
-                    />
+                    <TouchableOpacity onPress={toggleTheme}>  {/* ✅ TrackIcon Click to Toggle Theme */}
+                        <MaterialIcons name="dark-mode" size={28} color={theme.text} />
+                    </TouchableOpacity>
+                    <Ionicons name="notifications" size={28} color={theme.text} style={styles.bellIcon} />
                 </View> {/* headerIcons end */}
+
             </View> {/* header end */}
             <View style={styles.searchContainer}>
                 <TextInput style={styles.searchBar}
@@ -141,8 +142,9 @@ const HomeScreen = () => {
     );
 };
 
-const styles = StyleSheet.create({
+const dynamicTheme = (theme) => ({
     container: {
+        backgroundColor: theme.background,
         flex: 1,
         justifyContent: 'flex-start',
         padding: 20,
@@ -173,7 +175,7 @@ const styles = StyleSheet.create({
     profileName: {
         fontSize: 15,
         fontWeight: '500',
-        color: 'black',
+        color: theme.text,
     },
     headerIcons: {
         backgroundColor: "",
@@ -192,8 +194,8 @@ const styles = StyleSheet.create({
         marginRight: 0, // Add space between the icons
     },
     searchBar: {
-        backgroundColor: "#ddd",
-        color: '#333',
+        backgroundColor: theme.searchBg,
+        color: theme.searchText,
         height: 55,
         width: '96%',
         alignSelf: 'center',
@@ -204,6 +206,7 @@ const styles = StyleSheet.create({
     },
     heading: {
         backgroundColor: "",
+        color: theme.text,
         fontSize: 24,
         fontWeight: 'bold',
         marginVertical: '7%',
@@ -216,7 +219,7 @@ const styles = StyleSheet.create({
     },
     categoryItem: { alignItems: 'center', marginHorizontal: 10 },
     categoryImage: { width: 80, height: 80, borderRadius: 50 },
-    categoryTitle: { marginTop: 5, fontSize: 14, fontWeight: 'bold', color: '#333' },
+    categoryTitle: { marginTop: 5, fontSize: 14, fontWeight: 'bold', color: theme.text },
 
     productContainer: {
         backgroundColor: '',

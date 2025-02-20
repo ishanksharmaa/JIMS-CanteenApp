@@ -2,14 +2,17 @@ import React from "react";
 import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 import FontAwesome from 'react-native-vector-icons/FontAwesome6';
 import { useNavigation } from "@react-navigation/native"; 
+import { useTheme } from "./ThemeContext";
 
 const ProductCard = ({ image, title, price, onAddtoCart }) => {
   const navigation = useNavigation(); 
+  const {theme} = useTheme();
+  const styles = dynamicTheme(theme);
 
   return (
     <TouchableOpacity 
       style={styles.productCard} 
-      onPress={() => navigation.navigate("ProductDetail", { image, title, price })}
+      onPress={() => navigation.navigate("ProductScreen", { image, title, price })}
     >
       <Image source={image} style={styles.productImage} />
       <View style={styles.textContainer}>
@@ -28,9 +31,9 @@ const ProductCard = ({ image, title, price, onAddtoCart }) => {
   );
 };
 
-const styles = StyleSheet.create({
+const dynamicTheme = (theme) => ({
   productCard: { 
-    backgroundColor: '#fff', 
+    backgroundColor: theme.cardBg, 
     borderRadius: 15, 
     width: 200, 
     height: 220, 
@@ -47,8 +50,8 @@ const styles = StyleSheet.create({
 
   productImage: { width: '100%', height: 110, borderRadius: 10 },
   textContainer: { flexGrow: 0, justifyContent: 'space-between', alignSelf: 'stretch', padding: 10 },
-  productTitle: { textAlign: "left", fontSize: 16, fontWeight: 'bold', color: '#333' },
-  productPrice: { textAlign: "left", fontSize: 14, fontWeight: 'bold', color: '#666' },
+  productTitle: { textAlign: "left", fontSize: 16, fontWeight: 'bold', color: theme.cardTitle },
+  productPrice: { textAlign: "left", fontSize: 14, fontWeight: 'bold', color: theme.cardPrice },
   addIconContainer: { position: "absolute", bottom: 16, right: 16 }
 });
 

@@ -1,11 +1,15 @@
 import React from "react";
 import { View, Text, Image, ImageBackground, TouchableOpacity, StyleSheet, Button } from "react-native";
 import CustomButton from "../components/CustomButton";
+import { useTheme } from "../components/ThemeContext";
 
 const TextSection = () => {
+  const { theme } = useTheme();
+  const styles = dynamicTheme(theme);
+  
   return (
-      <View style={styles.textContainer}>
-        <Text style={{ color: "#222", fontSize: 45, fontWeight: "bold", lineHeight: 45 }}>Browse Menu</Text>
+    <View style={styles.textContainer}>
+        <Text style={{ color: theme.text, fontSize: 45, fontWeight: "bold", lineHeight: 45 }}>Browse Menu</Text>
         <Text style={{ color: "grey", fontSize: 42, fontWeight: "bold", lineHeight: 45 }}>Place Order</Text>
         <Text style={{ color: "grey", fontSize: 40, fontWeight: "bold", lineHeight: 45 }}>Enjoy food!</Text>
       </View>
@@ -13,6 +17,8 @@ const TextSection = () => {
 };
 
 const GetStartedScreen = ({ navigation }) => {
+  const { theme } = useTheme();
+  const styles = dynamicTheme(theme);
   return (
     <View style={styles.container}>
       {/* <Text style={styles.title}>
@@ -32,7 +38,7 @@ const GetStartedScreen = ({ navigation }) => {
   );
 };
 
-const styles = StyleSheet.create({
+const dynamicTheme = (theme) => ({
   logo: { 
     width: 220, // ✅ Adjust size accordingly
     height: 220,
@@ -42,7 +48,7 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   background: { flex: 1, width: "100%", height: "100%", justifyContent: "center" },
-  container: {backgroundColor:'#ddd', flex:1 },
+  container: {backgroundColor: theme.getStartedScreenBg, flex:1 },
   title: {color:'#222', fontSize:35, fontWeight:'bold', textAlign:'center', position:'absolute', top:35, alignSelf:'center'  },
   textContainer: { flex: 1, position:'fixed', left:'6%', top:'60%' },
   buttonPosition: { position:'fixed', bottom: 22 },

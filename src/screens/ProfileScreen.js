@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import ProductCard from '../components/ProductCard';
+import { useTheme } from "../components/ThemeContext";
 
 const combos = [
     { id: '1', title: 'Cheese Burger', price: '₹45', time: '7 min', image: 'https://images.pexels.com/photos/1639564/pexels-photo-1639564.jpeg' },
@@ -13,6 +14,8 @@ const combos = [
 
 
 const ProfileScreen = () => {
+    const { theme } = useTheme();
+    const styles = dynamicTheme(theme);
     return (
         <View style={styles.container}>
             {/* Header */}
@@ -61,14 +64,14 @@ const ProfileScreen = () => {
                     keyExtractor={(item) => item.id}
                     horizontal={true}
                     showsHorizontalScrollIndicator={false}
-                    renderItem={({ item }) => <ProductCard image={{uri: item.image}} title={item.title} price={item.price} />}
+                    renderItem={({ item }) => <ProductCard image={{uri: item.image}} title={item.title} price={item.price} onAddtoCart={null} />}
                 />
         </View>
     );
 };
 
-const styles = StyleSheet.create({
-    container: { flex: 1, padding: 20, backgroundColor: 'white' },
+const dynamicTheme = (theme) => ({
+    container: { flex: 1, padding: 20, backgroundColor: theme.background },
     header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20, marginTop: 40, paddingVertical: 5 },
     profileBack: {flexDirection: 'row', alignItems:'center', backgroundColor:'', width:'28%', justifyContent:'space-between'},
     title: { fontSize: 20, fontWeight: 'bold' },

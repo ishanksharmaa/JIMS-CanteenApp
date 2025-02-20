@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, Image, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, Keyboard } from "react-native";
 import CustomButton from "../components/CustomButton";
+import { useTheme } from "../components/ThemeContext";
 
 const LoginScreen = ({ navigation }) => {
+    const { theme } = useTheme();
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");

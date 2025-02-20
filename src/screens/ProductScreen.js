@@ -2,11 +2,14 @@ import React from "react";
 import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 import { useRoute } from "@react-navigation/native";
 import CustomButton from "../components/CustomButton";
+import { useTheme } from "../components/ThemeContext";
 import Ionicons from "react-native-vector-icons/Ionicons";
 
-const ProductDetail = () => {
+const ProductScreen = () => {
   const route = useRoute();
   const { image, title, price } = route.params;
+  const { theme } = useTheme();
+  const styles = dynamicTheme(theme);
 
   return (
     <View style={styles.container}>
@@ -15,7 +18,7 @@ const ProductDetail = () => {
       <Text style={styles.productPrice}>{price}</Text>
       <View style={styles.orderBtn}>
         <TouchableOpacity style={styles.iconButton}>
-          <Ionicons name="bag" size={29} color="black" />
+          <Ionicons name="bag" size={29} color= {theme.cartBagBtnIcon} />
         </TouchableOpacity>
         <View style={styles.buttonContainer}>
           <CustomButton title="Order Now" onPress={null} />
@@ -25,11 +28,11 @@ const ProductDetail = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: { flex: 1, alignItems: "left", padding: 0, backgroundColor: '' },
+const dynamicTheme = (theme) => ({
+  container: { flex: 1, alignItems: "left", padding: 0, backgroundColor: theme.background },
   productImage: { width: '100%', height: 250, borderRadius: 10, marginBottom: 20, marginTop: 40 },
-  productTitle: { fontSize: 22, fontWeight: "bold", color: "#333", marginLeft: 20 },
-  productPrice: { fontSize: 18, color: "#666", marginTop: 10, marginLeft: 20 },
+  productTitle: { fontSize: 22, fontWeight: "bold", color: theme.text, marginLeft: 20 },
+  productPrice: { fontSize: 18, color: theme.cardPrice, marginTop: 10, marginLeft: 20, fontWeight:'bold' },
   orderBtn: {
     position: 'absolute',
     bottom: 20,
@@ -42,7 +45,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent', // Red hata diya taki design clean lage
   },
   iconButton: {
-    backgroundColor: 'white',
+    backgroundColor: theme.cartBagBtn,
     padding: 15,
     borderRadius: 18,
     elevation: 5,
@@ -53,4 +56,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ProductDetail;
+export default ProductScreen;

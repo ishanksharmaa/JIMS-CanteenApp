@@ -2,13 +2,15 @@ import React, { useContext } from "react";
 import { Text, View, FlatList } from "react-native";
 import CartItem from "../components/CartItem";
 import { CartContext } from "../components/CartContext";  // ✅ Context se Data Fetch karenge
+import { useTheme } from "../components/ThemeContext";
 
 const CartScreen = () => {
     const { cartItems } = useContext(CartContext);  // ✅ Cart Items Receive
+    const { theme } = useTheme();
 
     return (
-        <View>
-            <Text style={{ fontWeight: "bold", fontSize: 30, alignSelf: "center", marginTop: '16%', marginBottom: 20 }}>
+        <View style={{backgroundColor: theme.background, height: '100%'}}>
+            <Text style={{ fontWeight: "bold", fontSize: 30, alignSelf: "center", marginTop: '16%', marginBottom: 20, color: theme.text }}>
                 Cart
             </Text>
 
