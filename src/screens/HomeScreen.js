@@ -1,6 +1,9 @@
 import React, { useState } from "react";
-import { Text, View, Image, StyleSheet, FlatList, StatusBar } from "react-native";
+import { Text, View, Image, StyleSheet, FlatList, StatusBar, TouchableOpacity } from "react-native";
 import Toast from 'react-native-toast-message';
+import { useNavigation } from "@react-navigation/native";
+
+
 
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -10,26 +13,27 @@ import ProductCard from '../components/ProductCard';
 
 
 const categories = [
-    { id: '1', title: 'Fast Food', image: require('../../assets/mayuri.jpg') },
-    { id: '2', title: 'Drinks', image: require('../../assets/mayuri.jpg') },
-    { id: '3', title: 'Lunch', image: require('../../assets/mayuri.jpg') },
-    { id: '4', title: 'Rice', image: require('../../assets/mayuri.jpg') },
-    { id: '5', title: 'Dessert', image: require('../../assets/mayuri.jpg') },
-    { id: '6', title: 'Quick Bites', image: require('../../assets/mayuri.jpg') },
-    { id: '7', title: 'Sushi', image: require('../../assets/mayuri.jpg') },
-    { id: '8', title: 'Steak', image: require('../../assets/mayuri.jpg') },
-    { id: '9', title: 'Tacos', image: require('../../assets/mayuri.jpg') },
-    { id: '10', title: 'Noodles', image: require('../../assets/mayuri.jpg') },
+    { id: '1', title: 'Fast Food', image: { uri: 'https://images.pexels.com/photos/1639564/pexels-photo-1639564.jpeg' } },
+    { id: '2', title: 'Drinks', image: { uri: 'https://images.pexels.com/photos/825661/pexels-photo-825661.jpeg' } },
+    { id: '3', title: 'Lunch', image: { uri: 'https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg' } },
+    { id: '4', title: 'Rice', image: { uri: 'https://images.pexels.com/photos/2271132/pexels-photo-2271132.jpeg' } },
+    { id: '5', title: 'Dessert', image: { uri: 'https://images.pexels.com/photos/4110002/pexels-photo-4110002.jpeg' } },
+    { id: '6', title: 'Quick Bites', image: { uri: 'https://images.pexels.com/photos/1435904/pexels-photo-1435904.jpeg' } },
+    { id: '7', title: 'Sushi', image: { uri: 'https://images.pexels.com/photos/3026803/pexels-photo-3026803.jpeg' } },
+    { id: '8', title: 'Steak', image: { uri: 'https://images.pexels.com/photos/616354/pexels-photo-616354.jpeg' } },
+    { id: '9', title: 'Tacos', image: { uri: 'https://images.pexels.com/photos/70497/pexels-photo-70497.jpeg' } },
+    { id: '10', title: 'Noodles', image: { uri: 'https://images.pexels.com/photos/1435904/pexels-photo-1435904.jpeg' } },
 ];
 
 const productItems = [
-    { id: '1', title: 'FarmFresh Cheese Pizza', image: require('../../assets/pepper.jpg'), price: '₹45' },
-    { id: '2', title: 'Cheese Burger', image: require('../../assets/pepper.jpg'), price: '₹40' },
-    { id: '3', title: 'Creamy Pasta', image: require('../../assets/pepper.jpg'), price: '₹30' },
-    { id: '4', title: 'Fresh Salad', image: require('../../assets/pepper.jpg'), price: '₹20' },
-    { id: '5', title: 'Chocolate Lava Cake', image: require('../../assets/pepper.jpg'), price: '₹65' },
-    { id: '6', title: 'Cold Coffee', image: require('../../assets/pepper.jpg'), price: '₹80' },
+    { id: '1', title: 'FarmFresh Cheese Pizza', image: { uri: 'https://images.pexels.com/photos/315755/pexels-photo-315755.jpeg' }, price: '₹45' },
+    { id: '2', title: 'Cheese Burger', image: { uri: 'https://images.pexels.com/photos/1639564/pexels-photo-1639564.jpeg' }, price: '₹40' },
+    { id: '3', title: 'Creamy Pasta', image: { uri: 'https://images.pexels.com/photos/1437267/pexels-photo-1437267.jpeg' }, price: '₹30' },
+    { id: '4', title: 'Fresh Salad', image: { uri: 'https://images.pexels.com/photos/1435904/pexels-photo-1435904.jpeg' }, price: '₹20' },
+    { id: '5', title: 'Chocolate Lava Cake', image: { uri: 'https://images.pexels.com/photos/4110002/pexels-photo-4110002.jpeg' }, price: '₹65' },
+    { id: '6', title: 'Cold Coffee', image: { uri: 'https://images.pexels.com/photos/302901/pexels-photo-302901.jpeg' }, price: '₹80' },
 ];
+
 
 
 // const showSuccessToast = () => {
@@ -70,16 +74,20 @@ const showToast = (productName, msg) => {
 
 const HomeScreen = () => {
     const [text, setText] = useState('');
+    const navigation = useNavigation();
+
     return (
         <View style={styles.container}>
             <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
             <View style={styles.header}>
                 {/* Profile Section */}
                 <View style={styles.profileSection}>
-                    <Image
-                        source={require('../../assets/mayuri.jpg')} // Replace with your profile image path
-                        style={styles.profileImage}
-                    />
+                    <TouchableOpacity onPress={() => navigation.navigate("Profile") }>
+                        <Image
+                            source={require('../../assets/mayuri.jpg')} // Replace with your profile image path
+                            style={styles.profileImage}
+                        />
+                    </TouchableOpacity>
                     <View>
                         <Text style={styles.profileName}>Ishank Sharma</Text>
                         <Text style={{ fontSize: 12, }}>Room A202</Text>
@@ -213,6 +221,7 @@ const styles = StyleSheet.create({
     productContainer: {
         backgroundColor: '',
         height: 'auto',
+        paddingBottom: 20,
     },
 });
 

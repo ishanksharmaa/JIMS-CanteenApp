@@ -1,4 +1,5 @@
 import React from "react";
+import { StatusBar } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -14,6 +15,7 @@ import HomeScreen from "./src/screens/HomeScreen";
 import CartScreen from "./src/screens/CartScreen";
 import FavoriteScreen from "./src/screens/FavoriteScreen";
 import ProductDetail from "./src/screens/ProductDetail";
+import ProfileScreen from "./src/screens/ProfileScreen";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -53,6 +55,7 @@ const App = () => {
   return (
     <CartProvider> {/* ✅ Wrap with CartProvider */}
       <NavigationContainer>
+      <StatusBar translucent backgroundColor="transparent" barStyle="dark-content" />
         <Stack.Navigator screenOptions={{ headerShown: false }}>
           <Stack.Screen name="Splash" component={SplashScreen} />
           <Stack.Screen name="GetStarted" component={GetStartedScreen} />
@@ -61,6 +64,7 @@ const App = () => {
           <Stack.Screen name="Favorites" component={FavoriteScreen} />
           <Stack.Screen name="Home" component={BottomTabs} />
           <Stack.Screen name="ProductDetail" component={ProductDetail} />
+          <Stack.Screen name="Profile" component={ProfileScreen} />
         </Stack.Navigator>
         <Toast config={CustomToast} />
       </NavigationContainer>
