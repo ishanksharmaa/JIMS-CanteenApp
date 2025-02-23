@@ -3,16 +3,24 @@ import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 import FontAwesome from 'react-native-vector-icons/FontAwesome6';
 import { useNavigation } from "@react-navigation/native"; 
 import { useTheme } from "./ThemeContext";
+import { useCart } from "./CartContext";
 
 const ProductCard = ({ image, title, price, onAddtoCart }) => {
   const navigation = useNavigation(); 
   const {theme} = useTheme();
   const styles = dynamicTheme(theme);
+  const { addToCart } = useCart();
+
+  const handleAddtoCart = () => {
+    onAddtoCart(title, "Added to cart");
+    addToCart({ image, title, price });
+  };
 
   return (
     <TouchableOpacity 
       style={styles.productCard} 
       onPress={() => navigation.navigate("ProductScreen", { image, title, price })}
+      activeOpacity={0.5}
     >
       <Image source={image} style={styles.productImage} />
       <View style={styles.textContainer}>
@@ -23,7 +31,8 @@ const ProductCard = ({ image, title, price, onAddtoCart }) => {
       {/* ✅ Add to Cart Button */}
       <TouchableOpacity 
         style={styles.addIconContainer} 
-        onPress={() => onAddtoCart(title, "Added to cart")}
+        onPress={handleAddtoCart}
+        activeOpacity={0.5}
       >
         <FontAwesome name="circle-plus" size={45} color="green" />
       </TouchableOpacity>

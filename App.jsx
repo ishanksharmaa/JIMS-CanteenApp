@@ -49,8 +49,8 @@ const BottomTabs = () => {
     >
       <Tab.Screen name="Home" component={HomeScreen} options={{ tabBarIcon: ({ color, size }) => <Ionicons name="home" color={color} size={size} /> }} />
       <Tab.Screen name="Favorites" component={FavoriteScreen} options={{ tabBarIcon: ({ color, size }) => <Ionicons name="heart" color={color} size={size} /> }} />
-      <Tab.Screen name="Menu" component={HomeScreen} options={{ tabBarIcon: ({ color, size }) => <Ionicons name="book" color={color} size={size} /> }} />
-      <Tab.Screen name="Orders" component={CartScreen} options={{ tabBarIcon: ({ color, size }) => <Ionicons name="cart" color={color} size={size} /> }} />
+      <Tab.Screen name="Menu" component={ProfileScreen} options={{ tabBarIcon: ({ color, size }) => <Ionicons name="book" color={color} size={size} /> }} />
+      <Tab.Screen name="Cart" component={CartScreen} options={{ tabBarIcon: ({ color, size }) => <Ionicons name="cart" color={color} size={size} /> }} />
     </Tab.Navigator>
   );
 };
@@ -66,11 +66,11 @@ const AppContent = () => {
           <Stack.Screen name="Splash" component={SplashScreen} />
           <Stack.Screen name="GetStarted" component={GetStartedScreen} />
           <Stack.Screen name="Login" component={LoginScreen} />
-          <Stack.Screen name="Cart" component={CartScreen} />
-          <Stack.Screen name="Favorites" component={FavoriteScreen} />
           <Stack.Screen name="Home" component={BottomTabs} />
-          <Stack.Screen name="ProductScreen" component={ProductScreen} />
+          <Stack.Screen name="Favorites" component={FavoriteScreen} />
+          <Stack.Screen name="Cart" component={CartScreen} />
           <Stack.Screen name="Profile" component={ProfileScreen} />
+          <Stack.Screen name="ProductScreen" component={ProductScreen} />
         </Stack.Navigator>
         <Toast config={CustomToast} />
       </NavigationContainer>

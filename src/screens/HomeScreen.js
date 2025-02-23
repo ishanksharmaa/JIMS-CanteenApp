@@ -85,7 +85,7 @@ const HomeScreen = () => {
             <View style={styles.header}>
                 {/* Profile Section */}
                 <View style={styles.profileSection}>
-                    <TouchableOpacity onPress={() => navigation.navigate("Profile")}>
+                    <TouchableOpacity onPress={() => navigation.navigate("Profile")} activeOpacity={0.7}>
                         <Image
                             source={require('../../assets/mayuri.jpg')} // Replace with your profile image path
                             style={styles.profileImage}

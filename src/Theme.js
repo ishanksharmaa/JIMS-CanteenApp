@@ -1,4 +1,5 @@
 export const lightTheme = {
+    logo: require("../assets/app_logo2.png"),
     statusBarIcons: "dark-content",
     background: "#eee",
     text: "#000000",
@@ -20,9 +21,15 @@ export const lightTheme = {
     customButtonBg: "#111",
     customButtonText: "#eee",
     getStartedScreenBg: "#ddd",
+    loginBg: "#ddd",
+    loginInput: "#ccc",
+    handleBarColor: "#333",
+    backBtnBg: "#ddd",
+    cartItemBg: "#fff",
 };
 
 export const darkTheme = {
+    logo: require("../assets/app_logo2_white.png"),
     statusBarIcons: "light-content",
     background: "#121212",
     text: "#ddd",
@@ -41,7 +48,12 @@ export const darkTheme = {
     tabBarMarginHorizontal: 0,
     cartBagBtn: "#222",
     cartBagBtnIcon: "#eee",
-    customButtonBg: "#eee",
+    customButtonBg: "#ccc",
     customButtonText: "#111",
-    getStartedScreenBg: "#333",
+    getStartedScreenBg: "#111",
+    loginBg: "#222",
+    loginInput: "#333",
+    handleBarColor: "#ccc",
+    backBtnBg: "#222",
+    cartItemBg: "#222",
 };

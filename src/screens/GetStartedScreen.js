@@ -25,13 +25,13 @@ const GetStartedScreen = ({ navigation }) => {
         JIMS {"\n"}  
         <Text style={{color:'orangered'}}>Canteen App</Text>
       </Text> */}
-      <Image source={require("../../assets/app_logo2.png")} style={styles.logo} />
+      <Image source={theme.logo} style={styles.logo} />
 
     <ImageBackground source={require("../../assets/sandwich.png")} style={styles.background} resizeMode="contain" >
       <TextSection />
 
       <View style={styles.buttonPosition}>
-        <CustomButton title="Get Started ->" onPress={() => navigation.navigate("Login")} />
+        <CustomButton btnColor={theme.customButtonBg} textColor={theme.customButtonText} title="Get Started ->" onPress={() => navigation.navigate("Login")} />
       </View>
     </ImageBackground>
   </View>
@@ -44,7 +44,7 @@ const dynamicTheme = (theme) => ({
     height: 220,
     resizeMode: "contain",
     position: "absolute",
-    top: 20, 
+    top: 30, 
     alignSelf: "center",
   },
   background: { flex: 1, width: "100%", height: "100%", justifyContent: "center" },

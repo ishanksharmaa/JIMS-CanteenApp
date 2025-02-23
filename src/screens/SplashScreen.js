@@ -8,7 +8,7 @@ const SplashScreen = ({ navigation }) => {
   useEffect(() => {
     setTimeout(() => {
       navigation.replace("GetStarted");  // ✅ 2 sec ke baad Login Screen pe navigate karega
-    }, 2000);
+    }, 500);
   }, []);
 
   return (

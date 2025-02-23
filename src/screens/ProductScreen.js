@@ -21,7 +21,7 @@ const ProductScreen = () => {
           <Ionicons name="bag" size={29} color= {theme.cartBagBtnIcon} />
         </TouchableOpacity>
         <View style={styles.buttonContainer}>
-          <CustomButton title="Order Now" onPress={null} />
+          <CustomButton btnColor={"green"} textColor="#ddd" title="Order Now" onPress={null} />
         </View>
       </View>
     </View>

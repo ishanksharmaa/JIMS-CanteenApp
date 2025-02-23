@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, Image, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, Keyboard } from "react-native";
+import { View, Text, StyleSheet, Image, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard } from "react-native";
 import CustomButton from "../components/CustomButton";
+import HandleBar from "../components/HandleBar";
 import { useTheme } from "../components/ThemeContext";
 
 const LoginScreen = ({ navigation }) => {
     const { theme } = useTheme();
+    const styles = dynamicTheme(theme);
+
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -22,23 +25,25 @@ const LoginScreen = ({ navigation }) => {
     }, []);
 
     return (
-        <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={styles.screen}>
-            <Image source={require("../../assets/app_logo2.png")} style={styles.logo} />
-            
-            <View style={[styles.container, { marginTop: keyboardVisible ? "0%" : "60%" }]}>
-                <Text style={styles.title}>Login</Text>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss} >
+            <View style={[styles.screen, {flex: 1}]}>
+                <Image source={theme.logo} style={styles.logo} />
 
-                <View style={styles.inputPosition}>
-                    <TextInput 
-                        style={styles.inputStyle} 
-                        placeholder="Username" 
-                        placeholderTextColor={"grey"} 
-                        autoCapitalize="none" 
-                        value={username} 
-                        onChangeText={setUsername} 
-                        keyboardType="default" 
-                    />
-                    <TextInput 
+                <View style={[styles.container, { marginTop: keyboardVisible ? "0%" : "75%" }]}>
+                    <HandleBar />
+                    <Text style={[styles.title, { marginTop: keyboardVisible ? "12%" : "5%" }]}>Login</Text>
+
+                    <View style={styles.emailContainer}>
+                        <TextInput
+                            style={styles.inputStyle}
+                            placeholder="Username"
+                            placeholderTextColor={"grey"}
+                            autoCapitalize="none"
+                            value={username}
+                            onChangeText={setUsername}
+                            keyboardType="default"
+                        />
+                        {/* <TextInput 
                         style={styles.inputStyle} 
                         placeholder="Email" 
                         placeholderTextColor={"grey"} 
@@ -46,79 +51,83 @@ const LoginScreen = ({ navigation }) => {
                         value={email} 
                         onChangeText={setEmail} 
                         keyboardType="email-address" 
-                    />
+                    /> */}
 
-                    {/* ✅ Password Input with Show/Hide Eye Icon */}
-                    <View style={styles.passwordContainer}>
-                        <TextInput 
-                            style={styles.passwordInput} 
-                            placeholder="Password" 
-                            placeholderTextColor={"grey"} 
-                            autoCapitalize="none" 
-                            value={password} 
-                            onChangeText={(text) => setPassword(text.replace(/\s/g, ""))}
-                            secureTextEntry={!isPasswordVisible}  // ✅ Toggle Password Visibility
-                        />
-                        <TouchableOpacity onPress={() => setPasswordVisible(!isPasswordVisible)} style={styles.eyeIconContainer}>
-                            <Image 
-                                source={isPasswordVisible ? require("../../assets/eye-open.png") : require("../../assets/eye-closed.png")}  
-                                style={styles.eyeIcon} 
+                        {/* ✅ Password Input with Show/Hide Eye Icon */}
+                        <View style={styles.passwordContainer}>
+                            <TextInput
+                                style={styles.passwordInput}
+                                placeholder="Password"
+                                placeholderTextColor={"grey"}
+                                autoCapitalize="none"
+                                value={password}
+                                onChangeText={(text) => setPassword(text.replace(/\s/g, ""))}
+                                secureTextEntry={!isPasswordVisible}  // ✅ Toggle Password Visibility
                             />
-                        </TouchableOpacity>
+                            <TouchableOpacity onPress={() => setPasswordVisible(!isPasswordVisible)} style={styles.eyeIconContainer}>
+                                <Image
+                                    source={isPasswordVisible ? require("../../assets/eye-open.png") : require("../../assets/eye-closed.png")}
+                                    style={styles.eyeIcon}
+                                />
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+
+                    <View style={styles.buttonPosition}>
+                        <CustomButton btnColor={theme.customButtonBg} textColor={theme.customButtonText} title="Login" onPress={() => { Keyboard.dismiss, navigation.navigate("Home"); }} />
+                        <Text style={{ textAlign: 'center', marginVertical: 20, color: theme.text }}>Create an account</Text>
+                        <Text style={{ textAlign: 'center', marginVertical: 20, color: theme.text }}>____________  or  ____________</Text>
+                        <CustomButton btnColor="#FFFFFF33" textColor={"#ccc"} title="Continue with Google" onPress={() => navigation.navigate("https://www.google.com")} />
                     </View>
                 </View>
-
-                <View style={styles.buttonPosition}>
-                    <CustomButton title="Login" onPress={() => navigation.navigate("Home")} />
-                    <Text style={{ textAlign: 'center', marginTop: 20 }}>Create an account</Text>
-                </View>
             </View>
-        </KeyboardAvoidingView>
+        </TouchableWithoutFeedback>
     );
 };
 
-const styles = StyleSheet.create({
-    logo: { 
-        width: 200, 
+const dynamicTheme = (theme) => ({
+    logo: {
+        width: 200,
         height: 200,
         resizeMode: "contain",
         position: "absolute",
-        top: 20, 
+        top: 35,
         alignSelf: "center",
     },
-    screen: { flex: 1, backgroundColor: "#bbb" },
-    container: { 
-        flex: 1, 
-        justifyContent: "center", 
-        backgroundColor: "#ffc300", 
-        backgroundColor: "#ddd", 
-        borderTopLeftRadius: 60, 
-        borderTopRightRadius: 60 
+    screen: { flex: 1, backgroundColor: "#111" },
+    container: {
+        height: '100%',
+        flex: 1,
+        justifyContent: "",
+        backgroundColor: theme.loginBg,
+        borderTopLeftRadius: 60,
+        borderTopRightRadius: 60,
+        paddingBottom: 0,
     },
-    inputPosition: { justifyContent: "center", alignItems: "center", marginTop: "10%" },
-    title: { color: "black", fontWeight: "bold", fontSize: 35, textAlign: "center", marginTop: "-16%" },
-    
-    inputStyle: { 
-        backgroundColor: "#ccc", 
-        color: "black", 
-        borderRadius: 12, 
-        paddingHorizontal: 22, 
-        height: 60, 
-        width: "80%", 
-        textAlignVertical: "center", 
-        marginVertical: 10 
+    emailContainer: { justifyContent: "center", alignItems: "center", marginTop: "14%" },
+    title: { color: theme.text, fontWeight: "bold", fontSize: 35, textAlign: "center" },
+
+    inputStyle: {
+        backgroundColor: theme.loginInput,
+        color: "black",
+        borderRadius: 12,
+        paddingHorizontal: 22,
+        height: 60,
+        width: "80%",
+        textAlignVertical: "center",
+        //marginVertical: 20,
     },
 
     /* ✅ Password Input Style */
     passwordContainer: {
         flexDirection: "row",
         alignItems: "center",
-        backgroundColor: "#ccc",
+        backgroundColor: theme.loginInput,
         borderRadius: 12,
         width: "80%",
         paddingHorizontal: 15,
         height: 60,
-        marginVertical: 10,
+        marginVertical: 20,
     },
     passwordInput: {
         flex: 1,
@@ -134,7 +143,7 @@ const styles = StyleSheet.create({
         tintColor: "black",  // ✅ Adjust color as needed
     },
 
-    buttonPosition: { alignSelf: "center", width: "100%", marginTop: 20 },
+    buttonPosition: { alignSelf: "center", width: "100%", marginTop: 10, justifyContent: 'space-around' },
 });
 
 export default LoginScreen;

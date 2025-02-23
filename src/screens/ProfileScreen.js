@@ -3,6 +3,7 @@ import { View, Text, Image, StyleSheet, TouchableOpacity, FlatList } from 'react
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import ProductCard from '../components/ProductCard';
 import { useTheme } from "../components/ThemeContext";
+import { useNavigation } from "@react-navigation/native";
 
 const combos = [
     { id: '1', title: 'Cheese Burger', price: '₹45', time: '7 min', image: 'https://images.pexels.com/photos/1639564/pexels-photo-1639564.jpeg' },
@@ -16,19 +17,21 @@ const combos = [
 const ProfileScreen = () => {
     const { theme } = useTheme();
     const styles = dynamicTheme(theme);
+    const navigation = useNavigation();
+
     return (
         <View style={styles.container}>
             {/* Header */}
             <View style={styles.header}>
-                <View style={styles.profileBack}>
-                <TouchableOpacity>
-                    <Ionicons name="arrow-back" size={24} color="black" />
-                </TouchableOpacity>
-                <Text style={styles.title}>Profile</Text>
+                <View>
+                    <TouchableOpacity style={styles.backBtn} onPress={() => navigation.goBack()} activeOpacity={0.6} >
+                        <Ionicons name="arrow-back" size={24} color={theme.text} />
+                    </TouchableOpacity>
                 </View>
+                <Text style={styles.title}>Profile</Text>
                 <View style={styles.headerIcons}>
-                    <Ionicons name="notifications-outline" size={24} color="black" />
-                    <Ionicons name="settings-outline" size={24} color="black" style={{ marginLeft: 10 }} />
+                    <Ionicons name="people-outline" size={24} color={theme.text} />
+                    <Ionicons name="settings-outline" size={24} color={theme.text} style={{ marginLeft: 10 }} />
                 </View>
             </View>
 
@@ -47,11 +50,11 @@ const ProfileScreen = () => {
 
             {/* Buttons */}
             <View style={styles.buttonContainer}>
-                <TouchableOpacity style={styles.historyButton}>
+                <TouchableOpacity style={styles.historyButton} activeOpacity={0.6} >
                     <Ionicons name="time-outline" size={20} color="white" />
                     <Text style={styles.buttonText}>History</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.reorderButton}>
+                <TouchableOpacity style={styles.reorderButton} activeOpacity={0.6} >
                     <Ionicons name="repeat-outline" size={20} color="white" />
                     <Text style={styles.buttonText}>Re-Order</Text>
                 </TouchableOpacity>
@@ -60,32 +63,32 @@ const ProfileScreen = () => {
             {/* Your Combos Section */}
             <Text style={styles.sectionTitle}>Your Combos</Text>
             <FlatList style={{ marginHorizontal: -20, paddingHorizontal: 20 }}
-                    data={combos}
-                    keyExtractor={(item) => item.id}
-                    horizontal={true}
-                    showsHorizontalScrollIndicator={false}
-                    renderItem={({ item }) => <ProductCard image={{uri: item.image}} title={item.title} price={item.price} onAddtoCart={null} />}
-                />
+                data={combos}
+                keyExtractor={(item) => item.id}
+                horizontal={true}
+                showsHorizontalScrollIndicator={false}
+                renderItem={({ item }) => <ProductCard image={{ uri: item.image }} title={item.title} price={item.price} onAddtoCart={null} />}
+            />
         </View>
     );
 };
 
 const dynamicTheme = (theme) => ({
     container: { flex: 1, padding: 20, backgroundColor: theme.background },
-    header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20, marginTop: 40, paddingVertical: 5 },
-    profileBack: {flexDirection: 'row', alignItems:'center', backgroundColor:'', width:'28%', justifyContent:'space-between'},
-    title: { fontSize: 20, fontWeight: 'bold' },
-    headerIcons: { flexDirection: 'row', marginHorizontal: 10, width:'18%', backgroundColor:'' , justifyContent:'space-between'},
+    header: { flexDirection: 'row', justifyContent: '', alignItems: 'center', marginBottom: 16, marginTop: 40, paddingVertical: 5, backgroundColor: '' },
+    backBtn: { flexDirection: 'row', alignItems: 'center', backgroundColor: theme.backBtnBg, padding: 7, borderRadius: '50%', justifyContent: 'space-between' },
+    title: { fontSize: 21, fontWeight: 'bold', alignSelf: 'center', color: theme.text, marginHorizontal: 18 },
+    headerIcons: { flexDirection: 'row', width: '18%', backgroundColor: '', justifyContent: 'space-between', position: 'absolute', right: 10 },
     profileSection: { flexDirection: 'row', alignItems: 'center', marginBottom: 20 },
-    profileImage: { width: 80, height: 80, borderRadius: 40, marginRight: 15 },
-    profileName: { fontSize: 18, fontWeight: 'bold' },
-    username: { fontSize: 14, color: 'gray' },
-    roomText: { fontSize: 14, color: 'gray' },
+    profileImage: { width: 75, height: 75, borderRadius: 40, marginRight: 15 },
+    profileName: { fontSize: 17, fontWeight: 'bold', color: theme.text },
+    username: { fontSize: 13, color: 'gray' },
+    roomText: { fontSize: 13, color: 'gray' },
     buttonContainer: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 20, marginTop: 8 },
     historyButton: { backgroundColor: '#1E90FF', padding: 15, borderRadius: 10, flexDirection: 'row', alignItems: 'center', flex: 1, marginRight: 10, justifyContent: 'center' },
     reorderButton: { backgroundColor: '#FF1493', padding: 15, borderRadius: 10, flexDirection: 'row', alignItems: 'center', flex: 1, marginLeft: 10, justifyContent: 'center' },
     buttonText: { color: 'white', fontSize: 16, fontWeight: 'bold', marginLeft: 8 },
-    sectionTitle: { fontSize: 20, fontWeight: 'bold', marginBottom: 10, marginTop: 16 },
+    sectionTitle: { fontSize: 20, fontWeight: 'bold', marginBottom: 10, marginTop: 16, color: theme.text },
     comboCard: { backgroundColor: 'white', borderRadius: 10, padding: 10, marginRight: 10, alignItems: 'center', elevation: 5 },
     comboImage: { width: 100, height: 100, borderRadius: 10 },
     comboTime: { fontSize: 12, color: 'gray', marginTop: 5 },
