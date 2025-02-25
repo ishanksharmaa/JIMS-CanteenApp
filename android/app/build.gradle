@@ -24,7 +24,7 @@ def enableProguardInReleaseBuilds = false
 def jscFlavor = 'org.webkit:android-jsc:+'
 
 android {
-    ndkVersion rootProject.ext.ndkVersion
+    ndkVersion "26.1.10909125"  // FIXED: Set correct NDK version
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 

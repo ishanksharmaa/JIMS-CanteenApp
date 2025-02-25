@@ -1,5 +1,5 @@
 import React from "react";
-import { StatusBar, View } from "react-native";
+import { Appearance, StatusBar, View } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -17,6 +17,8 @@ import CartScreen from "./src/screens/CartScreen";
 import FavoriteScreen from "./src/screens/FavoriteScreen";
 import ProductScreen from "./src/screens/ProductScreen";
 import ProfileScreen from "./src/screens/ProfileScreen";
+import SettingsScreen from "./src/screens/SettingsScreen";
+import AppearanceSetting from "./src/screens/settings/AppearanceSetting";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -71,6 +73,8 @@ const AppContent = () => {
           <Stack.Screen name="Cart" component={CartScreen} />
           <Stack.Screen name="Profile" component={ProfileScreen} />
           <Stack.Screen name="ProductScreen" component={ProductScreen} />
+          <Stack.Screen name="Settings" component={SettingsScreen} />
+          <Stack.Screen name="Appearance" component={AppearanceSetting} />
         </Stack.Navigator>
         <Toast config={CustomToast} />
       </NavigationContainer>

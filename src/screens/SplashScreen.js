@@ -7,7 +7,8 @@ const SplashScreen = ({ navigation }) => {
   const styles = dynamicTheme(theme);
   useEffect(() => {
     setTimeout(() => {
-      navigation.replace("GetStarted");  // ✅ 2 sec ke baad Login Screen pe navigate karega
+      navigation.replace("GetStarted");
+      // navigation.replace("Settings");
     }, 500);
   }, []);
 

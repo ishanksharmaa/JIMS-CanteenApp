@@ -1,15 +1,16 @@
 import React, { useState } from "react";
 import { Text, View, Image, StyleSheet, FlatList, StatusBar, TouchableOpacity } from "react-native";
 import Toast from 'react-native-toast-message';
+import { TextInput } from "react-native-gesture-handler";
 import { useNavigation } from "@react-navigation/native";
-import { useTheme } from "../components/ThemeContext";
 
-
-
+// ICONS
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import { TextInput } from "react-native-gesture-handler";
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+
+// COMPONENTS
+import { useTheme } from "../components/ThemeContext";
 import ProductCard from '../components/ProductCard';
 
 
@@ -35,31 +36,6 @@ const productItems = [
     { id: '6', title: 'Cold Coffee', image: { uri: 'https://images.pexels.com/photos/302901/pexels-photo-302901.jpeg' }, price: '₹80' },
 ];
 
-
-
-// const showSuccessToast = () => {
-//     Toast.show({
-//         type: 'success',
-//         text1: 'Success!',
-//         text2: 'Your order has been placed.',
-//         position: 'top',
-//         visibilityTime: 4000,
-//         autoHide: true,
-//         topOffset: 50,
-//     });
-// };
-
-// const showErrorToast = () => {
-//     Toast.show({
-//         type: 'error',
-//         text1: 'Error!',
-//         text2: 'Something went wrong.',
-//         position: 'top',
-//         visibilityTime: 4000,
-//         autoHide: true,
-//         topOffset: 50,
-//     });
-// };
 
 const showToast = (productName, msg) => {
     Toast.show({
@@ -99,9 +75,9 @@ const HomeScreen = () => {
 
                 {/* Header Icons */}
                 <View style={styles.headerIcons}>
-                    <TouchableOpacity onPress={toggleTheme}>  {/* ✅ TrackIcon Click to Toggle Theme */}
+                    {/* <TouchableOpacity onPress={toggleTheme}>
                         <MaterialIcons name="dark-mode" size={28} color={theme.text} />
-                    </TouchableOpacity>
+                    </TouchableOpacity> */}
                     <Ionicons name="notifications" size={28} color={theme.text} style={styles.bellIcon} />
                 </View> {/* headerIcons end */}
 
@@ -178,14 +154,14 @@ const dynamicTheme = (theme) => ({
         color: theme.text,
     },
     headerIcons: {
-        backgroundColor: "",
+        backgroundColor: '',
         flexDirection: 'row', // Arrange icons horizontally in the header
         alignItems: 'center', // Vertically center the icons
         marginRight: 0,
         height: '100%',
         width: '25%',
         paddingHorizontal: 5,
-        justifyContent: 'space-between',
+        justifyContent: 'flex-end',
     },
     bellIcon: {
         marginLeft: 0, // Add space between the icons

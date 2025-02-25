@@ -1,0 +1,59 @@
+import React from "react";
+import { View, Text, TouchableOpacity, Switch } from "react-native";
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import { useTheme } from "../components/ThemeContext";
+
+export const Section = ({ title, children }) => {
+    const { theme } = useTheme();
+    const styles = dynamicTheme(theme);
+
+    return (
+        <View style={{ marginBottom: 24 }}>
+            <Text style={{ color: "#8e8e93", fontSize: 14, paddingHorizontal: 16, marginBottom: 8 }}>
+                {title}
+            </Text>
+            <View style={styles.card}>
+                {children}
+            </View>
+        </View>
+    );
+};
+
+export const SettingItem = ({ icon, label, hasSwitch, isThemeSwitch, onPress, isLast }) => {
+    const { theme, changeTheme } = useTheme();
+    const styles = dynamicTheme(theme);
+
+    return (
+        <TouchableOpacity
+            onPress={onPress}
+            style={{
+                flexDirection: "row",
+                alignItems: "center",
+                padding: 11,
+                borderBottomColor: theme.mode === "dark" ? "#333" : "#ececec",
+                borderBottomWidth: isLast ? 0 : 1,
+            }}
+            activeOpacity={0.7}
+        >
+            <Ionicons name={icon} size={24} color={theme.customButtonBg} style={{ marginRight: 16 }} /> {/* #007AFF */}
+            <Text style={{ flex: 1, fontSize: 16, color: theme.text }}>{label}</Text>
+            {hasSwitch ? (
+                <Switch
+                    value={isThemeSwitch ? theme.mode.toLowerCase() === "dark" : false}
+                    onValueChange={isThemeSwitch ? changeTheme : null}
+                    trackColor={{ false: "#d3d3d3", true: theme.primaryColor }}
+                    thumbColor={theme.mode === "dark" ? "#ffffff" : "#f4f3f4"}
+                    style={{ transform: [{ scaleX: 1.3 }, { scaleY: 1.3 }] }}
+                />
+            ) : (
+                <Ionicons name="chevron-forward-outline" size={20} color="#8e8e93" />
+            )}
+        </TouchableOpacity>
+    );
+};
+
+const dynamicTheme = (theme) => ({
+    card: { backgroundColor: theme.cardBg, borderRadius: 12, marginHorizontal: 16, padding: 10 },
+});
+
+// export {Section, SettingItem};

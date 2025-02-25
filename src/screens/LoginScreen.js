@@ -109,7 +109,7 @@ const dynamicTheme = (theme) => ({
 
     inputStyle: {
         backgroundColor: theme.loginInput,
-        color: "black",
+        color: theme.text,
         borderRadius: 12,
         paddingHorizontal: 22,
         height: 60,
@@ -131,7 +131,7 @@ const dynamicTheme = (theme) => ({
     },
     passwordInput: {
         flex: 1,
-        color: "black",
+        color: theme.text,
         fontSize: 16,
     },
     eyeIconContainer: {

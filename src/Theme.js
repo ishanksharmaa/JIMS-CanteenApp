@@ -1,4 +1,5 @@
 export const lightTheme = {
+    mode: 'light',
     logo: require("../assets/app_logo2.png"),
     statusBarIcons: "dark-content",
     background: "#eee",
@@ -26,9 +27,11 @@ export const lightTheme = {
     handleBarColor: "#333",
     backBtnBg: "#ddd",
     cartItemBg: "#fff",
+    primaryColor: '',
 };
 
 export const darkTheme = {
+    mode: 'dark',
     logo: require("../assets/app_logo2_white.png"),
     statusBarIcons: "light-content",
     background: "#121212",
@@ -56,4 +59,5 @@ export const darkTheme = {
     handleBarColor: "#ccc",
     backBtnBg: "#222",
     cartItemBg: "#222",
+    primaryColor: '',
 };

@@ -25,13 +25,15 @@ const ProfileScreen = () => {
             <View style={styles.header}>
                 <View>
                     <TouchableOpacity style={styles.backBtn} onPress={() => navigation.goBack()} activeOpacity={0.6} >
-                        <Ionicons name="arrow-back" size={24} color={theme.text} />
+                        <Ionicons name="chevron-back-outline" size={24} color={theme.text} />
                     </TouchableOpacity>
                 </View>
                 <Text style={styles.title}>Profile</Text>
                 <View style={styles.headerIcons}>
                     <Ionicons name="people-outline" size={24} color={theme.text} />
-                    <Ionicons name="settings-outline" size={24} color={theme.text} style={{ marginLeft: 10 }} />
+                    <TouchableOpacity onPress={() => navigation.navigate("Settings")}>
+                        <Ionicons name="settings-outline" size={24} color={theme.text} style={{ marginLeft: 10 }} />
+                    </TouchableOpacity>
                 </View>
             </View>
 

@@ -1,21 +1,25 @@
 import React, { createContext, useContext, useState } from "react";
-import { useColorScheme } from "react-native";
-import { lightTheme, darkTheme } from "../Theme"; // ✅ Import Correctly
+import { lightTheme, darkTheme } from "../Theme";
 
 const ThemeContext = createContext();
 
 export const ThemeProvider = ({ children }) => {
-    const systemTheme = useColorScheme();  // ✅ Get system dark mode setting
-    const [mode, setMode] = useState(systemTheme || "light");
+    const [theme, setTheme] = useState({ ...lightTheme, mode: "light" });
 
-    const toggleTheme = () => {
-        setMode(prevTheme => (prevTheme === "dark" ? "light" : "dark"));
+    const changeTheme = (mode) => {
+        setTheme(mode === "dark" ? { ...darkTheme, mode: "dark" } : { ...lightTheme, mode: "light" });
     };
 
-    const theme = mode === "dark" ? darkTheme : lightTheme;
+    const setPrimaryColor = (color) => {
+        setTheme((prevTheme) => ({
+            ...prevTheme,
+            customButtonBg: color,
+            primaryColor: color,
+        }));
+    };
 
     return (
-        <ThemeContext.Provider value={{ mode, toggleTheme, theme }}>
+        <ThemeContext.Provider value={{ theme, changeTheme, setPrimaryColor }}>
             {children}
         </ThemeContext.Provider>
     );
