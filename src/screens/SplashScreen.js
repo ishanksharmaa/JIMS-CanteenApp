@@ -7,7 +7,7 @@ const SplashScreen = ({ navigation }) => {
   const styles = dynamicTheme(theme);
   useEffect(() => {
     setTimeout(() => {
-      navigation.replace("GetStarted");
+      navigation.replace("Home");
       // navigation.replace("Settings");
     }, 500);
   }, []);

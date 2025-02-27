@@ -29,6 +29,10 @@ export const lightTheme = {
     cartItemBg: "#fff",
     screenColor: "#ccc",
     primaryColor: '#007AFF',
+    productInfoCard: "#f2f2f2",
+    customGoogleButtonBg: "#FFFFFF80",
+    customGoogleButtonText: "#333",
+    settingsCard: "#ffffff90",
 };
 
 export const darkTheme = {
@@ -36,7 +40,7 @@ export const darkTheme = {
     logo: require("../assets/app_logo2_white.png"),
     statusBarIcons: "light-content",
     background: "#121212",
-    text: "#ddd",
+    text: "#eee",
     cardBg: "#222",
     cardTitle: "#ddd",
     cardPrice: "#aaa",
@@ -52,7 +56,7 @@ export const darkTheme = {
     tabBarMarginHorizontal: 0,
     cartBagBtn: "#222",
     cartBagBtnIcon: "#eee",
-    customButtonBg: "#ccc",
+    customButtonBg: "#ddd",
     customButtonText: "#111",
     getStartedScreenBg: "#111",
     loginBg: "#222",
@@ -62,4 +66,8 @@ export const darkTheme = {
     cartItemBg: "#222",
     screenColor: "#444",
     primaryColor: '#007AFF',
+    productInfoCard: "#222",
+    customGoogleButtonBg: "#FFFFFF33",
+    customGoogleButtonText: "#ccc",
+    settingsCard: "#222",
 };

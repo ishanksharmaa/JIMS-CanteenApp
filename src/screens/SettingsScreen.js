@@ -4,6 +4,7 @@ import { useNavigation } from "@react-navigation/native";
 import { useTheme } from "../components/ThemeContext";
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { Section, SettingItem } from "../components/SettingsItem";
+import { ProfileSection } from "./ProfileScreen";
 
 const SettingsScreen = () => {
     const { theme } = useTheme();
@@ -22,19 +23,28 @@ const SettingsScreen = () => {
             </View>
 
             <ScrollView style={{ flex: 1, backgroundColor: theme.background, paddingTop: 20 }}>
+                <View style={{flex: 0, justifyContent:'center', alignItems:'center', marginBottom: 10, paddingLeft: 10, backgroundColor:'' }}>
+                    <ProfileSection flexDirection='column' gap={10} scale={1.1} />
+                </View>
                 <Section title="General">
                     <SettingItem icon={isDarkMode ? "notifications-outline" : "notifications"} label="Notifications" hasSwitch />
-                    <SettingItem icon={isDarkMode ? "color-palette-outline" : "color-palette"} label="Appearance" isThemeSwitch onPress={() => navigation.navigate("Appearance")} isLast />
+                    <SettingItem icon={isDarkMode ? "color-palette-outline" : "color-palette"} label="Appearance" isThemeSwitch onPress={() => navigation.navigate("Appearance")} />
+                    <SettingItem icon={isDarkMode ? "time-outline" : "time"} label="Order History" isLast />
                 </Section>
 
                 <Section title="Account">
-                    <SettingItem icon={isDarkMode ? "person-circle-outline" : "person-circle"} label="Profile" />
-                    <SettingItem icon={isDarkMode ? "lock-closed-outline" : "lock-closed"} label="Privacy" isLast />
+                    <SettingItem icon={isDarkMode ? "person-circle-outline" : "person-circle"} label="Edit Profile" />
+                    <SettingItem icon={isDarkMode ? "lock-closed-outline" : "lock-closed"} label="Privacy & Security" isLast />
                 </Section>
 
                 <Section title="Support">
                     <SettingItem icon={isDarkMode ? "help-circle-outline" : "help-circle"} label="Help & Support" />
+                    <SettingItem icon={isDarkMode ? "star-outline" : "star"} label="Feedback" />
                     <SettingItem icon={isDarkMode ? "information-circle-outline" : "information-circle"} label="About" isLast />
+                </Section>
+
+                <Section title="LogOut">
+                    <SettingItem icon={isDarkMode ? "exit-outline" : "exit"} label="LogOut" onPress={() => navigation.navigate("Login")} isLast />
                 </Section>
             </ScrollView>
         </View>

@@ -8,7 +8,7 @@ const CustomButton = ({btnColor, textColor, title, onPress}) => {
 
     return(
         <View style={{ alignItems: "center" }}>
-            <TouchableOpacity style={styles.buttonStyle} onPress={onPress}>
+            <TouchableOpacity style={styles.buttonStyle} onPress={onPress} activeOpacity={0.8}>
                 <Text style={styles.buttonText}>{title}</Text>
             </TouchableOpacity>
         </View>

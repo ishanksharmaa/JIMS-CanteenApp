@@ -1,12 +1,14 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image } from 'react-native';
 import Toast, { BaseToast } from 'react-native-toast-message';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 // Custom Toast Component
 const CustomToast = {
   success: ({ text1, text2, props }) => (
     <View style={[styles.toastContainer, { backgroundColor: '#4CAF50' }]}>
-      <Image source={require('../../assets/eye-open.png')} style={styles.icon} />
+      {/* <Image source={require('../../assets/eye-open.png')} style={styles.icon} /> */}
+      <Ionicons name="cart" size={24} color={"#eee"} style={styles.icon} />
       <View>
         <Text style={styles.toastTitle}>{text1}</Text>
         <Text style={styles.toastMessage}>{text2}</Text>

@@ -9,8 +9,12 @@ export const CartProvider = ({ children }) => {
     setCartItems((prevItems) => [...prevItems, item]); // ✅ Latest state maintain karega
   };
 
+  const removeFromCart = (title) => {
+    setCartItems(cartItems.filter(item => item.title !== title));
+  };
+
   return (
-    <CartContext.Provider value={{ cartItems, addToCart }}>
+    <CartContext.Provider value={{ cartItems, addToCart, removeFromCart }}>
       {children}
     </CartContext.Provider>
   );

@@ -55,6 +55,7 @@ const AppearanceSetting = () => {
                             {[
                                 { color: theme.text, name: "default" },
                                 { color: "#ff7518", name: "fanta" },
+                                // { color: "#02802D", name: "veg" },
                                 { color: "green", name: "veg" },
                                 { color: "#d2042d", name: "anar" },
                                 { color: "#FDDA0D", name: "lemon" }
@@ -103,7 +104,7 @@ const AppearanceSetting = () => {
 // Dynamic Theme Styles
 const dynamicTheme = (theme) => ({
     container: { flex: 1, backgroundColor: theme.background, padding: 16 },
-    themeSection: { flexDirection: "row", justifyContent: "center", marginBottom: 40 },
+    themeSection: { flexDirection: "row", justifyContent: "center", marginBottom: 36, backgroundColor:'' },
     themeCard: {
         width: 160,
         height: 200,
@@ -117,7 +118,7 @@ const dynamicTheme = (theme) => ({
         overflow: 'hidden',
     },
     themeName: { color: theme.text, fontWeight: "bold", textAlign: 'center', paddingTop: 10 },
-    primaryColorSection: { marginTop: 20 },
+    primaryColorSection: { marginBottom: 36, backgroundColor:'' },
     subHeader: { fontSize: 18, fontWeight: "bold", color: theme.text, marginBottom: 20, marginLeft: 10 },
     header: { marginHorizontal: 8, marginVertical: '12%', flexDirection: "row", alignItems: "center", justifyContent: 'center' },
     title: { fontSize: 20, color: theme.text, fontWeight: 'bold' },
@@ -125,7 +126,7 @@ const dynamicTheme = (theme) => ({
     colorPalatte: { flexDirection: 'row' },
     coloring: { width: 75, height: 75, borderColor: theme.text, borderRadius: 50, marginHorizontal: 10 },
     colorText: { fontSize: 14, color: theme.text, textAlign: 'center', paddingTop: 10, textTransform: 'capitalize' },
-    animationSection: {},
+    animationSection: {backgroundColor: ''},
     image: {
         width: "100%",
         height: "105%",

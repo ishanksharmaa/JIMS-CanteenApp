@@ -1,11 +1,16 @@
-import React from "react";
+import React, {useState} from "react";
 import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 import { Swipeable } from "react-native-gesture-handler";
 import { useTheme } from "./ThemeContext";
+import { useCart } from "./CartContext";
+import Ionicons from "react-native-vector-icons/Ionicons";
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
 const CartItem = ({ image, title, price }) => {
   const { theme } = useTheme();
   const styles = dynamicTheme(theme);
+  const { removeFromCart } = useCart();
+  const [count, setCount] = useState(1); // Default count 1
 
   const renderRightActions = () => (
     <TouchableOpacity style={styles.deleteBtn} onPress={() => removeFromCart(title)}>
@@ -33,8 +38,23 @@ const CartItem = ({ image, title, price }) => {
         <Image source={image} style={styles.image} />
         <View>
           <Text style={styles.title}>{title}</Text>
-          <Text style={styles.price}>{price}</Text>
+          {/* <Text style={styles.price}>{'₹ ' + price}</Text> */}
+          <Text style={styles.totalAmount}>{`Total: ${price} X ${count} = ₹ ` + price * count}</Text>
         </View>
+
+         <View style={styles.countHandler}>
+                  <TouchableOpacity activeOpacity={1} onPress={() => setCount((prev) => (prev = prev + 1))}>
+                    <FontAwesome name="caret-up" size={32} color={theme.customButtonBg}/>
+                    {/* <FontAwesome name="plus" size={32} color={theme.customButtonBg}/> */}
+                  </TouchableOpacity>
+        
+                  <Text style={{ fontSize: 14, fontWeight: 'bold', textAlign: 'center', color: theme.text }}>{count}</Text>
+        
+                  <TouchableOpacity activeOpacity={1} onPress={() => setCount((prev) => (prev > 1 ? prev - 1 : 1))}>
+                    <FontAwesome name="caret-down" size={32} color={"grey"}/>
+                    {/* <FontAwesome name="minus" size={32} color={theme.customButtonBg}/> */}
+                  </TouchableOpacity>
+                </View>
       </View>
     </Swipeable>
   );
@@ -64,7 +84,12 @@ const dynamicTheme = (theme) => ({
   },
   price: {
     fontSize: 14,
-    color: "gray",
+    color: "#aaa",
+  },
+  totalAmount: {
+    fontSize: 14,
+    paddingTop: 2,
+    color: "#aaa",
   },
   deleteBtn: {
     backgroundColor: "red",
@@ -91,6 +116,8 @@ const dynamicTheme = (theme) => ({
     fontSize: 16,
     fontWeight: "bold",
   },
+  countHandler: { backgroundColor: '', flexDirection: 'column', justifyContent: 'space-between', alignItems: 'center', height: '50%', position: 'absolute', right: '5%', top: 6.5 },
+
 });
 
 export default CartItem;

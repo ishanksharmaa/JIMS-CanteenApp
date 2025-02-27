@@ -32,12 +32,12 @@ const categories = [
 ];
 
 const productItems = [
-    { id: '1', title: 'FarmFresh Cheese Pizza', image: { uri: 'https://images.pexels.com/photos/315755/pexels-photo-315755.jpeg' }, price: '₹45' },
-    { id: '2', title: 'Cheese Burger', image: { uri: 'https://images.pexels.com/photos/1639564/pexels-photo-1639564.jpeg' }, price: '₹40' },
-    { id: '3', title: 'Creamy Pasta', image: { uri: 'https://images.pexels.com/photos/1437267/pexels-photo-1437267.jpeg' }, price: '₹30' },
-    { id: '4', title: 'Fresh Salad', image: { uri: 'https://images.pexels.com/photos/1435904/pexels-photo-1435904.jpeg' }, price: '₹20' },
-    { id: '5', title: 'Chocolate Lava Cake', image: { uri: 'https://images.pexels.com/photos/4110002/pexels-photo-4110002.jpeg' }, price: '₹65' },
-    { id: '6', title: 'Cold Coffee', image: { uri: 'https://images.pexels.com/photos/302901/pexels-photo-302901.jpeg' }, price: '₹80' },
+    { id: '1', title: 'FarmFresh Cheese Pizza', image: { uri: 'https://images.pexels.com/photos/315755/pexels-photo-315755.jpeg' }, price: 399 },
+    { id: '2', title: 'Cheese Burger', image: { uri: 'https://images.pexels.com/photos/1639564/pexels-photo-1639564.jpeg' }, price: 40 },
+    { id: '3', title: 'Creamy Pasta', image: { uri: 'https://images.pexels.com/photos/1437267/pexels-photo-1437267.jpeg' }, price: 70 },
+    { id: '4', title: 'Fresh Salad', image: { uri: 'https://images.pexels.com/photos/1435904/pexels-photo-1435904.jpeg' }, price: 25 },
+    { id: '5', title: 'Chocolate Lava Cake', image: { uri: 'https://images.pexels.com/photos/4110002/pexels-photo-4110002.jpeg' }, price: 65 },
+    { id: '6', title: 'Cold Coffee', image: { uri: 'https://images.pexels.com/photos/302901/pexels-photo-302901.jpeg' }, price: 35 },
 ];
 
 
@@ -58,7 +58,7 @@ const HomeScreen = () => {
     const navigation = useNavigation();
     const { theme, toggleTheme } = useTheme();
     const styles = dynamicTheme(theme);
-    const {isMemeCatsEnabled} = useMemeCat();
+    const { isMemeCatsEnabled } = useMemeCat();
 
     return (
         <View style={styles.container}>
@@ -82,9 +82,9 @@ const HomeScreen = () => {
 
                 {/* Header Icons */}
                 <View style={styles.headerIcons}>
-                    {/* <TouchableOpacity onPress={toggleTheme}>
-                        <MaterialIcons name="dark-mode" size={28} color={theme.text} />
-                    </TouchableOpacity> */}
+                    <TouchableOpacity onPress={() => navigation.navigate("Cart")}>
+                        <Ionicons name="cart" size={28} color={theme.text} style={styles.bellIcon} />
+                    </TouchableOpacity>
                     <Ionicons name="notifications" size={28} color={theme.text} style={styles.bellIcon} />
                 </View> {/* headerIcons end */}
 
@@ -168,7 +168,8 @@ const dynamicTheme = (theme) => ({
         height: '100%',
         width: '25%',
         paddingHorizontal: 5,
-        justifyContent: 'flex-end',
+        justifyContent: 'space-between',
+        // justifyContent: 'flex-end',
     },
     bellIcon: {
         marginLeft: 0, // Add space between the icons

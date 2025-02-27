@@ -4,6 +4,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import ProductCard from '../components/ProductCard';
 import { useTheme } from "../components/ThemeContext";
 import { useNavigation } from "@react-navigation/native";
+import { transform } from 'typescript';
 
 const combos = [
     { id: '1', title: 'Cheese Burger', price: '₹45', time: '7 min', image: 'https://images.pexels.com/photos/1639564/pexels-photo-1639564.jpeg' },
@@ -13,6 +14,23 @@ const combos = [
     { id: '5', title: 'Cold Coffee', price: '₹80', time: '8 min', image: 'https://images.pexels.com/photos/302901/pexels-photo-302901.jpeg' }
 ];
 
+export const ProfileSection = ({ flexDirection, gap, scale }) => {
+    const { theme } = useTheme();
+    const styles = dynamicTheme(theme, flexDirection, gap, scale);
+    return (
+        <View style={styles.profileSection}>
+            <Image
+                source={require('../../assets/mayuri.jpg')} // Replace with your profile image path
+                style={styles.profileImage}
+            />
+            <View>
+                <Text style={styles.profileName}>Komi Chan</Text>
+                <Text style={styles.username}>@komi.chan</Text>
+                <Text style={styles.roomText}>Room A202</Text>
+            </View>
+        </View>
+    );
+};
 
 const ProfileScreen = () => {
     const { theme } = useTheme();
@@ -38,17 +56,7 @@ const ProfileScreen = () => {
             </View>
 
             {/* Profile Info */}
-            <View style={styles.profileSection}>
-                <Image
-                    source={require('../../assets/mayuri.jpg')} // Replace with your profile image path
-                    style={styles.profileImage}
-                />
-                <View>
-                    <Text style={styles.profileName}>Komi Chan</Text>
-                    <Text style={styles.username}>@komi.chan</Text>
-                    <Text style={styles.roomText}>Room A202</Text>
-                </View>
-            </View>
+            <ProfileSection flexDirection={"row"} gap={0} scale={1} />
 
             {/* Buttons */}
             <View style={styles.buttonContainer}>
@@ -75,13 +83,13 @@ const ProfileScreen = () => {
     );
 };
 
-const dynamicTheme = (theme) => ({
+const dynamicTheme = (theme, flexDirection, gap, scale) => ({
     container: { flex: 1, padding: 20, backgroundColor: theme.background },
     header: { flexDirection: 'row', justifyContent: '', alignItems: 'center', marginBottom: 16, marginTop: 40, paddingVertical: 5, backgroundColor: '' },
     backBtn: { flexDirection: 'row', alignItems: 'center', backgroundColor: theme.backBtnBg, padding: 7, borderRadius: '50%', justifyContent: 'space-between' },
     title: { fontSize: 21, fontWeight: 'bold', alignSelf: 'center', color: theme.text, marginHorizontal: 18 },
     headerIcons: { flexDirection: 'row', width: '18%', backgroundColor: '', justifyContent: 'space-between', position: 'absolute', right: 10 },
-    profileSection: { flexDirection: 'row', alignItems: 'center', marginBottom: 20 },
+    profileSection: { transform: [{scale: scale}] , flexDirection: flexDirection, alignItems: 'center', marginBottom: 20, gap: gap },
     profileImage: { width: 75, height: 75, borderRadius: 40, marginRight: 15 },
     profileName: { fontSize: 17, fontWeight: 'bold', color: theme.text },
     username: { fontSize: 13, color: 'gray' },

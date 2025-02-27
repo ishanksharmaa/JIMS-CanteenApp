@@ -25,7 +25,7 @@ const ProductCard = ({ image, title, price, onAddtoCart }) => {
       <Image source={image} style={styles.productImage} />
       <View style={styles.textContainer}>
         <Text style={styles.productTitle}>{title}</Text>
-        <Text style={styles.productPrice}>{price}</Text>
+        <Text style={styles.productPrice}>{'₹' + price}</Text>
       </View>
 
       {/* ✅ Add to Cart Button */}
@@ -34,7 +34,7 @@ const ProductCard = ({ image, title, price, onAddtoCart }) => {
         onPress={handleAddtoCart}
         activeOpacity={0.5}
       >
-        <FontAwesome name="circle-plus" size={45} color="green" />
+        <FontAwesome name="circle-plus" size={45} color="#029232" />
       </TouchableOpacity>
     </TouchableOpacity>
   );

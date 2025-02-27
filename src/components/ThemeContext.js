@@ -1,38 +1,69 @@
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useState, useEffect } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { lightTheme, darkTheme } from "../Theme";
 
 const ThemeContext = createContext();
 
 export const ThemeProvider = ({ children }) => {
-    const [theme, setTheme] = useState({ 
-        ...lightTheme, 
-        mode: "light", 
-        primaryColor: "#007AFF", 
-        customButtonBg: "#111" 
+    const [theme, setTheme] = useState({
+        ...lightTheme,
+        mode: "light",
+        primaryColor: "#007AFF",
+        customButtonBg: "#111",
+        customButtonText: "#eee"
     });
 
-    const changeTheme = (mode) => {
+    // Load Theme from AsyncStorage
+    useEffect(() => {
+        const loadTheme = async () => {
+            try {
+                const savedTheme = await AsyncStorage.getItem("theme");
+                if (savedTheme) {
+                    setTheme(JSON.parse(savedTheme));
+                }
+            } catch (error) {
+                console.log("Error loading theme:", error);
+            }
+        };
+        loadTheme();
+    }, []);
+
+    // Change Theme Mode
+    const changeTheme = async (mode) => {
         setTheme((prevTheme) => {
             const newTheme = mode === "dark" ? darkTheme : lightTheme;
-            const defaultPrimaryColor = "#007AFF"
-            return {
+            const defaultPrimaryColor = "#007AFF";
+
+            const updatedTheme = {
                 ...newTheme,
-                mode: mode,
-                primaryColor: prevTheme.primaryColor || "#007AFF", // Default color
-                customButtonBg: prevTheme.primaryColor === defaultPrimaryColor ? (mode === "dark" ? "#ccc" : "#111") : prevTheme.customButtonBg, // Default button bg
-                customButtonText: prevTheme.primaryColor === defaultPrimaryColor ? (mode === "dark" ? "#111" : "#eee") : "#eee",
+                mode,
+                primaryColor: prevTheme.primaryColor || defaultPrimaryColor, 
+                customButtonBg: prevTheme.primaryColor === defaultPrimaryColor ? (mode === "dark" ? "#ddd" : "#111") : prevTheme.customButtonBg,
+                customButtonText: prevTheme.primaryColor === defaultPrimaryColor 
+                    ? (mode === "dark" ? "#999" : "#eee") 
+                    : (prevTheme.customButtonBg === "#FDDA0D" ? "#333" : "#eee"),
             };
+
+            AsyncStorage.setItem("theme", JSON.stringify(updatedTheme)); // Save theme
+            return updatedTheme;
         });
     };
 
-    const setPrimaryColor = (color) => {
-        const defaultColor = theme.text
-        setTheme((prevTheme) => ({
-            ...prevTheme,
-            customButtonBg: color,
-            primaryColor: color === defaultColor ? "#007AFF" : color,
-            customButtonText: color === defaultColor ? (prevTheme.mode === "dark" ? "#111" : "#eee") : "#eee",
-        }));
+    // Change Primary Color
+    const setPrimaryColor = async (color) => {
+        setTheme((prevTheme) => {
+            const updatedTheme = {
+                ...prevTheme,
+                customButtonBg: color,
+                primaryColor: color === prevTheme.text ? "#007AFF" : color,
+                customButtonText: color === prevTheme.text
+                    ? (prevTheme.mode === "dark" ? "#111" : "#eee")
+                    : (color === "#FDDA0D" ? "#999" : "#eee"),
+            };
+
+            AsyncStorage.setItem("theme", JSON.stringify(updatedTheme)); // Save color
+            return updatedTheme;
+        });
     };
 
     return (

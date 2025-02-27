@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, Image, TextInput, TouchableOpacity, KeyboardAvo
 import CustomButton from "../components/CustomButton";
 import HandleBar from "../components/HandleBar";
 import { useTheme } from "../components/ThemeContext";
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const LoginScreen = ({ navigation }) => {
     const { theme } = useTheme();
@@ -26,7 +27,7 @@ const LoginScreen = ({ navigation }) => {
 
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss} >
-            <View style={[styles.screen, {flex: 1}]}>
+            <View style={[styles.screen, { flex: 1 }]}>
                 <Image source={theme.logo} style={styles.logo} />
 
                 <View style={[styles.container, { marginTop: keyboardVisible ? "0%" : "75%" }]}>
@@ -64,11 +65,12 @@ const LoginScreen = ({ navigation }) => {
                                 onChangeText={(text) => setPassword(text.replace(/\s/g, ""))}
                                 secureTextEntry={!isPasswordVisible}  // ✅ Toggle Password Visibility
                             />
-                            <TouchableOpacity onPress={() => setPasswordVisible(!isPasswordVisible)} style={styles.eyeIconContainer}>
-                                <Image
+                            <TouchableOpacity onPress={() => setPasswordVisible(!isPasswordVisible)} style={styles.eyeIconContainer} activeOpacity={0.8}>
+                                {/* <Image
                                     source={isPasswordVisible ? require("../../assets/eye-open.png") : require("../../assets/eye-closed.png")}
                                     style={styles.eyeIcon}
-                                />
+                                /> */}
+                                <Ionicons name={isPasswordVisible ? "eye" : "eye-off"} size={22} color={theme.text} style={styles.eyeIcon} />
                             </TouchableOpacity>
                         </View>
                     </View>
@@ -77,7 +79,7 @@ const LoginScreen = ({ navigation }) => {
                         <CustomButton btnColor={theme.customButtonBg} textColor={theme.customButtonText} title="Login" onPress={() => { Keyboard.dismiss, navigation.navigate("Home"); }} />
                         <Text style={{ textAlign: 'center', marginVertical: 20, color: theme.text }}>Create an account</Text>
                         <Text style={{ textAlign: 'center', marginVertical: 20, color: theme.text }}>____________  or  ____________</Text>
-                        <CustomButton btnColor="#FFFFFF33" textColor={"#ccc"} title="Continue with Google" onPress={() => navigation.navigate("https://www.google.com")} />
+                        <CustomButton btnColor={theme.customGoogleButtonBg} textColor={theme.customGoogleButtonText} title="Continue with Google" onPress={() => navigation.navigate("Home")} />
                     </View>
                 </View>
             </View>
@@ -140,6 +142,7 @@ const dynamicTheme = (theme) => ({
     eyeIcon: {
         width: 24,
         height: 24,
+        opacity: 0.22,
         tintColor: "black",  // ✅ Adjust color as needed
     },
 

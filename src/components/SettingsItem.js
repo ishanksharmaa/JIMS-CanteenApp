@@ -54,7 +54,7 @@ export const SettingItem = ({ icon, label, hasSwitch, isThemeSwitch, onPress, is
 };
 
 const dynamicTheme = (theme) => ({
-    card: { backgroundColor: theme.cardBg, borderRadius: 12, marginHorizontal: 16, padding: 10 },
+    card: { backgroundColor: theme.settingsCard, borderRadius: 12, marginHorizontal: 16, padding: 10 },
 });
 
 // export {Section, SettingItem};
