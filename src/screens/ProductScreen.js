@@ -18,10 +18,10 @@ const ProductScreen = () => {
       <Text style={styles.productPrice}>{price}</Text>
       <View style={styles.orderBtn}>
         <TouchableOpacity style={styles.iconButton}>
-          <Ionicons name="bag" size={29} color= {theme.cartBagBtnIcon} />
+          <Ionicons name="bag" size={29} color= {theme.customButtonBg} />
         </TouchableOpacity>
         <View style={styles.buttonContainer}>
-          <CustomButton btnColor={theme.customButtonBg} textColor="#ddd" title="Order Now" onPress={null} />
+          <CustomButton btnColor={theme.customButtonBg} textColor= {theme.customButtonText} title="Order Now" onPress={null} />
         </View>
       </View>
     </View>

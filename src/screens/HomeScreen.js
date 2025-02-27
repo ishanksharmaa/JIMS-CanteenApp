@@ -3,6 +3,7 @@ import { Text, View, Image, StyleSheet, FlatList, StatusBar, TouchableOpacity } 
 import Toast from 'react-native-toast-message';
 import { TextInput } from "react-native-gesture-handler";
 import { useNavigation } from "@react-navigation/native";
+import MemeCat from "../components/MemeCat";
 
 // ICONS
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -57,6 +58,8 @@ const HomeScreen = () => {
 
     return (
         <View style={styles.container}>
+            <MemeCat available={true} active={true} onTouch={() => console.log("Cat touched!")} />
+
             <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
             <View style={styles.header}>
                 {/* Profile Section */}

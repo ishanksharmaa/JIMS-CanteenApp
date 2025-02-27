@@ -94,7 +94,7 @@ const dynamicTheme = (theme) => ({
         top: 35,
         alignSelf: "center",
     },
-    screen: { flex: 1, backgroundColor: "#111" },
+    screen: { flex: 1, backgroundColor: theme.screenColor },
     container: {
         height: '100%',
         flex: 1,

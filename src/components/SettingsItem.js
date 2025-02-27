@@ -19,7 +19,7 @@ export const Section = ({ title, children }) => {
     );
 };
 
-export const SettingItem = ({ icon, label, hasSwitch, isThemeSwitch, onPress, isLast }) => {
+export const SettingItem = ({ icon, label, hasSwitch, isThemeSwitch, onPress, isLast, switchValue }) => {
     const { theme, changeTheme } = useTheme();
     const styles = dynamicTheme(theme);
 
@@ -35,16 +35,17 @@ export const SettingItem = ({ icon, label, hasSwitch, isThemeSwitch, onPress, is
             }}
             activeOpacity={0.7}
         >
-            <Ionicons name={icon} size={24} color={theme.customButtonBg} style={{ marginRight: 16 }} /> {/* #007AFF */}
+            <Ionicons name={icon} size={24} color={theme.primaryColor} style={{ marginRight: 16 }} /> {/* #007AFF */}
             <Text style={{ flex: 1, fontSize: 16, color: theme.text }}>{label}</Text>
             {hasSwitch ? (
                 <Switch
-                    value={isThemeSwitch ? theme.mode.toLowerCase() === "dark" : false}
-                    onValueChange={isThemeSwitch ? changeTheme : null}
-                    trackColor={{ false: "#d3d3d3", true: theme.primaryColor }}
-                    thumbColor={theme.mode === "dark" ? "#ffffff" : "#f4f3f4"}
-                    style={{ transform: [{ scaleX: 1.3 }, { scaleY: 1.3 }] }}
-                />
+                // value={isThemeSwitch ? theme.mode.toLowerCase() === "dark" : isMemeCatsEnabled}
+                value={switchValue}
+                onValueChange={onPress}
+                trackColor={{ false: "#d3d3d3", true: theme.primaryColor }}
+                thumbColor={theme.mode === "dark" ? "#ffffff" : "#f4f3f4"}
+                style={{ transform: [{ scaleX: 1.3 }, { scaleY: 1.3 }] }}
+            />
             ) : (
                 <Ionicons name="chevron-forward-outline" size={20} color="#8e8e93" />
             )}

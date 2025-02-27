@@ -3,13 +3,13 @@ export const lightTheme = {
     logo: require("../assets/app_logo2.png"),
     statusBarIcons: "dark-content",
     background: "#eee",
-    text: "#000000",
+    text: "#111",
     cardBg: "#fff",
     cardTitle: "#333",
     cardPrice: "#666",
     border: "#ddd",
     searchBg: "#ddd",
-    searchText: "#ddd",
+    searchText: "#222",
     tabBarBg: "#ddd",
     tabBarIcon: "#aaa",
     tabBarIconActive: "#333",
@@ -27,7 +27,8 @@ export const lightTheme = {
     handleBarColor: "#333",
     backBtnBg: "#ddd",
     cartItemBg: "#fff",
-    primaryColor: '',
+    screenColor: "#ccc",
+    primaryColor: '#007AFF',
 };
 
 export const darkTheme = {
@@ -59,5 +60,6 @@ export const darkTheme = {
     handleBarColor: "#ccc",
     backBtnBg: "#222",
     cartItemBg: "#222",
-    primaryColor: '',
+    screenColor: "#444",
+    primaryColor: '#007AFF',
 };
