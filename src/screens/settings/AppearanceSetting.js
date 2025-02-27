@@ -5,6 +5,7 @@ import { useTheme } from "../../components/ThemeContext";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { useNavigation } from "@react-navigation/native";
 import MemeCat from "../../components/MemeCat";
+import { useMemeCat } from "../../components/MemeCatContext";
 import { Section, SettingItem } from "../../components/SettingsItem";
 
 const themes = [
@@ -16,27 +17,7 @@ const AppearanceSetting = () => {
     const { theme, changeTheme, setPrimaryColor } = useTheme();
     const styles = dynamicTheme(theme);
     const navigation = useNavigation();
-    const [isMemeCatsEnabled, setIsMemeCatsEnabled] = useState(false);
-
-    // Load MemeCats state from AsyncStorage
-    useEffect(() => {
-        const loadMemeCatState = async () => {
-            const savedState = await AsyncStorage.getItem("memeCatsEnabled");
-            if (savedState !== null) {
-                setIsMemeCatsEnabled(JSON.parse(savedState));
-            }
-        };
-        loadMemeCatState();
-    }, []);
-
-    // Toggle function for MemeCats switch
-    const toggleMemeCat = async () => {
-        const newValue = !isMemeCatsEnabled;
-        setIsMemeCatsEnabled(newValue);
-        await AsyncStorage.setItem("memeCatsEnabled", JSON.stringify(newValue));
-
-        console.log("Meme Cats Enabled:", newValue);
-    };
+    const {isMemeCatsEnabled, toggleMemeCat} = useMemeCat();
 
     return (
         <View style={styles.container}>
@@ -113,8 +94,8 @@ const AppearanceSetting = () => {
 
             </ScrollView>
 
-            {/* Render MemeCat only if enabled */}
-            {isMemeCatsEnabled && <MemeCat isMemeCatsEnabled={isMemeCatsEnabled} />}
+            {/* Pass prop but don't render */}
+            {/* {isMemeCatsEnabled ? <MemeCat available={false} isMemeCatsEnabled={isMemeCatsEnabled} /> : false} */}
         </View>
     );
 };

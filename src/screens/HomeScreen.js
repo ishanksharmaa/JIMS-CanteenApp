@@ -1,9 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Text, View, Image, StyleSheet, FlatList, StatusBar, TouchableOpacity } from "react-native";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 import Toast from 'react-native-toast-message';
 import { TextInput } from "react-native-gesture-handler";
 import { useNavigation } from "@react-navigation/native";
 import MemeCat from "../components/MemeCat";
+import { useMemeCat } from "../components/MemeCatContext";
 
 // ICONS
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -55,10 +58,11 @@ const HomeScreen = () => {
     const navigation = useNavigation();
     const { theme, toggleTheme } = useTheme();
     const styles = dynamicTheme(theme);
+    const {isMemeCatsEnabled} = useMemeCat();
 
     return (
         <View style={styles.container}>
-            <MemeCat available={true} active={true} onTouch={() => console.log("Cat touched!")} />
+            <MemeCat available={true} active={true} onTouch={() => console.log("Cat touched!")} isMemeCatsEnabled={isMemeCatsEnabled} />
 
             <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
             <View style={styles.header}>

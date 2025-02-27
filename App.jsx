@@ -19,6 +19,7 @@ import ProductScreen from "./src/screens/ProductScreen";
 import ProfileScreen from "./src/screens/ProfileScreen";
 import SettingsScreen from "./src/screens/SettingsScreen";
 import AppearanceSetting from "./src/screens/settings/AppearanceSetting";
+import { MemeCatProvider } from "./src/components/MemeCatContext";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -84,11 +85,13 @@ const AppContent = () => {
 
 const App = () => {
   return (
+    <MemeCatProvider>
     <ThemeProvider>
       <CartProvider>
         <AppContent />  {/* ✅ Wrapping here so `useTheme()` works properly */}
       </CartProvider>
     </ThemeProvider>
+    </MemeCatProvider>
   );
 };
 

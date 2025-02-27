@@ -5,7 +5,7 @@ import FastImage from "react-native-fast-image";
 const { width, height } = Dimensions.get("window");
 
 const MemeCat = ({ available, active, onTouch, isMemeCatsEnabled }) => {
-    // if (!isMemeCatsEnabled || !available) return null;
+    if (!isMemeCatsEnabled || !available) return null;
 
     const animX = useRef(new Animated.Value(100)).current;
     const animY = useRef(new Animated.Value(100)).current;
@@ -18,7 +18,7 @@ const MemeCat = ({ available, active, onTouch, isMemeCatsEnabled }) => {
 
         const moveCat = () => {
             if (!isMoving) return;
-            
+
             let newX = animX._value + speedX.current;
             let newY = animY._value + speedY.current;
 
@@ -52,12 +52,12 @@ const MemeCat = ({ available, active, onTouch, isMemeCatsEnabled }) => {
     return (
         <Animated.View style={{ position: "absolute", left: animX, top: animY, zIndex: 9999 }}>
             <TouchableOpacity onPress={onTouch}>
-                <FastImage 
+                <FastImage
                     source={isMoving ? require("../../assets/meme_cat.gif") : require("../../assets/meme_cat_static.png")}
                     style={{
                         width: isMoving ? 80 : 100,   // PNG (static) ka size bada
                         height: isMoving ? 80 : 100,
-                    }} 
+                    }}
                     resizeMode={FastImage.resizeMode.contain}
                 />
             </TouchableOpacity>
