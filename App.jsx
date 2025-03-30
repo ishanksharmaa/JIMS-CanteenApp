@@ -1,22 +1,22 @@
-// import firebase from 'firebase/app'; // Import the Firebase module
-// import { FirebaseApp } from '@react-native-firebase/app';
+// import firebase from 'firebase/app';
+import firebase, { FirebaseApp } from '@react-native-firebase/app';
 
-// // Firebase Config
-// const firebaseConfig = {
-//   apiKey: 'AIzaSyAx1FL3xD-XUvVtBelREh25TQ4Wd6PtMf0',
-//   authDomain: 'YOUR_AUTH_DOMAIN',
-//   projectId: 'jims-canteen',
-//   storageBucket: 'YOUR_STORAGE_BUCKET',
-//   messagingSenderId: 'YOUR_MESSAGING_SENDER_ID',
-//   appId: '1:396737801187:android:614571dd069abdabd1ced6',
-// };
+// Firebase Config
+const firebaseConfig = {
+  apiKey: 'AIzaSyAx1FL3xD-XUvVtBelREh25TQ4Wd6PtMf0',
+  authDomain: 'jims-canteen.firebaseapp.com',
+  projectId: 'jims-canteen',
+  storageBucket: 'jims-canteen.firebasestorage.app',
+  messagingSenderId: '396737801187',
+  appId: '1:396737801187:android:614571dd069abdabd1ced6',
+};
 
-// // Initialize Firebase (before any components)
-// if (!firebase.apps.length) {
-//   firebase.initializeApp(firebaseConfig);
-// } else {
-//   firebase.app(); // if already initialized
-// }
+// Initialize Firebase (before any components)
+if (!firebase.apps.length) {
+  firebase.initializeApp(firebaseConfig);
+} else {
+  firebase.app(); // if already initialized
+}
 
 
 import React, {useState, useEffect} from "react";
