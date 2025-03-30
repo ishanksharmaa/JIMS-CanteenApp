@@ -9,6 +9,12 @@ import CustomToast from "./src/components/CustomToast";
 import { CartProvider } from "./src/components/CartContext"; // ✅ CartContext Import
 import { ThemeProvider, useTheme } from "./src/components/ThemeContext";
 
+// Firebase Import
+// import { FirebaseApp } from '@react-native-firebase/app';
+import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
+
+
 import SplashScreen from "./src/screens/SplashScreen";
 import GetStartedScreen from "./src/screens/GetStartedScreen";
 import LoginScreen from "./src/screens/LoginScreen";
@@ -64,6 +70,20 @@ const BottomTabs = () => {
 // ✅ This function ensures that `useTheme()` is available
 const AppContent = () => {
   const { theme } = useTheme();  // ✅ Now NavigationContainer & StatusBar can use the theme
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const unsubscribe = auth().onAuthStateChanged(user => {
+      if (user) {
+        setIsLoggedIn(true);
+      } else {
+        setIsLoggedIn(false);
+      }
+    });
+
+    return unsubscribe;  // Clean up the listener when the component is unmounted
+  }, []);
+
   return (
     <View style={{ flex: 1, backgroundColor: 'transparent' }}>
       <NavigationContainer>

@@ -7,12 +7,24 @@ import { Section, SettingItem } from "../components/SettingsItem";
 import { ProfileSection } from "./ProfileScreen";
 import FontAwesome6Icon from "react-native-vector-icons/FontAwesome6";
 
+import auth from '@react-native-firebase/auth';
+
 const SettingsScreen = () => {
     const { theme } = useTheme();
     const styles = dynamicTheme(theme);
     const navigation = useNavigation();
     const isDarkMode = theme.mode === "dark";
     // const isDarkMode = true;
+
+    const handleLogout = async () => {
+        try {
+          await auth().signOut();
+          navigation.navigate("Login");  // Navigate to the login screen after signing out
+        } catch (error) {
+          Alert.alert("Error", error.message);
+        }
+      };
+      
 
     return (
         <View style={styles.container}>
@@ -49,7 +61,7 @@ const SettingsScreen = () => {
                 </Section>
 
                 <Section title="LogOut">
-                    <SettingItem icon={isDarkMode ? "exit-outline" : "exit"} label="LogOut" onPress={() => navigation.navigate("Login")} isLast />
+                    <SettingItem icon={isDarkMode ? "exit-outline" : "exit"} label="LogOut" onPress={handleLogout} isLast />
                 </Section>
             </ScrollView>
         </View>

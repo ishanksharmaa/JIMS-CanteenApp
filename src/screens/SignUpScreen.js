@@ -6,6 +6,8 @@ import ThemeToggle from "../components/ThemeToggle";
 import { useTheme } from "../components/ThemeContext";
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
+import auth from '@react-native-firebase/auth';
+
 const SignUpScreen = ({ navigation }) => {
     const { theme } = useTheme();
     const styles = dynamicTheme(theme);
@@ -30,17 +32,32 @@ const SignUpScreen = ({ navigation }) => {
     }, []);
 
     const handleSignUp = () => {
-        if (!username || !password || !confirmPassword) {
+        if (!email || !password || !confirmPassword) {
             setErrorMessage("All fields are required!");
         } else {
-            const proceed = checkPasswordValidation(password, confirmPassword)
+            const proceed = checkPasswordValidation(password, confirmPassword);
             if (proceed) {
                 Keyboard.dismiss();
-                navigation.replace("Home");
+                auth()
+                    .createUserWithEmailAndPassword(email, password)
+                    .then(() => {
+                        // Successful Sign-Up
+                        navigation.replace("Home");
+                    })
+                    .catch((error) => {
+                        // Handle errors here
+                        if (error.code === 'auth/email-already-in-use') {
+                            setErrorMessage("This email address is already in use!");
+                        } else if (error.code === 'auth/invalid-email') {
+                            setErrorMessage("Invalid email format!");
+                        } else {
+                            setErrorMessage("Something went wrong. Please try again.");
+                        }
+                    });
             }
         }
-
     };
+
 
     const checkPasswordValidation = (password, confirmPassword) => {
 
@@ -68,7 +85,7 @@ const SignUpScreen = ({ navigation }) => {
                     {errorMessage ? <Text style={{ color: "red", textAlign: "center", marginTop: 10 }}>{errorMessage}</Text> : null}
 
                     <View style={styles.emailContainer}>
-                        {/* <TextInput
+                        <TextInput
                             style={styles.inputStyle}
                             placeholder="Email"
                             placeholderTextColor={"grey"}
@@ -76,9 +93,9 @@ const SignUpScreen = ({ navigation }) => {
                             value={email}
                             onChangeText={setEmail}
                             keyboardType="email-address"
-                        /> */}
+                        />
 
-                        <TextInput
+                        {/* <TextInput
                             style={styles.inputStyle}
                             placeholder="Username"
                             placeholderTextColor={"grey"}
@@ -86,7 +103,7 @@ const SignUpScreen = ({ navigation }) => {
                             value={username}
                             onChangeText={setUsername}
                             keyboardType="default"
-                        />
+                        /> */}
 
                         {/* ✅ Password Input with Show/Hide Eye Icon */}
                         <View style={[styles.passwordContainer, {

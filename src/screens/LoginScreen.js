@@ -6,6 +6,8 @@ import ThemeToggle from "../components/ThemeToggle";
 import { useTheme } from "../components/ThemeContext";
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
+import auth from '@react-native-firebase/auth';
+
 const LoginScreen = ({ navigation }) => {
     const { theme, changeTheme } = useTheme();
     const styles = dynamicTheme(theme);
@@ -26,6 +28,41 @@ const LoginScreen = ({ navigation }) => {
         };
     }, []);
 
+    const handleLogin = () => {
+        if (!email || !password) {
+            setErrorMessage("All fields are required!");
+        } else {
+            auth()
+                .signInWithEmailAndPassword(email, password)
+                .then(() => {
+                    // Login successful, navigate to Home screen
+                    Keyboard.dismiss();
+                    navigation.replace("Home");
+                })
+                .catch((error) => {
+                    // Handle errors here
+                    if (error.code === 'auth/user-not-found') {
+                        setErrorMessage("No user found with this email.");
+                    } else if (error.code === 'auth/wrong-password') {
+                        setErrorMessage("Incorrect password.");
+                    } else {
+                        setErrorMessage("Something went wrong. Please try again.");
+                    }
+                });
+        }
+    };
+    
+
+    // const checkPasswordValidation = (password, confirmPassword) => {
+
+    //     const isFilled = password && confirmPassword;
+    //     const isMatch = password === confirmPassword;
+
+    //     setErrorMessage(isFilled && !isMatch ? "Passwords do not match!" : "");
+    //     setIsPasswordValid(isFilled && isMatch);
+    //     return isFilled && isMatch;
+    // }
+
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss} >
             <View style={[styles.screen, { flex: 1 }]}>
@@ -39,7 +76,7 @@ const LoginScreen = ({ navigation }) => {
                     <Text style={[styles.title, { marginTop: keyboardVisible ? "5%" : "5%" }]}>Login</Text>
 
                     <View style={styles.emailContainer}>
-                        <TextInput
+                        {/* <TextInput
                             style={styles.inputStyle}
                             placeholder="Email or Username"
                             placeholderTextColor={"grey"}
@@ -47,8 +84,8 @@ const LoginScreen = ({ navigation }) => {
                             value={username}
                             onChangeText={setUsername}
                             keyboardType="default"
-                        />
-                        {/* <TextInput 
+                        /> */}
+                        <TextInput 
                         style={styles.inputStyle} 
                         placeholder="Email" 
                         placeholderTextColor={"grey"} 
@@ -56,7 +93,7 @@ const LoginScreen = ({ navigation }) => {
                         value={email} 
                         onChangeText={setEmail} 
                         keyboardType="email-address" 
-                    /> */}
+                    />
 
                         <View style={styles.passwordArea}>
                             <View style={styles.passwordContainer}>
@@ -82,7 +119,7 @@ const LoginScreen = ({ navigation }) => {
                     </View>
 
                     <View style={styles.buttonPosition}>
-                        <CustomButton btnColor={theme.customButtonBg} textColor={theme.customButtonText} title="Login" onPress={() => { Keyboard.dismiss, navigation.replace("Home"); }} />
+                        <CustomButton btnColor={theme.customButtonBg} textColor={theme.customButtonText} title="Login" onPress={handleLogin} />
                         <TouchableOpacity onPress={() => { Keyboard.dismiss, navigation.replace("SignUp"); }} >
                             <Text style={{ textAlign: 'center', marginVertical: 20, color: theme.text }}>Create an account</Text>
                         </TouchableOpacity>

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "396737801187",
+    "project_id": "jims-canteen",
+    "storage_bucket": "jims-canteen.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:396737801187:android:614571dd069abdabd1ced6",
+        "android_client_info": {
+          "package_name": "com.jimscanteenapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAx1FL3xD-XUvVtBelREh25TQ4Wd6PtMf0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
