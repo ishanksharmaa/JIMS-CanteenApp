@@ -17,6 +17,7 @@ import HomeScreen from "./src/screens/HomeScreen";
 import CartScreen from "./src/screens/CartScreen";
 import FavoriteScreen from "./src/screens/FavoriteScreen";
 import ProductScreen from "./src/screens/ProductScreen";
+import AddProductScreen from "./src/screens/AddProductScreen";
 import ProfileScreen from "./src/screens/ProfileScreen";
 import SettingsScreen from "./src/screens/SettingsScreen";
 import AppearanceSetting from "./src/screens/settings/AppearanceSetting";
@@ -77,6 +78,7 @@ const AppContent = () => {
           <Stack.Screen name="Cart" component={CartScreen} />
           <Stack.Screen name="Profile" component={ProfileScreen} />
           <Stack.Screen name="ProductScreen" component={ProductScreen} />
+          <Stack.Screen name="AddProductScreen" component={AddProductScreen} />
           <Stack.Screen name="Settings" component={SettingsScreen} />
           <Stack.Screen name="Appearance" component={AppearanceSetting} />
         </Stack.Navigator>
