@@ -3,14 +3,17 @@ import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 import { useRoute } from "@react-navigation/native";
 import CustomButton from "../components/CustomButton";
 import { useTheme } from "../components/ThemeContext";
+import { useCart } from "../components/CartContext";
+// import {handleAddtoCart} from "../components/ProductCard";
 import { useNavigation } from "@react-navigation/native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 const ProductScreen = () => {
   const route = useRoute();
-  const { image, title, price } = route.params;
+  const { image, title, price, onAddtoCart } = route.params;
   const { theme } = useTheme();
+  const { addToCart } = useCart();
   const styles = dynamicTheme(theme);
   const navigation = useNavigation();
   const [count, setCount] = useState(1); // Default count 1
@@ -19,6 +22,11 @@ const ProductScreen = () => {
   const toggleFavoriteItem = (fav) => {
     setIsFavorite((prev) => !prev);
   }
+
+  const handleAddtoCart = () => {
+    onAddtoCart(title, "Added to cart");
+    addToCart({ image, title, price });
+  };
 
 
   return (
@@ -80,7 +88,7 @@ const ProductScreen = () => {
 
 
         <View style={styles.orderBtn}>
-          <TouchableOpacity style={styles.iconButton} activeOpacity={0.7}>
+          <TouchableOpacity style={styles.iconButton} onPress={handleAddtoCart} activeOpacity={0.7}>
             <Ionicons name="bag" size={29} color={theme.customButtonBg} />
           </TouchableOpacity>
           <View style={styles.buttonContainer}>

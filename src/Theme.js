@@ -33,6 +33,7 @@ export const lightTheme = {
     customGoogleButtonBg: "#FFFFFF80",
     customGoogleButtonText: "#333",
     settingsCard: "#ffffff90",
+    iconBg: "#ddd",
 };
 
 export const darkTheme = {
@@ -70,4 +71,5 @@ export const darkTheme = {
     customGoogleButtonBg: "#FFFFFF33",
     customGoogleButtonText: "#ccc",
     settingsCard: "#222",
+    iconBg: "#222",
 };

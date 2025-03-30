@@ -5,6 +5,7 @@ import { useTheme } from "../components/ThemeContext";
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { Section, SettingItem } from "../components/SettingsItem";
 import { ProfileSection } from "./ProfileScreen";
+import FontAwesome6Icon from "react-native-vector-icons/FontAwesome6";
 
 const SettingsScreen = () => {
     const { theme } = useTheme();
@@ -20,10 +21,14 @@ const SettingsScreen = () => {
                     <Ionicons name={isDarkMode ? "chevron-back-outline" : "chevron-back"} size={24} color={theme.text} />
                 </TouchableOpacity>
                 <Text style={styles.title}>Settings</Text>
+                <TouchableOpacity activeOpacity={0.8} style={styles.editIcon}>
+                    {/* <Text style={{ fontSize: 17, color: theme.primaryColor, fontWeight: '500'}}>Edit</Text> */}
+                    <FontAwesome6Icon name="pen-to-square" size={21} color={theme.primaryColor} />
+                </TouchableOpacity>
             </View>
 
             <ScrollView style={{ flex: 1, backgroundColor: theme.background, paddingTop: 20 }}>
-                <View style={{flex: 0, justifyContent:'center', alignItems:'center', marginBottom: 10, paddingLeft: 10, backgroundColor:'' }}>
+                <View style={{ flex: 0, justifyContent: 'center', alignItems: 'center', marginBottom: 10, paddingLeft: 10, backgroundColor: '' }}>
                     <ProfileSection flexDirection='column' gap={10} scale={1.1} />
                 </View>
                 <Section title="General">
@@ -44,7 +49,7 @@ const SettingsScreen = () => {
                 </Section>
 
                 <Section title="LogOut">
-                    <SettingItem icon={isDarkMode ? "exit-outline" : "exit"} label="LogOut" onPress={() => navigation.replace("Login")} isLast />
+                    <SettingItem icon={isDarkMode ? "exit-outline" : "exit"} label="LogOut" onPress={() => navigation.navigate("Login")} isLast />
                 </Section>
             </ScrollView>
         </View>
@@ -53,9 +58,10 @@ const SettingsScreen = () => {
 
 const dynamicTheme = (theme) => ({
     container: { flex: 1, backgroundColor: theme.background },
-    header: { margin: 20, marginTop: '14%', flexDirection: "row", alignItems: "center", justifyContent: 'center' },
-    title: { fontSize: 30, color: theme.text, fontWeight: 'bold', marginLeft: 12 },
+    header: { margin: 20, marginTop: '14%', flexDirection: "row", alignItems: "center", justifyContent: 'center', backgroundColor: '' },
+    title: { fontSize: 29, color: theme.text, fontWeight: 'bold', marginLeft: 12 },
     backBtn: { padding: 7, borderRadius: 20, backgroundColor: theme.backBtnBg, position: 'absolute', left: 2 },
+    editIcon: {position: 'absolute', right: 3, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 9, backgroundColor:'transparent'},
 });
 
 export default SettingsScreen;

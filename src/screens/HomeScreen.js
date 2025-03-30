@@ -68,9 +68,9 @@ const HomeScreen = () => {
             <View style={styles.header}>
                 {/* Profile Section */}
                 <View style={styles.profileSection}>
-                    <TouchableOpacity onPress={() => navigation.navigate("Profile")} activeOpacity={0.7}>
+                    <TouchableOpacity onPress={() => navigation.navigate("AddProductScreen")} activeOpacity={0.7}>
                         <Image
-                            source={require('../../assets/mayuri.jpg')} // Replace with your profile image path
+                            source={require('../../assets/swaggy_cat.jpg')} // Replace with your profile image path
                             style={styles.profileImage}
                         />
                     </TouchableOpacity>
@@ -82,13 +82,16 @@ const HomeScreen = () => {
 
                 {/* Header Icons */}
                 <View style={styles.headerIcons}>
-                    <TouchableOpacity onPress={() => navigation.navigate("Cart")}>
-                        <Ionicons name="cart" size={28} color={theme.text} style={styles.bellIcon} />
+                    <TouchableOpacity onPress={() => navigation.navigate("Cart")} style={styles.iconBg}>
+                        <Ionicons name="cart-outline" size={23} color={theme.text} />
                     </TouchableOpacity>
-                    <Ionicons name="notifications" size={28} color={theme.text} style={styles.bellIcon} />
+                    <TouchableOpacity style={styles.iconBg}>
+                        <Ionicons name="notifications-outline" size={23} color={theme.text} />
+                    </TouchableOpacity>
                 </View> {/* headerIcons end */}
-
             </View> {/* header end */}
+
+
             <View style={styles.searchContainer}>
                 <TextInput style={styles.searchBar}
                     placeholder="Search food, menu"
@@ -96,6 +99,8 @@ const HomeScreen = () => {
                     onChange={setText}
                 />
             </View> {/* searchContainer end */}
+
+
             <View style={styles.categoryContainer}>
                 <Text style={styles.heading}>Categories</Text>
                 <FlatList style={{ marginHorizontal: -10, marginVertical: 0 }}
@@ -151,8 +156,8 @@ const dynamicTheme = (theme) => ({
         width: 58,  // Set the image width
         height: 58, // Set the image height
         borderRadius: 50, // Make it a circle
-        borderColor: 'orangered',
-        borderWidth: 2,
+        borderColor: theme.text,
+        borderWidth: 0.5,
         marginRight: 10, // Space between image and text
     },
     profileName: {
@@ -166,16 +171,10 @@ const dynamicTheme = (theme) => ({
         alignItems: 'center', // Vertically center the icons
         marginRight: 0,
         height: '100%',
-        width: '25%',
-        paddingHorizontal: 5,
+        width: '28%',
+        paddingHorizontal: 1,
         justifyContent: 'space-between',
         // justifyContent: 'flex-end',
-    },
-    bellIcon: {
-        marginLeft: 0, // Add space between the icons
-    },
-    trackIcon: {
-        marginRight: 0, // Add space between the icons
     },
     searchBar: {
         backgroundColor: theme.searchBg,
@@ -210,6 +209,7 @@ const dynamicTheme = (theme) => ({
         height: 'auto',
         paddingBottom: 20,
     },
+    iconBg: { backgroundColor: theme.iconBg, borderRadius: 50, borderWidth: 0, padding: 10, },
 });
 
 export default HomeScreen;

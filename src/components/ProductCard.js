@@ -19,7 +19,7 @@ const ProductCard = ({ image, title, price, onAddtoCart }) => {
   return (
     <TouchableOpacity 
       style={styles.productCard} 
-      onPress={() => navigation.navigate("ProductScreen", { image, title, price })}
+      onPress={() => navigation.navigate("ProductScreen", { image, title, price, onAddtoCart })}
       activeOpacity={0.5}
     >
       <Image source={image} style={styles.productImage} />
