@@ -20,7 +20,7 @@ export const ProfileSection = ({ flexDirection, gap, scale }) => {
     return (
         <View style={styles.profileSection}>
             <Image
-                source={require('../../assets/swaggy_catcls.jpg')} // Replace with your profile image path
+                source={require('../../assets/swaggy_cat.jpg')} // Replace with your profile image path
                 style={styles.profileImage}
             />
             <View>
