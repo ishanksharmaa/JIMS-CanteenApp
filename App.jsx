@@ -1,4 +1,25 @@
-import React from "react";
+// import firebase from 'firebase/app'; // Import the Firebase module
+// import { FirebaseApp } from '@react-native-firebase/app';
+
+// // Firebase Config
+// const firebaseConfig = {
+//   apiKey: 'AIzaSyAx1FL3xD-XUvVtBelREh25TQ4Wd6PtMf0',
+//   authDomain: 'YOUR_AUTH_DOMAIN',
+//   projectId: 'jims-canteen',
+//   storageBucket: 'YOUR_STORAGE_BUCKET',
+//   messagingSenderId: 'YOUR_MESSAGING_SENDER_ID',
+//   appId: '1:396737801187:android:614571dd069abdabd1ced6',
+// };
+
+// // Initialize Firebase (before any components)
+// if (!firebase.apps.length) {
+//   firebase.initializeApp(firebaseConfig);
+// } else {
+//   firebase.app(); // if already initialized
+// }
+
+
+import React, {useState, useEffect} from "react";
 import { Appearance, StatusBar, View } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
@@ -12,7 +33,7 @@ import { ThemeProvider, useTheme } from "./src/components/ThemeContext";
 // Firebase Import
 // import { FirebaseApp } from '@react-native-firebase/app';
 import auth from '@react-native-firebase/auth';
-import firestore from '@react-native-firebase/firestore';
+// import firestore, {FieldValue} from '@react-native-firebase/firestore';
 
 
 import SplashScreen from "./src/screens/SplashScreen";

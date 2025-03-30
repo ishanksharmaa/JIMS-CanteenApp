@@ -1,4 +1,4 @@
-package com.canteen
+package com.jimscanteenapp
 
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate

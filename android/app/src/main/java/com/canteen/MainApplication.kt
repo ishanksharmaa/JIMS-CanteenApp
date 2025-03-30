@@ -1,4 +1,6 @@
-package com.canteen
+package com.jimscanteenapp
+import com.jimscanteenapp.BuildConfig
+
 
 import android.app.Application
 import com.facebook.react.PackageList

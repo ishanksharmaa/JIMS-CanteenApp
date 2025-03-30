@@ -33,7 +33,7 @@ const LoginScreen = ({ navigation }) => {
             setErrorMessage("All fields are required!");
         } else {
             auth()
-                .signInWithEmailAndPassword(email, password)
+                .signInWithEmailAndPassword("laddu@vasu.com", "radhe")
                 .then(() => {
                     // Login successful, navigate to Home screen
                     Keyboard.dismiss();

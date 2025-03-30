@@ -18,13 +18,17 @@ const SettingsScreen = () => {
 
     const handleLogout = async () => {
         try {
-          await auth().signOut();
-          navigation.navigate("Login");  // Navigate to the login screen after signing out
+            console.log("Attempting to sign out...");
+            await auth().signOut();
+            Alert.alert("Success", "You have been logged out!");
+            navigation.replace("Login");  // Navigate to the login screen after signing out
         } catch (error) {
-          Alert.alert("Error", error.message);
+            console.log("Error signing out:", error);  // Log the error to the console
+            Alert.alert("Error", error.message);
         }
-      };
-      
+    };
+
+
 
     return (
         <View style={styles.container}>
@@ -73,7 +77,7 @@ const dynamicTheme = (theme) => ({
     header: { margin: 20, marginTop: '14%', flexDirection: "row", alignItems: "center", justifyContent: 'center', backgroundColor: '' },
     title: { fontSize: 29, color: theme.text, fontWeight: 'bold', marginLeft: 12 },
     backBtn: { padding: 7, borderRadius: 20, backgroundColor: theme.backBtnBg, position: 'absolute', left: 2 },
-    editIcon: {position: 'absolute', right: 3, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 9, backgroundColor:'transparent'},
+    editIcon: { position: 'absolute', right: 3, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 9, backgroundColor: 'transparent' },
 });
 
 export default SettingsScreen;
