@@ -31,8 +31,13 @@ const LoginScreen = ({ navigation }) => {
     }, []);
 
     const handleLogin = () => {
+        // Email format validation using regex
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
         if (!email || !password) {
             setErrorMessage("All fields are required!");
+        } else if (!emailRegex.test(email)) {
+            setErrorMessage("Please enter a valid email address.");
         } else {
             setErrorMessage("");
             auth()
@@ -48,6 +53,28 @@ const LoginScreen = ({ navigation }) => {
                         setErrorMessage("No user found with this email.");
                     } else if (error.code === 'auth/wrong-password') {
                         setErrorMessage("Incorrect password.");
+                    } else {
+                        setErrorMessage("Incorrect email or password.");
+                    }
+                });
+        }
+    };
+
+    const handlePasswordReset = () => {
+        if (!email) {
+            setErrorMessage("First enter your email for password reset!");
+        } else {
+            auth()
+                .sendPasswordResetEmail(email)
+                .then(() => {
+                    setErrorMessage("Password reset email sent!");
+                    // You can also navigate to a different screen or show a success message
+                })
+                .catch((error) => {
+                    if (error.code === 'auth/invalid-email') {
+                        setErrorMessage("Invalid email format.");
+                    } else if (error.code === 'auth/user-not-found') {
+                        setErrorMessage("No user found with this email.");
                     } else {
                         setErrorMessage("Something went wrong. Please try again.");
                     }
@@ -77,6 +104,9 @@ const LoginScreen = ({ navigation }) => {
                 <View style={[styles.container, { marginTop: keyboardVisible ? "10%" : "60%" }]}>
                     <HandleBar />
                     <Text style={[styles.title, { marginTop: keyboardVisible ? "5%" : "5%" }]}>Login</Text>
+
+                    {/* Display Error Message */}
+                    {errorMessage ? <Text style={{ color: "red", textAlign: "center", marginTop: 10, marginBottom: -10, }}>{errorMessage}</Text> : null}
 
                     <View style={styles.emailContainer}>
                         {/* <TextInput
@@ -115,7 +145,7 @@ const LoginScreen = ({ navigation }) => {
                                 </TouchableOpacity>
                             </View>
                             {/* Forgot Password */}
-                            <TouchableOpacity>
+                            <TouchableOpacity onPress={handlePasswordReset}>
                                 <Text style={{ color: theme.customGoogleButtonText, marginLeft: 10, marginTop: 7 }}>Forgot Password?</Text>
                             </TouchableOpacity>
                         </View>

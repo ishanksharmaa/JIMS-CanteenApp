@@ -24,7 +24,7 @@ const SettingsScreen = () => {
         try {
             console.log("Attempting to sign out...");
             await signOut(auth);
-            Alert.alert("Success", "You have been logged out!");
+            Alert.alert("Logged Out", "You have been logged out!");
             setIsLoggedIn(false);
             navigation.replace("Login");  // Navigate to the login screen after signing out
         } catch (error) {

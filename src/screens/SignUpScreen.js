@@ -5,6 +5,7 @@ import HandleBar from "../components/HandleBar";
 import ThemeToggle from "../components/ThemeToggle";
 import { useTheme } from "../components/ThemeContext";
 import Ionicons from 'react-native-vector-icons/Ionicons';
+// import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Firebase Auth Import
 import auth from '@react-native-firebase/auth';
@@ -20,7 +21,10 @@ const SignUpScreen = ({ navigation }) => {
     const [isPasswordVisible, setPasswordVisible] = useState(false);
     const [keyboardVisible, setKeyboardVisible] = useState(false);
     const [errorMessage, setErrorMessage] = useState(""); // ✅ Error message state
+    const [successMessage, setSuccessMessage] = useState(""); // ✅ success message state
     const [isPasswordValid, setIsPasswordValid] = useState(null);
+    const [isOTPSent, setIsOTPSent] = useState(false);
+    const [generatedOtp, setGeneratedOtp] = useState(null);
 
     useEffect(() => {
         const keyboardShowListener = Keyboard.addListener("keyboardDidShow", () => setKeyboardVisible(true));
@@ -32,13 +36,45 @@ const SignUpScreen = ({ navigation }) => {
         };
     }, []);
 
-    const handleSignUp = () => {
+
+    const gotoUsernameScreen = (email, password) => {
+        navigation.navigate("UsernameScreen", {
+            email: email,
+            password: password,
+        });
+    }
+
+    const handleSignUp = async () => {
+        setErrorMessage("");
+        // Email format validation using regex
+        // const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
         if (!email || !password || !confirmPassword) {
             setErrorMessage("All fields are required!");
-        } else {
+        }
+        // else if (!emailRegex.test(email)) {
+        //     setErrorMessage("Invalid email format.");
+        // }
+        else {
             const proceed = checkPasswordValidation(password, confirmPassword);
             if (proceed) {
                 Keyboard.dismiss();
+
+                // gotoUsernameScreen()
+
+                // try {
+                //     // await auth().createUserWithEmailAndPassword(email, password);
+                //     const verified = await sendEmailVerification(email);
+                // } catch (error) {
+                //     if (error.code === "auth/email-already-in-use") {
+                //         setErrorMessage("Email already in use!");
+                //     } else {
+                //         setErrorMessage("Error signing up. Try again!");
+                //     }
+                // }
+
+                // if (verified) {
+
                 auth()
                     .createUserWithEmailAndPassword(email, password)
                     .then(() => {
@@ -52,12 +88,34 @@ const SignUpScreen = ({ navigation }) => {
                         } else if (error.code === 'auth/invalid-email') {
                             setErrorMessage("Invalid email format!");
                         } else {
-                            setErrorMessage("Something went wrong. Please try again.");
+                            setErrorMessage("Password must be atleast 6 character(s) long");
                         }
                     });
             }
         }
-    };
+    }
+
+
+    // const sendEmailVerification = async (email) => {
+    //     const actionCodeSettings = {
+    //         url: "https://your-app.page.link",  // Replace with your dynamic link
+    //         handleCodeInApp: true,
+    //         android: { packageName: "com.yourapp", installApp: true },
+    //         iOS: { bundleId: "com.yourapp.ios" }
+    //     };
+
+    //     try {
+    //         await auth().sendSignInLinkToEmail(email, actionCodeSettings);
+    //         setSuccessMessage("Verification link sent to email!");
+    //         return true;
+    //     } catch (error) {
+    //         setErrorMessage("Failed to send verification link!");
+    //         return false;
+    //     }
+    // };
+
+
+
 
 
     const checkPasswordValidation = (password, confirmPassword) => {
@@ -83,7 +141,7 @@ const SignUpScreen = ({ navigation }) => {
                     <HandleBar />
                     <Text style={[styles.title, { marginTop: keyboardVisible ? "5%" : "5%" }]}>SignUp</Text>
 
-                    {errorMessage ? <Text style={{ color: "red", textAlign: "center", marginTop: 10 }}>{errorMessage}</Text> : null}
+                    {errorMessage ? <Text style={{ color: "red", textAlign: "center", marginTop: 10, marginBottom: -20, }}>{errorMessage}</Text> : null}
 
                     <View style={styles.emailContainer}>
                         <TextInput
@@ -158,7 +216,7 @@ const SignUpScreen = ({ navigation }) => {
                             <Text style={{ textAlign: 'center', marginVertical: 20, color: theme.text }}>Already have an account?</Text>
                         </TouchableOpacity>
                         <Text style={{ textAlign: 'center', marginVertical: 20, color: theme.text }}>____________  or  ____________</Text>
-                        <CustomButton btnColor={theme.customGoogleButtonBg} textColor={theme.customGoogleButtonText} title="Continue with Google" onPress={() => navigation.replace("Home")} />
+                        <CustomButton btnColor={theme.customGoogleButtonBg} textColor={theme.customGoogleButtonText} title="Continue with Google" onPress={gotoUsernameScreen} />
                     </View>
                 </View>
             </View>

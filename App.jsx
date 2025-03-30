@@ -45,9 +45,11 @@ import SplashScreen from "./src/screens/SplashScreen";
 import GetStartedScreen from "./src/screens/GetStartedScreen";
 import LoginScreen from "./src/screens/LoginScreen";
 import SignUpScreen from "./src/screens/SignUpScreen";
+import UsernameScreen from "./src/screens/UsernameScreen";
 import HomeScreen from "./src/screens/HomeScreen";
 import CartScreen from "./src/screens/CartScreen";
 import FavoriteScreen from "./src/screens/FavoriteScreen";
+import MenuScreen from "./src/screens/MenuScreen";
 import ProductScreen from "./src/screens/ProductScreen";
 import AddProductScreen from "./src/screens/AddProductScreen";
 import ProfileScreen from "./src/screens/ProfileScreen";
@@ -86,7 +88,7 @@ const BottomTabs = () => {
     >
       <Tab.Screen name="Home" component={HomeScreen} options={{ tabBarIcon: ({ color, size }) => <Ionicons name="home" color={color} size={size} /> }} />
       <Tab.Screen name="Favorites" component={FavoriteScreen} options={{ tabBarIcon: ({ color, size }) => <Ionicons name="heart" color={color} size={size} /> }} />
-      <Tab.Screen name="Menu" component={SettingsScreen} options={{ tabBarIcon: ({ color, size }) => <Ionicons name="book" color={color} size={size} /> }} />
+      <Tab.Screen name="Menu" component={MenuScreen} options={{ tabBarIcon: ({ color, size }) => <Ionicons name="book" color={color} size={size} /> }} />
       {/* <Tab.Screen name="Cart" component={CartScreen} options={{ tabBarIcon: ({ color, size }) => <Ionicons name="cart" color={color} size={size} /> }} /> */}
       <Tab.Screen name="Settings" component={SettingsScreen} options={{ tabBarIcon: ({ color, size }) => <Ionicons name="cog" color={color} size={size+3} /> }} />
     </Tab.Navigator>
@@ -122,8 +124,10 @@ const AppContent = () => {
           <Stack.Screen name="GetStarted" component={GetStartedScreen} />
           <Stack.Screen name="Login" component={LoginScreen} />
           <Stack.Screen name="SignUp" component={SignUpScreen} />
+          <Stack.Screen name="UsernameScreen" component={UsernameScreen} />
           <Stack.Screen name="Home" component={BottomTabs} />
           <Stack.Screen name="Favorites" component={FavoriteScreen} />
+          <Stack.Screen name="Menu" component={MenuScreen} />
           <Stack.Screen name="Cart" component={CartScreen} />
           <Stack.Screen name="Profile" component={ProfileScreen} />
           <Stack.Screen name="ProductScreen" component={ProductScreen} />
