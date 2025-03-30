@@ -2,11 +2,12 @@ import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, Image, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard } from "react-native";
 import CustomButton from "../components/CustomButton";
 import HandleBar from "../components/HandleBar";
+import ThemeToggle from "../components/ThemeToggle";
 import { useTheme } from "../components/ThemeContext";
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const LoginScreen = ({ navigation }) => {
-    const { theme } = useTheme();
+    const { theme, changeTheme } = useTheme();
     const styles = dynamicTheme(theme);
 
     const [username, setUsername] = useState("");
@@ -28,16 +29,19 @@ const LoginScreen = ({ navigation }) => {
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss} >
             <View style={[styles.screen, { flex: 1 }]}>
+                <View style={{ alignSelf: 'center', position: 'absolute', top: 120, transform: [{ scale: 5 }], zIndex: 5 }}>
+                    <ThemeToggle iconColor={'transparent'} />
+                </View>
                 <Image source={theme.logo} style={styles.logo} />
 
-                <View style={[styles.container, { marginTop: keyboardVisible ? "0%" : "75%" }]}>
+                <View style={[styles.container, { marginTop: keyboardVisible ? "10%" : "60%" }]}>
                     <HandleBar />
-                    <Text style={[styles.title, { marginTop: keyboardVisible ? "12%" : "5%" }]}>Login</Text>
+                    <Text style={[styles.title, { marginTop: keyboardVisible ? "5%" : "5%" }]}>Login</Text>
 
                     <View style={styles.emailContainer}>
                         <TextInput
                             style={styles.inputStyle}
-                            placeholder="Username"
+                            placeholder="Email or Username"
                             placeholderTextColor={"grey"}
                             autoCapitalize="none"
                             value={username}
@@ -54,32 +58,36 @@ const LoginScreen = ({ navigation }) => {
                         keyboardType="email-address" 
                     /> */}
 
-                        {/* ✅ Password Input with Show/Hide Eye Icon */}
-                        <View style={styles.passwordContainer}>
-                            <TextInput
-                                style={styles.passwordInput}
-                                placeholder="Password"
-                                placeholderTextColor={"grey"}
-                                autoCapitalize="none"
-                                value={password}
-                                onChangeText={(text) => setPassword(text.replace(/\s/g, ""))}
-                                secureTextEntry={!isPasswordVisible}  // ✅ Toggle Password Visibility
-                            />
-                            <TouchableOpacity onPress={() => setPasswordVisible(!isPasswordVisible)} style={styles.eyeIconContainer} activeOpacity={0.8}>
-                                {/* <Image
-                                    source={isPasswordVisible ? require("../../assets/eye-open.png") : require("../../assets/eye-closed.png")}
-                                    style={styles.eyeIcon}
-                                /> */}
-                                <Ionicons name={isPasswordVisible ? "eye" : "eye-off"} size={22} color={theme.text} style={styles.eyeIcon} />
+                        <View style={styles.passwordArea}>
+                            <View style={styles.passwordContainer}>
+                                {/* ✅ Password Input */}
+                                <TextInput style={styles.passwordInput}
+                                    placeholder="Password"
+                                    placeholderTextColor={"grey"}
+                                    autoCapitalize="none"
+                                    value={password}
+                                    onChangeText={(text) => setPassword(text.replace(/\s/g, ""))}
+                                    secureTextEntry={!isPasswordVisible}  // Toggle Password Visibility
+                                />
+                                {/* Eye Icon */}
+                                <TouchableOpacity onPress={() => setPasswordVisible(!isPasswordVisible)} style={styles.eyeIconContainer} activeOpacity={0.8}>
+                                    <Ionicons name={isPasswordVisible ? "eye" : "eye-off"} size={22} color={theme.text} style={styles.eyeIcon} />
+                                </TouchableOpacity>
+                            </View>
+                            {/* Forgot Password */}
+                            <TouchableOpacity>
+                                <Text style={{ color: theme.customGoogleButtonText, marginLeft: 10, marginTop: 7 }}>Forgot Password?</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
 
                     <View style={styles.buttonPosition}>
-                        <CustomButton btnColor={theme.customButtonBg} textColor={theme.customButtonText} title="Login" onPress={() => { Keyboard.dismiss, navigation.navigate("Home"); }} />
-                        <Text style={{ textAlign: 'center', marginVertical: 20, color: theme.text }}>Create an account</Text>
+                        <CustomButton btnColor={theme.customButtonBg} textColor={theme.customButtonText} title="Login" onPress={() => { Keyboard.dismiss, navigation.replace("Home"); }} />
+                        <TouchableOpacity onPress={() => { Keyboard.dismiss, navigation.replace("SignUp"); }} >
+                            <Text style={{ textAlign: 'center', marginVertical: 20, color: theme.text }}>Create an account</Text>
+                        </TouchableOpacity>
                         <Text style={{ textAlign: 'center', marginVertical: 20, color: theme.text }}>____________  or  ____________</Text>
-                        <CustomButton btnColor={theme.customGoogleButtonBg} textColor={theme.customGoogleButtonText} title="Continue with Google" onPress={() => navigation.navigate("Home")} />
+                        <CustomButton btnColor={theme.customGoogleButtonBg} textColor={theme.customGoogleButtonText} title="Continue with Google" onPress={() => navigation.replace("Home")} />
                     </View>
                 </View>
             </View>
@@ -91,6 +99,7 @@ const dynamicTheme = (theme) => ({
     logo: {
         width: 200,
         height: 200,
+        backgroundColor: 'transparent',
         resizeMode: "contain",
         position: "absolute",
         top: 35,
@@ -105,6 +114,7 @@ const dynamicTheme = (theme) => ({
         borderTopLeftRadius: 60,
         borderTopRightRadius: 60,
         paddingBottom: 0,
+        zIndex: 10,
     },
     emailContainer: { justifyContent: "center", alignItems: "center", marginTop: "14%" },
     title: { color: theme.text, fontWeight: "bold", fontSize: 35, textAlign: "center" },
@@ -120,6 +130,10 @@ const dynamicTheme = (theme) => ({
         //marginVertical: 20,
     },
 
+    passwordArea: {
+        marginVertical: 20,
+    },
+
     /* ✅ Password Input Style */
     passwordContainer: {
         flexDirection: "row",
@@ -129,7 +143,6 @@ const dynamicTheme = (theme) => ({
         width: "80%",
         paddingHorizontal: 15,
         height: 60,
-        marginVertical: 20,
     },
     passwordInput: {
         flex: 1,

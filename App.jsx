@@ -12,6 +12,7 @@ import { ThemeProvider, useTheme } from "./src/components/ThemeContext";
 import SplashScreen from "./src/screens/SplashScreen";
 import GetStartedScreen from "./src/screens/GetStartedScreen";
 import LoginScreen from "./src/screens/LoginScreen";
+import SignUpScreen from "./src/screens/SignUpScreen";
 import HomeScreen from "./src/screens/HomeScreen";
 import CartScreen from "./src/screens/CartScreen";
 import FavoriteScreen from "./src/screens/FavoriteScreen";
@@ -70,6 +71,7 @@ const AppContent = () => {
           <Stack.Screen name="Splash" component={SplashScreen} />
           <Stack.Screen name="GetStarted" component={GetStartedScreen} />
           <Stack.Screen name="Login" component={LoginScreen} />
+          <Stack.Screen name="SignUp" component={SignUpScreen} />
           <Stack.Screen name="Home" component={BottomTabs} />
           <Stack.Screen name="Favorites" component={FavoriteScreen} />
           <Stack.Screen name="Cart" component={CartScreen} />

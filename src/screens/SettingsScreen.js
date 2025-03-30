@@ -44,7 +44,7 @@ const SettingsScreen = () => {
                 </Section>
 
                 <Section title="LogOut">
-                    <SettingItem icon={isDarkMode ? "exit-outline" : "exit"} label="LogOut" onPress={() => navigation.navigate("Login")} isLast />
+                    <SettingItem icon={isDarkMode ? "exit-outline" : "exit"} label="LogOut" onPress={() => navigation.replace("Login")} isLast />
                 </Section>
             </ScrollView>
         </View>
