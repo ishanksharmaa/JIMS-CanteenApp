@@ -6,6 +6,7 @@ import ThemeToggle from "../components/ThemeToggle";
 import { useTheme } from "../components/ThemeContext";
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
+// Firebase Auth Import
 import auth from '@react-native-firebase/auth';
 
 const SignUpScreen = ({ navigation }) => {

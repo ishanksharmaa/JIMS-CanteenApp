@@ -6,6 +6,7 @@ import ThemeToggle from "../components/ThemeToggle";
 import { useTheme } from "../components/ThemeContext";
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
+// Firebase Auth Import
 import auth from '@react-native-firebase/auth';
 
 const LoginScreen = ({ navigation }) => {
@@ -17,6 +18,7 @@ const LoginScreen = ({ navigation }) => {
     const [password, setPassword] = useState("");
     const [isPasswordVisible, setPasswordVisible] = useState(false);  // ✅ Toggle Password Visibility
     const [keyboardVisible, setKeyboardVisible] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("");
 
     useEffect(() => {
         const keyboardShowListener = Keyboard.addListener("keyboardDidShow", () => setKeyboardVisible(true));
@@ -32,8 +34,9 @@ const LoginScreen = ({ navigation }) => {
         if (!email || !password) {
             setErrorMessage("All fields are required!");
         } else {
+            setErrorMessage("");
             auth()
-                .signInWithEmailAndPassword("laddu@vasu.com", "radhe")
+                .signInWithEmailAndPassword(email, password)
                 .then(() => {
                     // Login successful, navigate to Home screen
                     Keyboard.dismiss();
@@ -51,7 +54,7 @@ const LoginScreen = ({ navigation }) => {
                 });
         }
     };
-    
+
 
     // const checkPasswordValidation = (password, confirmPassword) => {
 
@@ -85,15 +88,15 @@ const LoginScreen = ({ navigation }) => {
                             onChangeText={setUsername}
                             keyboardType="default"
                         /> */}
-                        <TextInput 
-                        style={styles.inputStyle} 
-                        placeholder="Email" 
-                        placeholderTextColor={"grey"} 
-                        autoCapitalize="none" 
-                        value={email} 
-                        onChangeText={setEmail} 
-                        keyboardType="email-address" 
-                    />
+                        <TextInput
+                            style={styles.inputStyle}
+                            placeholder="Email"
+                            placeholderTextColor={"grey"}
+                            autoCapitalize="none"
+                            value={email}
+                            onChangeText={setEmail}
+                            keyboardType="email-address"
+                        />
 
                         <View style={styles.passwordArea}>
                             <View style={styles.passwordContainer}>

@@ -1,5 +1,7 @@
 // import firebase from 'firebase/app';
 import firebase, { FirebaseApp } from '@react-native-firebase/app';
+import { initializeApp } from 'firebase/app';
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 // Firebase Config
 const firebaseConfig = {
@@ -12,11 +14,14 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase (before any components)
-if (!firebase.apps.length) {
-  firebase.initializeApp(firebaseConfig);
-} else {
-  firebase.app(); // if already initialized
-}
+// if (!firebase.apps.length) {
+//   firebase.initializeApp(firebaseConfig);
+// } else {
+//   firebase.app(); // if already initialized
+// }
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
 
 
 import React, {useState, useEffect} from "react";
@@ -32,7 +37,7 @@ import { ThemeProvider, useTheme } from "./src/components/ThemeContext";
 
 // Firebase Import
 // import { FirebaseApp } from '@react-native-firebase/app';
-import auth from '@react-native-firebase/auth';
+// import auth from '@react-native-firebase/auth';
 // import firestore, {FieldValue} from '@react-native-firebase/firestore';
 
 
@@ -94,7 +99,10 @@ const AppContent = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
-    const unsubscribe = auth().onAuthStateChanged(user => {
+    // Get the auth instance
+    const auth = getAuth();
+
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         setIsLoggedIn(true);
       } else {
