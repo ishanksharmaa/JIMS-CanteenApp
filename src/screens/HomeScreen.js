@@ -5,6 +5,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Firebase Import
 import firestore from '@react-native-firebase/firestore';
+// import auth from '@react-native-firebase/auth';
+import { getAuth } from "@react-native-firebase/auth";
+const auth = getAuth();
 import { collection, getDocs } from 'firebase/firestore';
 
 
@@ -102,12 +105,22 @@ const HomeScreen = () => {
             <View style={styles.header}>
                 {/* Profile Section */}
                 <View style={styles.profileSection}>
-                    <TouchableOpacity onPress={() => navigation.navigate("ProductsList")} activeOpacity={0.7}>
+
+                    <TouchableOpacity
+                        onPress={() =>
+                            auth.currentUser?.email === "iishanksharma@gmail.com"
+                                ? navigation.navigate("ProductsList")
+                                : navigation.navigate("Profile")
+                        }
+                        activeOpacity={0.7}
+                    >
                         <Image
-                            source={require('../../assets/swaggy_cat.jpg')} // Replace with your profile image path
+                            source={require("../../assets/swaggy_cat.jpg")} // Replace with your profile image path
                             style={styles.profileImage}
                         />
                     </TouchableOpacity>
+
+
                     <View>
                         <Text style={styles.profileName}>Ishank Sharma</Text>
                         <Text style={{ fontSize: 12, color: theme.text }}>Room A202</Text>
@@ -153,7 +166,7 @@ const HomeScreen = () => {
                     keyExtractor={(item) => item.id}
                     horizontal={true}
                     showsHorizontalScrollIndicator={false}
-                    renderItem={({ item }) => <ProductCard image={{uri: item.image}} title={item.name} price={item.price} descr={item.description} onAddtoCart={showToast} />}
+                    renderItem={({ item }) => <ProductCard image={{ uri: item.image }} title={item.name} price={item.price} descr={item.description} onAddtoCart={showToast} />}
                 />
             </View>
         </View> // container end

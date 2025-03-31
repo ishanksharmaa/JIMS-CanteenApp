@@ -131,10 +131,10 @@ const AddProductScreen = () => {
                     </View>
                 ) : (
                     <View style={styles.imageContainer}>
-                        {/* <Image source={require('../../assets/swaggy_cat.jpg')} style={styles.image} /> */}
+                        <Image source={require('../../assets/swaggy_cat.jpg')} style={styles.image} />
                         {/* <Image source={require('../../assets/banana_cat.jpg')} style={styles.image} /> */}
                         {/* <Image source={require('../../assets/image.png')} style={styles.image} /> */}
-                        <Image source={require('../../assets/black_sandwich.jpg')} style={styles.image} />
+                        {/* <Image source={require('../../assets/black_sandwich.jpg')} style={styles.image} /> */}
                     </View>
                 )}
 
