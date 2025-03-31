@@ -18,20 +18,42 @@ const AddProductScreen = () => {
         description: "",
         quantity: "",
         image: "",
+        category: "",
     });
 
     const [uploading, setUploading] = useState(false);
 
     const handleChange = (field, value) => {
-        if ((field === "price" || field === "quantity") && !/^\d*$/.test(value)) {
-            return;
-        }
-        setProduct({ ...product, [field]: value });
-
-        // if(isFormValid()){
-        //     Keyboard.dismiss();
-        // }
+        setProduct(prevProduct => {
+            let updatedValue = value;
+    
+            if (field === "price") {
+                updatedValue = value.replace(/\D/g, ""); // Only numbers allowed for price
+            }
+    
+            if (field === "category") {
+                if (value.endsWith(" ")) { 
+                    // Last character agar space hai, toh last word ke aage # laga do
+                    updatedValue = value
+                        .trim()
+                        .split(' ')
+                        .map(word => 
+                            word.startsWith("#") 
+                                ? word 
+                                : `#${word.charAt(0).toUpperCase()}${word.slice(1).toLowerCase()}`
+                        ) // Ensure first letter capital & rest small
+                        .join(' ') + ' '; // Space maintain rakhne ke liye
+                } else if (!value.endsWith(" ") && value[value.length - 1] === "#") {
+                    // Agar last character # hai (matlab backspace se space remove hua), toh # hatao
+                    updatedValue = value.slice(0, -1);
+                }
+            }
+    
+            return { ...prevProduct, [field]: updatedValue };
+        });
     };
+    
+
 
     const removeImage = () => {
         setProduct({ ...product, image: "" });
@@ -43,7 +65,7 @@ const AddProductScreen = () => {
             product.price.trim() !== "" &&
             product.description.trim() !== "" &&
             product.quantity.trim() !== ""
-            // && product.image.trim() !== ""
+            // && product.category.trim() !== ""
         );
     };
 
@@ -72,13 +94,14 @@ const AddProductScreen = () => {
             description: product.description,
             quantity: product.quantity,
             image: product.image, // Directly storing image URL
+            category: product.category,
             timestamp: firestore.FieldValue.serverTimestamp(),
         };
 
         try {
             await productsRef.doc(newProductId).set(newProduct);
             console.log(`Product added successfully with ID: ${newProductId}`);
-            setProduct({ name: "", price: "", description: "", quantity: "", image: "" });
+            setProduct({ name: "", price: "", description: "", quantity: "", image: "", category: "" });
 
         } catch (error) {
             console.error("Error adding product:", error);
@@ -151,7 +174,6 @@ const AddProductScreen = () => {
                     <TextInput
                         style={styles.smallInput}
                         placeholder="Quantity"
-                        keyboardType="numeric"
                         value={product.quantity}
                         placeholderTextColor={'grey'}
                         onChangeText={(text) => handleChange("quantity", text)}
@@ -160,11 +182,19 @@ const AddProductScreen = () => {
 
                 <TextInput
                     style={styles.input}
-                    placeholder="# Paste Image URL Here"
+                    placeholder="@ Paste Image URL Here"
                     value={product.image}
                     placeholderTextColor={'grey'}
                     onChangeText={(text) => handleChange("image", text)}
                 />
+                <TextInput
+                    style={styles.input}
+                    placeholder="# Category"
+                    value={product.category}
+                    placeholderTextColor={'grey'}
+                    onChangeText={(text) => handleChange("category", text)}
+                />
+
 
                 {uploading ? (
                     <ActivityIndicator size="large" color="green" style={{ marginTop: 10 }} />
