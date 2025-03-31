@@ -9,6 +9,19 @@ import CustomButton from "../components/CustomButton";
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
+export const HeaderBackIcon = ({ title }) => {
+    const { cartItems } = useCart();  // ✅ Cart Items Receive
+    const { theme } = useTheme();
+    const styles = dynamicTheme(theme);
+
+    return (
+        <View style={styles.header}>
+            <BackBtn position='absolute' left={16} top={70} />
+            <Text style={styles.title}>{title}</Text>
+        </View>
+    );
+};
+
 const CartScreen = () => {
     const { cartItems } = useCart();  // ✅ Cart Items Receive
     const { theme } = useTheme();
@@ -16,12 +29,7 @@ const CartScreen = () => {
 
     return (
         <View style={styles.container}>
-            <View style={styles.header}>
-                <BackBtn position='absolute' left={16} top={70} />
-                <Text style={styles.title}>
-                    Cart
-                </Text>
-            </View>
+            <HeaderBackIcon title="Cart" />
             <Ionicons name="add" size={29} color={theme.text} style={styles.addIcon} />
 
             {cartItems.length === 0 ? (
@@ -42,14 +50,14 @@ const CartScreen = () => {
                 />
             )}
 
-           <View style={styles.orderBtn}>
-          <TouchableOpacity style={styles.iconButton} activeOpacity={0.7}>
-            <MaterialIcons name="call-split" size={29} color={theme.customButtonBg} />
-          </TouchableOpacity>
-          <View style={styles.buttonContainer}>
-            <CustomButton btnColor={theme.customButtonBg} textColor={theme.customButtonText} title="Order Now" onPress={null} />
-          </View>
-        </View>
+            <View style={styles.orderBtn}>
+                <TouchableOpacity style={styles.iconButton} activeOpacity={0.7}>
+                    <MaterialIcons name="call-split" size={29} color={theme.customButtonBg} />
+                </TouchableOpacity>
+                <View style={styles.buttonContainer}>
+                    <CustomButton btnColor={theme.customButtonBg} textColor={theme.customButtonText} title="Order Now" onPress={null} />
+                </View>
+            </View>
 
         </View>
     );
@@ -70,17 +78,17 @@ const dynamicTheme = (theme) => ({
         alignItems: 'center',
         paddingLeft: 30, // Vertical padding thoda aur acha lagne ke liye
         backgroundColor: 'transparent', // Red hata diya taki design clean lage
-      },
-      iconButton: {
+    },
+    iconButton: {
         backgroundColor: theme.cartBagBtn,
         padding: 15,
         borderRadius: 18,
         elevation: 5,
-      },
-      buttonContainer: {
+    },
+    buttonContainer: {
         flex: 1,
         marginLeft: 8,
-      },
+    },
 });
 
 export default CartScreen;

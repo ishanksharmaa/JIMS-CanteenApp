@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Text, View, Image, StyleSheet, FlatList, StatusBar, TouchableOpacity } from "react-native";
+import SearchBar from "../components/SearchBar";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import Toast from 'react-native-toast-message';
@@ -68,7 +69,7 @@ const HomeScreen = () => {
             <View style={styles.header}>
                 {/* Profile Section */}
                 <View style={styles.profileSection}>
-                    <TouchableOpacity onPress={() => navigation.navigate("AddProductScreen")} activeOpacity={0.7}>
+                    <TouchableOpacity onPress={() => navigation.navigate("ProductsList")} activeOpacity={0.7}>
                         <Image
                             source={require('../../assets/swaggy_cat.jpg')} // Replace with your profile image path
                             style={styles.profileImage}
@@ -91,14 +92,10 @@ const HomeScreen = () => {
                 </View> {/* headerIcons end */}
             </View> {/* header end */}
 
-
-            <View style={styles.searchContainer}>
-                <TextInput style={styles.searchBar}
-                    placeholder="Search food, menu"
-                    placeholderTextColor={"grey"}
-                    onChange={setText}
-                />
-            </View> {/* searchContainer end */}
+            {/* SEARCH BAR HERE */}
+            <View style = {styles.searchContainer}>
+                <SearchBar placeholder="Search food, menu..." onChange={setText} />
+            </View>
 
 
             <View style={styles.categoryContainer}>

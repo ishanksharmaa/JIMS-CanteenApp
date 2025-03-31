@@ -74,6 +74,8 @@ dependencies {
     implementation 'com.google.firebase:firebase-analytics'
     implementation 'com.google.firebase:firebase-auth'
     implementation 'com.google.firebase:firebase-firestore'
+    // implementation project(':react-native-community-blur')
+
 
 }
 apply plugin: 'com.google.gms.google-services'  // Add this line

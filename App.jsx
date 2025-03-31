@@ -52,6 +52,7 @@ import FavoriteScreen from "./src/screens/FavoriteScreen";
 import MenuScreen from "./src/screens/MenuScreen";
 import ProductScreen from "./src/screens/ProductScreen";
 import AddProductScreen from "./src/screens/AddProductScreen";
+import ProductsListScreen from "./src/screens/ProductsListScreen";
 import ProfileScreen from "./src/screens/ProfileScreen";
 import SettingsScreen from "./src/screens/SettingsScreen";
 import AppearanceSetting from "./src/screens/settings/AppearanceSetting";
@@ -131,9 +132,10 @@ const AppContent = () => {
           <Stack.Screen name="Cart" component={CartScreen} />
           <Stack.Screen name="Profile" component={ProfileScreen} />
           <Stack.Screen name="ProductScreen" component={ProductScreen} />
-          <Stack.Screen name="AddProductScreen" component={AddProductScreen} />
           <Stack.Screen name="Settings" component={SettingsScreen} />
           <Stack.Screen name="Appearance" component={AppearanceSetting} />
+          <Stack.Screen name="AddProductScreen" component={AddProductScreen} />
+          <Stack.Screen name="ProductsList" component={ProductsListScreen} />
         </Stack.Navigator>
         <Toast config={CustomToast} />
       </NavigationContainer>
