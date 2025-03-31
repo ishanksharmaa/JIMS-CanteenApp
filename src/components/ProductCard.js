@@ -5,7 +5,7 @@ import { useNavigation } from "@react-navigation/native";
 import { useTheme } from "./ThemeContext";
 import { useCart } from "./CartContext";
 
-const ProductCard = ({ image, title, price, onAddtoCart }) => {
+const ProductCard = ({ image, title, price, descr, onAddtoCart }) => {
   const navigation = useNavigation(); 
   const {theme} = useTheme();
   const styles = dynamicTheme(theme);
@@ -19,7 +19,7 @@ const ProductCard = ({ image, title, price, onAddtoCart }) => {
   return (
     <TouchableOpacity 
       style={styles.productCard} 
-      onPress={() => navigation.navigate("ProductScreen", { image, title, price, onAddtoCart })}
+      onPress={() => navigation.navigate("ProductScreen", { image, title, price, descr, onAddtoCart })}
       activeOpacity={0.5}
     >
       <Image source={image} style={styles.productImage} />

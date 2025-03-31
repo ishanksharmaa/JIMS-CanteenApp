@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, Image, TouchableOpacity, ActivityIndicator, StyleSheet } from "react-native";
+import { View, Text, TextInput, Image, TouchableOpacity, ActivityIndicator, StyleSheet, Keyboard } from "react-native";
 import { useTheme } from "../components/ThemeContext";
+import RefreshCompo from "../components/RefreshCompo";
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 // import { BlurView } from "@react-native-community/blur";
 
@@ -26,6 +27,10 @@ const AddProductScreen = () => {
             return;
         }
         setProduct({ ...product, [field]: value });
+
+        // if(isFormValid()){
+        //     Keyboard.dismiss();
+        // }
     };
 
     const removeImage = () => {
@@ -37,8 +42,8 @@ const AddProductScreen = () => {
             product.name.trim() !== "" &&
             product.price.trim() !== "" &&
             product.description.trim() !== "" &&
-            product.quantity.trim() !== "" &&
-            product.image.trim() !== ""
+            product.quantity.trim() !== ""
+            // && product.image.trim() !== ""
         );
     };
 
@@ -74,42 +79,64 @@ const AddProductScreen = () => {
             await productsRef.doc(newProductId).set(newProduct);
             console.log(`Product added successfully with ID: ${newProductId}`);
             setProduct({ name: "", price: "", description: "", quantity: "", image: "" });
+
         } catch (error) {
             console.error("Error adding product:", error);
         } finally {
             setUploading(false);
         }
+        // <RefreshCompo name="Home" />
     };
 
     return (
         <View style={styles.container}>
-            {/* <BlurView
-                style={styles.blurBackground}
-                blurType="light"
-                blurAmount={10}
-            /> */}
             <Text style={styles.header}>Add Product</Text>
 
             <View style={styles.card}>
-                {product.image !== "" && (
+                <Text style={styles.headerTitle}>Product Details:</Text>
+
+                {product.image ? (
                     <View style={styles.imageContainer}>
-                        <Image source={{ uri: product.image }} style={styles.image} />
+                        <Image
+                            source={{ uri: product.image }}
+                            style={styles.image}
+                            onError={() => setProduct({ ...product, image: "" })}
+                        />
                         <TouchableOpacity style={styles.removeIcon} onPress={removeImage}>
                             <MaterialIcons name="cancel" size={24} color="red" />
                         </TouchableOpacity>
                     </View>
+                ) : (
+                    <View style={styles.imageContainer}>
+                        {/* <Image source={require('../../assets/swaggy_cat.jpg')} style={styles.image} /> */}
+                        {/* <Image source={require('../../assets/banana_cat.jpg')} style={styles.image} /> */}
+                        {/* <Image source={require('../../assets/image.png')} style={styles.image} /> */}
+                        <Image source={require('../../assets/black_sandwich.jpg')} style={styles.image} />
+                    </View>
                 )}
+
+
+                {/* {product.image !== "" && (
+                    <View style={styles.imageContainer}>
+                        <Image source={{ uri: product.image } || require('../../assets/swaggy_cat.jpg')} style={styles.image} />
+                        <TouchableOpacity style={styles.removeIcon} onPress={removeImage}>
+                            <MaterialIcons name="cancel" size={24} color="red" />
+                        </TouchableOpacity>
+                    </View>
+                )} */}
 
                 <TextInput
                     style={styles.input}
                     placeholder="Product Name"
                     value={product.name}
+                    placeholderTextColor={'grey'}
                     onChangeText={(text) => handleChange("name", text)}
                 />
                 <TextInput
                     style={styles.input}
                     placeholder="Product Description"
                     value={product.description}
+                    placeholderTextColor={'grey'}
                     onChangeText={(text) => handleChange("description", text)}
                 />
                 <View style={styles.row}>
@@ -118,21 +145,24 @@ const AddProductScreen = () => {
                         placeholder="₹ Price"
                         keyboardType="numeric"
                         value={product.price}
+                        placeholderTextColor={'grey'}
                         onChangeText={(text) => handleChange("price", text)}
                     />
                     <TextInput
                         style={styles.smallInput}
-                        placeholder="Qty"
+                        placeholder="Quantity"
                         keyboardType="numeric"
                         value={product.quantity}
+                        placeholderTextColor={'grey'}
                         onChangeText={(text) => handleChange("quantity", text)}
                     />
                 </View>
 
                 <TextInput
                     style={styles.input}
-                    placeholder="Paste Image URL Here"
+                    placeholder="# Paste Image URL Here"
                     value={product.image}
+                    placeholderTextColor={'grey'}
                     onChangeText={(text) => handleChange("image", text)}
                 />
 
@@ -153,13 +183,14 @@ const AddProductScreen = () => {
 };
 
 const dynamicTheme = (theme) => ({
-    container: { flex: 1, backgroundColor: 'transparent', padding: 20 },
     // blurBackground: { ...StyleSheet.absoluteFillObject, position: "absolute", },
-    header: { fontSize: 26, fontWeight: "bold", color: theme.text, textAlign: "center", marginBottom: 50, marginTop: 0 },
-    card: { backgroundColor: theme.cardBg, borderRadius: 15, padding: 20, elevation: 10, borderWidth: 1, borderColor: theme.primaryColor, },
-    input: { borderWidth: 1, borderColor: theme.primaryColor, borderRadius: 8, padding: 12, marginVertical: 10, fontSize: 16, color: theme.text },
+    // container: { flex: 1, backgroundColor: '#FFFFFFA0', padding: 20, height: '100%', borderRadius: 20, justifyContent: 'center' },
+    // header: { fontSize: 26, fontWeight: "bold", color: theme.text, textAlign: "center", marginBottom: 50, marginTop: 0, position: 'absolute', top: 33, alignSelf: 'center', },
+    card: { backgroundColor: theme.cardBg, borderRadius: 15, padding: 20, elevation: 10, borderWidth: 1, borderColor: theme.primaryColor, marginHorizontal: 16, },
+    headerTitle: { color: theme.primaryColor, fontSize: 22, fontWeight: 'bold', alignSelf: 'center', marginBottom: 20, },
+    input: { borderWidth: 1.4, borderColor: theme.primaryColor, borderRadius: 8, padding: 12, marginVertical: 10, fontSize: 16, color: theme.text },
     row: { flexDirection: "row", justifyContent: "space-between" },
-    smallInput: { borderWidth: 1, marginVertical: 10, borderColor: theme.primaryColor, borderRadius: 8, padding: 12, fontSize: 16, color: theme.text, width: "48%" },
+    smallInput: { borderWidth: 1.4, marginVertical: 10, borderColor: theme.primaryColor, borderRadius: 8, padding: 12, fontSize: 16, color: theme.text, width: "48%" },
     button: { padding: 12, borderRadius: 8, alignItems: "center", marginTop: 10, backgroundColor: theme.primaryColor },
     buttonText: { color: "#fff", fontSize: 16, fontWeight: "bold" },
     imageContainer: { position: "relative", alignItems: "center" },

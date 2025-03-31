@@ -1,11 +1,17 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Text, View, Image, StyleSheet, FlatList, StatusBar, TouchableOpacity } from "react-native";
 import SearchBar from "../components/SearchBar";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+// Firebase Import
+import firestore from '@react-native-firebase/firestore';
+import { collection, getDocs } from 'firebase/firestore';
+
+
+
 import Toast from 'react-native-toast-message';
 import { TextInput } from "react-native-gesture-handler";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import MemeCat from "../components/MemeCat";
 import { useMemeCat } from "../components/MemeCatContext";
 
@@ -17,6 +23,25 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 // COMPONENTS
 import { useTheme } from "../components/ThemeContext";
 import ProductCard from '../components/ProductCard';
+// import RefreshCompo from "../components/RefreshCompo";
+
+
+// Fetch Data...
+
+const fetchData = async (setProductItems) => {
+    try {
+        const querySnapshot = await firestore().collection("Products").get();
+        const items = [];
+        querySnapshot.forEach(doc => {
+            items.push({ id: doc.id, ...doc.data() });
+        });
+        setProductItems(items);
+    } catch (error) {
+        console.error('Error fetching products:', error);
+    }
+};
+
+
 
 
 const categories = [
@@ -32,14 +57,14 @@ const categories = [
     { id: '10', title: 'Noodles', image: { uri: 'https://images.pexels.com/photos/1435904/pexels-photo-1435904.jpeg' } },
 ];
 
-const productItems = [
-    { id: '1', title: 'FarmFresh Cheese Pizza', image: { uri: 'https://images.pexels.com/photos/315755/pexels-photo-315755.jpeg' }, price: 399 },
-    { id: '2', title: 'Cheese Burger', image: { uri: 'https://images.pexels.com/photos/1639564/pexels-photo-1639564.jpeg' }, price: 40 },
-    { id: '3', title: 'Creamy Pasta', image: { uri: 'https://images.pexels.com/photos/1437267/pexels-photo-1437267.jpeg' }, price: 70 },
-    { id: '4', title: 'Fresh Salad', image: { uri: 'https://images.pexels.com/photos/1435904/pexels-photo-1435904.jpeg' }, price: 25 },
-    { id: '5', title: 'Chocolate Lava Cake', image: { uri: 'https://images.pexels.com/photos/4110002/pexels-photo-4110002.jpeg' }, price: 65 },
-    { id: '6', title: 'Cold Coffee', image: { uri: 'https://images.pexels.com/photos/302901/pexels-photo-302901.jpeg' }, price: 35 },
-];
+// const productItems = [
+//     { id: '1', title: 'FarmFresh Cheese Pizza', image: { uri: 'https://images.pexels.com/photos/315755/pexels-photo-315755.jpeg' }, price: 399 },
+//     { id: '2', title: 'Cheese Burger', image: { uri: 'https://images.pexels.com/photos/1639564/pexels-photo-1639564.jpeg' }, price: 40 },
+//     { id: '3', title: 'Creamy Pasta', image: { uri: 'https://images.pexels.com/photos/1437267/pexels-photo-1437267.jpeg' }, price: 70 },
+//     { id: '4', title: 'Fresh Salad', image: { uri: 'https://images.pexels.com/photos/1435904/pexels-photo-1435904.jpeg' }, price: 25 },
+//     { id: '5', title: 'Chocolate Lava Cake', image: { uri: 'https://images.pexels.com/photos/4110002/pexels-photo-4110002.jpeg' }, price: 65 },
+//     { id: '6', title: 'Cold Coffee', image: { uri: 'https://images.pexels.com/photos/302901/pexels-photo-302901.jpeg' }, price: 35 },
+// ];
 
 
 const showToast = (productName, msg) => {
@@ -56,10 +81,18 @@ const showToast = (productName, msg) => {
 
 const HomeScreen = () => {
     const [text, setText] = useState('');
+    const [productItems, setProductItems] = useState([]);
     const navigation = useNavigation();
     const { theme, toggleTheme } = useTheme();
     const styles = dynamicTheme(theme);
     const { isMemeCatsEnabled } = useMemeCat();
+
+    useFocusEffect(
+        useCallback(() => {
+            fetchData(setProductItems);
+        }, [])
+    );
+
 
     return (
         <View style={styles.container}>
@@ -93,7 +126,7 @@ const HomeScreen = () => {
             </View> {/* header end */}
 
             {/* SEARCH BAR HERE */}
-            <View style = {styles.searchContainer}>
+            <View style={styles.searchContainer}>
                 <SearchBar placeholder="Search food, menu..." onChange={setText} />
             </View>
 
@@ -120,7 +153,7 @@ const HomeScreen = () => {
                     keyExtractor={(item) => item.id}
                     horizontal={true}
                     showsHorizontalScrollIndicator={false}
-                    renderItem={({ item }) => <ProductCard image={item.image} title={item.title} price={item.price} onAddtoCart={showToast} />}
+                    renderItem={({ item }) => <ProductCard image={{uri: item.image}} title={item.name} price={item.price} descr={item.description} onAddtoCart={showToast} />}
                 />
             </View>
         </View> // container end
