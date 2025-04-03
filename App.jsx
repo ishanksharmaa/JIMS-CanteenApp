@@ -55,6 +55,7 @@ import AddProductScreen from "./src/screens/AddProductScreen";
 import ProductsListScreen from "./src/screens/ProductsListScreen";
 import ProfileScreen from "./src/screens/ProfileScreen";
 import SettingsScreen from "./src/screens/SettingsScreen";
+import UserInfoScreen from "./src/screens/UserInfoScreen";
 import AppearanceSetting from "./src/screens/settings/AppearanceSetting";
 import { MemeCatProvider } from "./src/components/MemeCatContext";
 
@@ -133,6 +134,7 @@ const AppContent = () => {
           <Stack.Screen name="Profile" component={ProfileScreen} />
           <Stack.Screen name="ProductScreen" component={ProductScreen} />
           <Stack.Screen name="Settings" component={SettingsScreen} />
+          <Stack.Screen name="UserInfo" component={UserInfoScreen} />
           <Stack.Screen name="Appearance" component={AppearanceSetting} />
           <Stack.Screen name="AddProductScreen" component={AddProductScreen} />
           <Stack.Screen name="ProductsList" component={ProductsListScreen} />

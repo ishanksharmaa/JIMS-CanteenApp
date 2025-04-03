@@ -42,7 +42,7 @@ const SettingsScreen = () => {
                     <Ionicons name={isDarkMode ? "chevron-back-outline" : "chevron-back"} size={24} color={theme.text} />
                 </TouchableOpacity>
                 <Text style={styles.title}>Settings</Text>
-                <TouchableOpacity activeOpacity={0.8} style={styles.editIcon}>
+                <TouchableOpacity activeOpacity={0.8} style={styles.editIcon} onPress={() => navigation.navigate("UserInfo")}>
                     {/* <Text style={{ fontSize: 17, color: theme.primaryColor, fontWeight: '500'}}>Edit</Text> */}
                     <FontAwesome6Icon name="pen-to-square" size={21} color={theme.primaryColor} />
                 </TouchableOpacity>
@@ -59,7 +59,7 @@ const SettingsScreen = () => {
                 </Section>
 
                 <Section title="Account">
-                    <SettingItem icon={isDarkMode ? "person-circle-outline" : "person-circle"} label="Edit Profile" />
+                    <SettingItem icon={isDarkMode ? "person-circle-outline" : "person-circle"} label="Edit Profile" onPress={() => navigation.navigate("UserInfo")} />
                     <SettingItem icon={isDarkMode ? "lock-closed-outline" : "lock-closed"} label="Privacy & Security" isLast />
                 </Section>
 

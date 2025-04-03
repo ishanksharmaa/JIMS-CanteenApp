@@ -8,7 +8,7 @@ import firestore from '@react-native-firebase/firestore';
 // import auth from '@react-native-firebase/auth';
 import { getAuth } from "@react-native-firebase/auth";
 const auth = getAuth();
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, query, where, getDocs } from "firebase/firestore";
 
 
 
@@ -31,18 +31,55 @@ import ProductCard from '../components/ProductCard';
 
 // Fetch Data...
 
-const fetchData = async (setProductItems) => {
+// const fetchData = async (setProductItems) => {
+//     try {
+//         const querySnapshot = await firestore().collection("Products").get();
+//         const items = [];
+//         querySnapshot.forEach(doc => {
+//             items.push({ id: doc.id, ...doc.data() });
+//         });
+//         setProductItems(items);
+//     } catch (error) {
+//         console.error('Error fetching products:', error);
+//     }
+// };
+
+const fetchData = async (setProductItems, setName, setLocation) => {
     try {
-        const querySnapshot = await firestore().collection("Products").get();
-        const items = [];
-        querySnapshot.forEach(doc => {
-            items.push({ id: doc.id, ...doc.data() });
+        const user = auth.currentUser;
+        let userData = { name: "Guest", location: "Unknown" }; // Default values
+
+        const productPromise = firestore().collection("Products").get(); // Fetching products
+        let productItems = [];
+
+        if (user) {
+            const userSnapshot = await firestore()
+                .collection("Users")
+                .where("email", "==", user.email)
+                .get();
+
+            if (!userSnapshot.empty) {
+                userData = userSnapshot.docs[0].data();
+            }
+        }
+
+        const productSnapshot = await productPromise; // Awaiting the product data
+        productSnapshot.forEach(doc => {
+            productItems.push({ id: doc.id, ...doc.data() });
         });
-        setProductItems(items);
+
+        // Setting the data
+        setName(userData.name);
+        setLocation(userData.location);
+        setProductItems(productItems);
+
     } catch (error) {
-        console.error('Error fetching products:', error);
+        console.error("Error fetching data:", error);
     }
 };
+
+
+
 
 
 
@@ -83,6 +120,8 @@ const showToast = (productName, msg) => {
 };
 
 const HomeScreen = () => {
+    const [name, setName] = useState("");
+    const [location, setLocation] = useState("");
     const [text, setText] = useState('');
     const [productItems, setProductItems] = useState([]);
     const navigation = useNavigation();
@@ -92,7 +131,7 @@ const HomeScreen = () => {
 
     useFocusEffect(
         useCallback(() => {
-            fetchData(setProductItems);
+            fetchData(setProductItems, setName, setLocation);
         }, [])
     );
 
@@ -122,8 +161,8 @@ const HomeScreen = () => {
 
 
                     <View>
-                        <Text style={styles.profileName}>Ishank Sharma</Text>
-                        <Text style={{ fontSize: 12, color: theme.text }}>Room A202</Text>
+                        <Text style={styles.profileName}>{name}</Text>
+                        <Text style={{ fontSize: 12, color: theme.text }}>{location}</Text>
                     </View>
                 </View>
 
