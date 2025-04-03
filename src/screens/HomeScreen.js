@@ -47,7 +47,7 @@ import ProductCard from '../components/ProductCard';
 const fetchData = async (setProductItems, setName, setLocation) => {
     try {
         const user = auth.currentUser;
-        let userData = { name: "Guest", location: "Unknown" }; // Default values
+        let userData = { name: "Guest", location: "location" }; // Default values
 
         const productPromise = firestore().collection("Products").get(); // Fetching products
         let productItems = [];

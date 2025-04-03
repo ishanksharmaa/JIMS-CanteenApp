@@ -23,7 +23,7 @@ const UserInfoScreen = ({ navigation }) => {
     // const auth = getAuth();
     const db = getFirestore();
 
-    const [user, setUser] = useState(null); 
+    const [user, setUser] = useState(null);
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
     const [name, setName] = useState("");
@@ -47,11 +47,11 @@ const UserInfoScreen = ({ navigation }) => {
 
     const fetchData = async (authUser) => { // Take user as parameter
         if (!authUser) return;
-    
+
         try {
             console.log("Fetching data for UID:", authUser.uid); // Debugging
             const userDoc = await getDoc(doc(db, "Users", authUser.uid));
-    
+
             if (userDoc.exists()) {
                 const data = userDoc.data();
                 setUsername(data.username || "");
@@ -71,52 +71,55 @@ const UserInfoScreen = ({ navigation }) => {
 
     // import { query, where } from "firebase/firestore";
 
-    const saveData = async () => {
+    const saveData = async (user) => {
         if (!username || !dob || !location) {
             alert("Username, DOB, and Location are required!");
             return;
         }
 
         const db = getFirestore();
-        const auth = getAuth();
-        const user = auth.currentUser;
-    
-        if (!user || !user.email) {
-            alert("User not logged in properly!");
-            return;
-        }
-    
+        // const auth = getAuth();
+        // const user = auth.currentUser;
+
+        // if (!user || !user.email) {
+        //     alert("User not logged in properly!");
+        //     return;
+        // }
+
         try {
-            console.log("Logged-in Email:", user.email); // Debugging
-            
-            const email = user.email;
-            const usersRef = collection(db, "Users");
-            const q = query(usersRef, where("email", "==", email));
-            const snapshot = await getDocs(q);
-    
-            if (!snapshot.empty) {
-                const userDoc = snapshot.docs[0];
-                const userIdToUpdate = userDoc.id;
-    
-                await updateDoc(doc(db, "Users", userIdToUpdate), {
-                    username,
-                    name,
-                    dob,
-                    location,
-                    profilePic: image,
-                });
-    
-                alert("Profile updated!");
-                navigation.goBack();
-            } else {
-                alert("User not found!");
+            // console.log("Logged-in Email:", user.email); // Debugging
+
+            if (user) {
+                // const email = user.email;
+                // const userRef = doc(db, "Users", user.uid);
+                const userRef = collection(db, "Users");
+                const q = query(userRef, where("email", "==", user.email));
+                const snapshot = await getDocs(q);
+
+                if (!snapshot.empty) {
+                    const userDoc = snapshot.docs[0];
+                    const userIdToUpdate = userDoc.id;
+
+                    await updateDoc(doc(db, "Users", userIdToUpdate), {
+                        username,
+                        name,
+                        dob,
+                        location,
+                        profilePic: image,
+                    });
+
+                    alert("Profile updated!");
+                    navigation.goBack();
+                } else {
+                    alert("User not found!");
+                }
             }
         } catch (error) {
             alert("Error saving data: " + error.message);
         }
     };
-    
-    
+
+
     const pickImage = () => {
         launchImageLibrary({ mediaType: "photo", quality: 1 }, (response) => {
             if (!response.didCancel && !response.error) {
@@ -124,9 +127,9 @@ const UserInfoScreen = ({ navigation }) => {
             }
         });
     };
-    
-    
-    
+
+
+
 
     return (
         <View style={styles.container}>
@@ -145,7 +148,7 @@ const UserInfoScreen = ({ navigation }) => {
             <TextInput placeholder="Name (Optional)" value={name} onChangeText={setName} style={styles.input} placeholderTextColor={theme.text} />
             <TextInput placeholder="Date of Birth*" value={dob} onChangeText={setDob} style={styles.input} placeholderTextColor={theme.text} />
             <TextInput placeholder="Location in College" value={location} onChangeText={setLocation} style={styles.input} placeholderTextColor={theme.text} />
-            <TouchableOpacity style={styles.saveButton} onPress={saveData}>
+            <TouchableOpacity style={styles.saveButton} onPress={() => saveData(user)}>
                 <Text style={styles.saveButtonText}>Save</Text>
             </TouchableOpacity>
         </View>
@@ -180,7 +183,7 @@ const dynamicTheme = (theme) => ({
         borderRadius: 50,
         borderWidth: 1,
         borderColor: theme.primaryColor,
-        transform: [{scale: 1.6}]
+        transform: [{ scale: 1.6 }]
     },
     editIcon: {
         position: "absolute",
