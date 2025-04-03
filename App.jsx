@@ -1,5 +1,5 @@
 // import firebase from 'firebase/app';
-import firebase, { FirebaseApp } from '@react-native-firebase/app';
+// import firebase, { FirebaseApp } from '@react-native-firebase/app';
 import { initializeApp } from 'firebase/app';
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 
@@ -24,7 +24,7 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
 
-import React, {useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import { Appearance, StatusBar, View } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
@@ -58,6 +58,7 @@ import SettingsScreen from "./src/screens/SettingsScreen";
 import UserInfoScreen from "./src/screens/UserInfoScreen";
 import AppearanceSetting from "./src/screens/settings/AppearanceSetting";
 import { MemeCatProvider } from "./src/components/MemeCatContext";
+import { UserProvider } from './src/components/UserContext';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -92,7 +93,7 @@ const BottomTabs = () => {
       <Tab.Screen name="Favorites" component={FavoriteScreen} options={{ tabBarIcon: ({ color, size }) => <Ionicons name="heart" color={color} size={size} /> }} />
       <Tab.Screen name="Menu" component={MenuScreen} options={{ tabBarIcon: ({ color, size }) => <Ionicons name="book" color={color} size={size} /> }} />
       {/* <Tab.Screen name="Cart" component={CartScreen} options={{ tabBarIcon: ({ color, size }) => <Ionicons name="cart" color={color} size={size} /> }} /> */}
-      <Tab.Screen name="Settings" component={SettingsScreen} options={{ tabBarIcon: ({ color, size }) => <Ionicons name="cog" color={color} size={size+3} /> }} />
+      <Tab.Screen name="Settings" component={SettingsScreen} options={{ tabBarIcon: ({ color, size }) => <Ionicons name="cog" color={color} size={size + 3} /> }} />
     </Tab.Navigator>
   );
 };
@@ -147,13 +148,15 @@ const AppContent = () => {
 
 const App = () => {
   return (
-    <MemeCatProvider>
-    <ThemeProvider>
-      <CartProvider>
-        <AppContent />  {/* ✅ Wrapping here so `useTheme()` works properly */}
-      </CartProvider>
-    </ThemeProvider>
-    </MemeCatProvider>
+    <UserProvider>
+      <MemeCatProvider>
+        <ThemeProvider>
+          <CartProvider>
+            <AppContent />  {/* ✅ Wrapping here so `useTheme()` works properly */}
+          </CartProvider>
+        </ThemeProvider>
+      </MemeCatProvider>
+    </UserProvider>
   );
 };
 

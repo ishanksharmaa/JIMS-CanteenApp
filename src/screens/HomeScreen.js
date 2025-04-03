@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Text, View, Image, StyleSheet, FlatList, StatusBar, TouchableOpacity } from "react-native";
 import SearchBar from "../components/SearchBar";
+import { useUser } from "../components/UserContext";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Firebase Import
 import firestore from '@react-native-firebase/firestore';
-// import auth from '@react-native-firebase/auth';
-import { getAuth } from "@react-native-firebase/auth";
-const auth = getAuth();
+import auth from '@react-native-firebase/auth';
+import { getAuth, onAuthStateChanged } from "@react-native-firebase/auth";
 import { collection, query, where, getDocs } from "firebase/firestore";
 
 
@@ -26,38 +26,22 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 // COMPONENTS
 import { useTheme } from "../components/ThemeContext";
 import ProductCard from '../components/ProductCard';
-// import RefreshCompo from "../components/RefreshCompo";
-
-
-// Fetch Data...
-
-// const fetchData = async (setProductItems) => {
-//     try {
-//         const querySnapshot = await firestore().collection("Products").get();
-//         const items = [];
-//         querySnapshot.forEach(doc => {
-//             items.push({ id: doc.id, ...doc.data() });
-//         });
-//         setProductItems(items);
-//     } catch (error) {
-//         console.error('Error fetching products:', error);
-//     }
-// };
 
 const fetchData = async (setProductItems, setName, setLocation) => {
     try {
+        const auth = getAuth();
         const user = auth.currentUser;
         let userData = { name: "Guest", location: "location" }; // Default values
-
+        
         const productPromise = firestore().collection("Products").get(); // Fetching products
         let productItems = [];
 
         if (user) {
             const userSnapshot = await firestore()
-                .collection("Users")
-                .where("email", "==", user.email)
-                .get();
-
+            .collection("Users")
+            .where("email", "==", user.email)
+            .get();
+            
             if (!userSnapshot.empty) {
                 userData = userSnapshot.docs[0].data();
             }
@@ -78,12 +62,6 @@ const fetchData = async (setProductItems, setName, setLocation) => {
     }
 };
 
-
-
-
-
-
-
 const categories = [
     { id: '1', title: 'Fast Food', image: { uri: 'https://images.pexels.com/photos/1639564/pexels-photo-1639564.jpeg' } },
     { id: '2', title: 'Drinks', image: { uri: 'https://images.pexels.com/photos/825661/pexels-photo-825661.jpeg' } },
@@ -96,16 +74,6 @@ const categories = [
     { id: '9', title: 'Tacos', image: { uri: 'https://images.pexels.com/photos/70497/pexels-photo-70497.jpeg' } },
     { id: '10', title: 'Noodles', image: { uri: 'https://images.pexels.com/photos/1435904/pexels-photo-1435904.jpeg' } },
 ];
-
-// const productItems = [
-//     { id: '1', title: 'FarmFresh Cheese Pizza', image: { uri: 'https://images.pexels.com/photos/315755/pexels-photo-315755.jpeg' }, price: 399 },
-//     { id: '2', title: 'Cheese Burger', image: { uri: 'https://images.pexels.com/photos/1639564/pexels-photo-1639564.jpeg' }, price: 40 },
-//     { id: '3', title: 'Creamy Pasta', image: { uri: 'https://images.pexels.com/photos/1437267/pexels-photo-1437267.jpeg' }, price: 70 },
-//     { id: '4', title: 'Fresh Salad', image: { uri: 'https://images.pexels.com/photos/1435904/pexels-photo-1435904.jpeg' }, price: 25 },
-//     { id: '5', title: 'Chocolate Lava Cake', image: { uri: 'https://images.pexels.com/photos/4110002/pexels-photo-4110002.jpeg' }, price: 65 },
-//     { id: '6', title: 'Cold Coffee', image: { uri: 'https://images.pexels.com/photos/302901/pexels-photo-302901.jpeg' }, price: 35 },
-// ];
-
 
 const showToast = (productName, msg) => {
     Toast.show({
@@ -128,13 +96,28 @@ const HomeScreen = () => {
     const { theme, toggleTheme } = useTheme();
     const styles = dynamicTheme(theme);
     const { isMemeCatsEnabled } = useMemeCat();
+    const { setUserEmail } = useUser();
 
     useFocusEffect(
         useCallback(() => {
             fetchData(setProductItems, setName, setLocation);
+
+            // const auth = getAuth();
+            // onAuthStateChanged(auth, (user) => {
+            //     if (user) {
+            //         setUserEmail(user.email);  // User email global state me save ho jayega
+            //     }
+            // });
+
+            const unsubscribe = auth().onAuthStateChanged((user) => {
+                if (user) {
+                    setUserEmail(user.email);  // User email global state me save ho jayega
+                }
+            });
+
+            return () => unsubscribe(); // Cleanup function to avoid memory leaks
         }, [])
     );
-
 
     return (
         <View style={styles.container}>

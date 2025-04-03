@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useUser } from "../components/UserContext";
 import {
     View,
     Text,
@@ -17,6 +18,7 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { getFirestore, collection, doc, setDoc, getDoc, getDocs, updateDoc, query, where } from "firebase/firestore";
 
 const UserInfoScreen = ({ navigation }) => {
+    const { userEmail } = useUser();
     const { theme } = useTheme();
     const styles = dynamicTheme(theme);
 
@@ -32,27 +34,26 @@ const UserInfoScreen = ({ navigation }) => {
     const [image, setImage] = useState(null);
 
     useEffect(() => {
-        const auth = getAuth();
-        const unsubscribe = onAuthStateChanged(auth, (authUser) => {
-            if (authUser) {
-                setUser(authUser);
-                setEmail(authUser.email); // Ensure email is set
-                fetchData(authUser); // Pass user directly
-            } else {
-                alert("User not logged in!");
-            }
-        });
-        return () => unsubscribe();
-    }, []);
+        if (userEmail) {
+            fetchData();
+        }
+        else{
+            alert("data not fetched!")
+            return;
+        }
+    }, [userEmail]);
 
-    const fetchData = async (authUser) => { // Take user as parameter
-        if (!authUser) return;
+
+    const fetchData = async () => {
+        if (!userEmail) return;
 
         try {
-            console.log("Fetching data for UID:", authUser.uid); // Debugging
-            const userDoc = await getDoc(doc(db, "Users", authUser.uid));
+            const userRef = collection(db, "Users");
+            const q = query(userRef, where("email", "==", userEmail));
+            const snapshot = await getDocs(q);
 
-            if (userDoc.exists()) {
+            if (!snapshot.empty) {
+                const userDoc = snapshot.docs[0];
                 const data = userDoc.data();
                 setUsername(data.username || "");
                 setEmail(data.email || "");
@@ -61,17 +62,15 @@ const UserInfoScreen = ({ navigation }) => {
                 setLocation(data.location || "");
                 setImage(data.profilePic || null);
             } else {
-                console.log("User document does not exist in Firestore.");
+                console.log("User not found in Firestore");
             }
         } catch (error) {
-            alert("Error fetching data: " + error.message);
+            console.error("Error fetching data:", error);
         }
     };
 
 
-    // import { query, where } from "firebase/firestore";
-
-    const saveData = async (user) => {
+    const saveData = async (email) => {
         if (!username || !dob || !location) {
             alert("Username, DOB, and Location are required!");
             return;
@@ -87,13 +86,13 @@ const UserInfoScreen = ({ navigation }) => {
         // }
 
         try {
-            // console.log("Logged-in Email:", user.email); // Debugging
+            console.log("Logged-in Email:", email); // Debugging
 
-            if (user) {
+            if (email) {
                 // const email = user.email;
                 // const userRef = doc(db, "Users", user.uid);
                 const userRef = collection(db, "Users");
-                const q = query(userRef, where("email", "==", user.email));
+                const q = query(userRef, where("email", "==", email.toLowerCase()));
                 const snapshot = await getDocs(q);
 
                 if (!snapshot.empty) {
@@ -113,6 +112,10 @@ const UserInfoScreen = ({ navigation }) => {
                 } else {
                     alert("User not found!");
                 }
+            }
+            else {
+                alert("Email not found!");
+                return;
             }
         } catch (error) {
             alert("Error saving data: " + error.message);
@@ -148,7 +151,7 @@ const UserInfoScreen = ({ navigation }) => {
             <TextInput placeholder="Name (Optional)" value={name} onChangeText={setName} style={styles.input} placeholderTextColor={theme.text} />
             <TextInput placeholder="Date of Birth*" value={dob} onChangeText={setDob} style={styles.input} placeholderTextColor={theme.text} />
             <TextInput placeholder="Location in College" value={location} onChangeText={setLocation} style={styles.input} placeholderTextColor={theme.text} />
-            <TouchableOpacity style={styles.saveButton} onPress={() => saveData(user)}>
+            <TouchableOpacity style={styles.saveButton} onPress={() => saveData(userEmail)}>
                 <Text style={styles.saveButtonText}>Save</Text>
             </TouchableOpacity>
         </View>
