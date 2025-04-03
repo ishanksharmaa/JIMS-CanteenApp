@@ -23,7 +23,7 @@ const UserInfoScreen = ({ navigation }) => {
     // const auth = getAuth();
     const db = getFirestore();
 
-    const [user, setUser] = useState(null);
+    const [user, setUser] = useState(null); 
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
     const [name, setName] = useState("");
@@ -47,11 +47,11 @@ const UserInfoScreen = ({ navigation }) => {
 
     const fetchData = async (authUser) => { // Take user as parameter
         if (!authUser) return;
-
+    
         try {
             console.log("Fetching data for UID:", authUser.uid); // Debugging
             const userDoc = await getDoc(doc(db, "Users", authUser.uid));
-
+    
             if (userDoc.exists()) {
                 const data = userDoc.data();
                 setUsername(data.username || "");
@@ -80,24 +80,24 @@ const UserInfoScreen = ({ navigation }) => {
         const db = getFirestore();
         const auth = getAuth();
         const user = auth.currentUser;
-
+    
         if (!user || !user.email) {
             alert("User not logged in properly!");
             return;
         }
-
+    
         try {
             console.log("Logged-in Email:", user.email); // Debugging
-
+            
             const email = user.email;
             const usersRef = collection(db, "Users");
             const q = query(usersRef, where("email", "==", email));
             const snapshot = await getDocs(q);
-
+    
             if (!snapshot.empty) {
                 const userDoc = snapshot.docs[0];
                 const userIdToUpdate = userDoc.id;
-
+    
                 await updateDoc(doc(db, "Users", userIdToUpdate), {
                     username,
                     name,
@@ -105,7 +105,7 @@ const UserInfoScreen = ({ navigation }) => {
                     location,
                     profilePic: image,
                 });
-
+    
                 alert("Profile updated!");
                 navigation.goBack();
             } else {
@@ -115,8 +115,8 @@ const UserInfoScreen = ({ navigation }) => {
             alert("Error saving data: " + error.message);
         }
     };
-
-
+    
+    
     const pickImage = () => {
         launchImageLibrary({ mediaType: "photo", quality: 1 }, (response) => {
             if (!response.didCancel && !response.error) {
@@ -124,9 +124,9 @@ const UserInfoScreen = ({ navigation }) => {
             }
         });
     };
-
-
-
+    
+    
+    
 
     return (
         <View style={styles.container}>
@@ -180,7 +180,7 @@ const dynamicTheme = (theme) => ({
         borderRadius: 50,
         borderWidth: 1,
         borderColor: theme.primaryColor,
-        transform: [{ scale: 1.6 }]
+        transform: [{scale: 1.6}]
     },
     editIcon: {
         position: "absolute",
