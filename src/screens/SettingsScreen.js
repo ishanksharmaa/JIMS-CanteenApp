@@ -1,10 +1,11 @@
-import React, {useState, useEffect} from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { View, Text, TouchableOpacity, ScrollView, Alert } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import { useTheme } from "../components/ThemeContext";
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { Section, SettingItem } from "../components/SettingsItem";
 import { ProfileSection } from "./ProfileScreen";
+import { useUser } from "../components/UserContext";
 import FontAwesome6Icon from "react-native-vector-icons/FontAwesome6";
 
 // Firebase Auth used as an Instance (MO CHANGES!!)
@@ -12,6 +13,7 @@ import { getAuth, signOut } from 'firebase/auth';
 // import auth from '@react-native-firebase/auth';
 
 const SettingsScreen = () => {
+    // const { userEmail, name, username, dob, location } = useUser();
     const { theme } = useTheme();
     const styles = dynamicTheme(theme);
     const navigation = useNavigation();
@@ -20,18 +22,41 @@ const SettingsScreen = () => {
     // const isDarkMode = true;
     const auth = getAuth();
 
-    const handleLogout = async () => {
-        try {
-            console.log("Attempting to sign out...");
-            await signOut(auth);
-            Alert.alert("Logged Out", "You have been logged out!");
-            setIsLoggedIn(false);
-            navigation.replace("Login");  // Navigate to the login screen after signing out
-        } catch (error) {
-            console.log("Error signing out:", error);  // Log the error to the console
-            Alert.alert("Error", error.message);
-        }
+    const handleLogout = () => {
+        Alert.alert(
+            "Confirm Logout",
+            "Are you sure you want to logout?",
+            [
+                {
+                    text: "Cancel",
+                    style: "cancel",
+                },
+                {
+                    text: "Logout",
+                    onPress: async () => {
+                        try {
+                            console.log("Attempting to sign out...");
+                            await signOut(auth);
+                            // Alert.alert("Logged Out", "You have been logged out!");
+                            setIsLoggedIn(false);
+                            navigation.replace("Login");  
+                        } catch (error) {
+                            console.log("Error signing out:", error);
+                            Alert.alert("Error", error.message);
+                        }
+                    },
+                    style: "destructive",
+                },
+            ]
+        );
     };
+    
+
+    useFocusEffect(
+        useCallback(() => {
+
+        }, [])
+    );
 
 
 

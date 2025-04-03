@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import ProductCard from '../components/ProductCard';
 import { useTheme } from "../components/ThemeContext";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useFocusEffect } from "@react-navigation/native";
+import { useUser } from '../components/UserContext';
 import { transform } from 'typescript';
 
 const combos = [
@@ -15,8 +16,16 @@ const combos = [
 ];
 
 export const ProfileSection = ({ flexDirection, gap, scale }) => {
+    const { userEmail, username, name, dob, location } = useUser();
     const { theme } = useTheme();
     const styles = dynamicTheme(theme, flexDirection, gap, scale);
+
+    useFocusEffect(
+        useCallback(() => {
+
+        }, [])
+    );
+
     return (
         <View style={styles.profileSection}>
             <Image
@@ -24,9 +33,10 @@ export const ProfileSection = ({ flexDirection, gap, scale }) => {
                 style={styles.profileImage}
             />
             <View>
-                <Text style={styles.profileName}>Komi Chan</Text>
-                <Text style={styles.username}>@komi.chan</Text>
-                <Text style={styles.roomText}>Room A202</Text>
+                <Text style={styles.profileName}>{name}</Text>
+                <Text style={styles.username}>@{username}</Text>
+                {/* <Text style={styles.username}>@{dob}</Text> */}
+                <Text style={styles.roomText}>{location}</Text>
             </View>
         </View>
     );
@@ -36,6 +46,12 @@ const ProfileScreen = () => {
     const { theme } = useTheme();
     const styles = dynamicTheme(theme);
     const navigation = useNavigation();
+
+    useFocusEffect(
+        useCallback(() => {
+
+        }, [])
+    );
 
     return (
         <View style={styles.container}>
@@ -89,7 +105,7 @@ const dynamicTheme = (theme, flexDirection, gap, scale) => ({
     backBtn: { flexDirection: 'row', alignItems: 'center', backgroundColor: theme.backBtnBg, padding: 7, borderRadius: '50%', justifyContent: 'space-between' },
     title: { fontSize: 21, fontWeight: 'bold', alignSelf: 'center', color: theme.text, marginHorizontal: 18 },
     headerIcons: { flexDirection: 'row', width: '18%', backgroundColor: '', justifyContent: 'space-between', position: 'absolute', right: 10 },
-    profileSection: { transform: [{scale: scale}] , flexDirection: flexDirection, alignItems: 'center', marginBottom: 20, gap: gap },
+    profileSection: { transform: [{ scale: scale }], flexDirection: flexDirection, alignItems: 'center', justifyContent: 'center', alignSelf: 'center', marginBottom: 20, gap: gap, backgroundColor: 'transparent' },
     profileImage: { width: 75, height: 75, borderRadius: 40, marginRight: 15 },
     profileName: { fontSize: 17, fontWeight: 'bold', color: theme.text },
     username: { fontSize: 13, color: 'gray' },

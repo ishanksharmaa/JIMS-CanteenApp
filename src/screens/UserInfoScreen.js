@@ -1,4 +1,11 @@
 import React, { useState, useEffect } from "react";
+import {
+    KeyboardAvoidingView,
+    ScrollView,
+    Platform,
+    TouchableWithoutFeedback,
+    Keyboard,
+} from "react-native";
 import { useUser } from "../components/UserContext";
 import {
     View,
@@ -7,6 +14,7 @@ import {
     TouchableOpacity,
     Image,
     StyleSheet,
+    Keyboard as RNKeyboard,
 } from "react-native";
 // import { Ionicons } from "@expo/vector-icons";
 import { useTheme } from "../components/ThemeContext";
@@ -32,15 +40,29 @@ const UserInfoScreen = ({ navigation }) => {
     const [dob, setDob] = useState("");
     const [location, setLocation] = useState("");
     const [image, setImage] = useState(null);
+    const [isKeyboardVisible, setKeyboardVisible] = useState(false);
 
     useEffect(() => {
         if (userEmail) {
             fetchData();
         }
-        else{
+        else {
             alert("data not fetched!")
             return;
         }
+
+        const keyboardDidShowListener = RNKeyboard.addListener("keyboardDidShow", () => {
+            setKeyboardVisible(true);
+        });
+
+        const keyboardDidHideListener = RNKeyboard.addListener("keyboardDidHide", () => {
+            setKeyboardVisible(false);
+        });
+
+        return () => {
+            keyboardDidShowListener.remove();
+            keyboardDidHideListener.remove();
+        };
     }, [userEmail]);
 
 
@@ -108,7 +130,14 @@ const UserInfoScreen = ({ navigation }) => {
                     });
 
                     alert("Profile updated!");
-                    navigation.goBack();
+                    // navigation.replace("Settings"); // for fast info update in settings but double back to go Home
+
+                    navigation.reset({
+                        index: 1,
+                        routes: [{ name: "Home" }, { name: "Settings" }],
+                    });
+
+
                 } else {
                     alert("User not found!");
                 }
@@ -132,29 +161,39 @@ const UserInfoScreen = ({ navigation }) => {
     };
 
 
-
-
     return (
-        <View style={styles.container}>
-            <TouchableOpacity
-                style={styles.closeButton}
-                onPress={() => navigation.goBack()}
-            >
-                <Ionicons name="close" size={30} color={theme.text} />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={pickImage} activeOpacity={0.85} style={styles.imageContainer}>
-                <Image source={image ? { uri: image } : require("../../assets/banana_cat.jpg")} style={styles.profileImage} />
-                <Ionicons name="create-outline" size={30} color={theme.primaryColor} style={styles.editIcon} />
-            </TouchableOpacity>
-            <TextInput placeholder="Username" value={username} onChangeText={setUsername} style={styles.input} placeholderTextColor={theme.text} />
-            <TextInput placeholder="Email" value={email} onChangeText={setEmail} style={styles.input} placeholderTextColor={theme.text} />
-            <TextInput placeholder="Name (Optional)" value={name} onChangeText={setName} style={styles.input} placeholderTextColor={theme.text} />
-            <TextInput placeholder="Date of Birth*" value={dob} onChangeText={setDob} style={styles.input} placeholderTextColor={theme.text} />
-            <TextInput placeholder="Location in College" value={location} onChangeText={setLocation} style={styles.input} placeholderTextColor={theme.text} />
-            <TouchableOpacity style={styles.saveButton} onPress={() => saveData(userEmail)}>
-                <Text style={styles.saveButtonText}>Save</Text>
-            </TouchableOpacity>
-        </View>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+            <View style={styles.container}>
+
+                <View style={styles.header}>
+                    <TouchableOpacity
+                        style={styles.closeButton}
+                        onPress={() => navigation.goBack()}
+                    >
+                        <Ionicons name="close" size={30} color={theme.text} />
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.saveButton} onPress={() => saveData(userEmail)}>
+                        <Text style={styles.saveButtonText}>Save</Text>
+                    </TouchableOpacity>
+                </View>
+
+                {!isKeyboardVisible && (
+                    <TouchableOpacity onPress={pickImage} activeOpacity={0.85} style={styles.imageContainer}>
+                        <Image source={image ? { uri: image } : require("../../assets/banana_cat.jpg")} style={styles.profileImage} />
+                        <Ionicons name="create-outline" size={30} color={theme.primaryColor} style={styles.editIcon} />
+                    </TouchableOpacity>
+                )}
+
+                <View style={styles.inputContainer}>
+                    <TextInput placeholder="Username" value={username} onChangeText={setUsername} style={styles.input} placeholderTextColor={theme.text} />
+                    <TextInput placeholder="Email" value={email} onChangeText={setEmail} style={[styles.input, { color: 'grey', opacity: 1 }]} placeholderTextColor={theme.text} editable={false} />
+                    <TextInput placeholder="Name (Optional)" value={name} onChangeText={setName} style={styles.input} placeholderTextColor={theme.text} />
+                    <TextInput placeholder="Date of Birth*" value={dob} onChangeText={setDob} style={styles.input} placeholderTextColor={theme.text} />
+                    <TextInput placeholder="Location in College" value={location} onChangeText={setLocation} style={styles.input} placeholderTextColor={theme.text} />
+                </View>
+            </View>
+        </TouchableWithoutFeedback>
+
     );
 };
 
@@ -165,18 +204,39 @@ const dynamicTheme = (theme) => ({
         alignItems: "center",
         backgroundColor: theme.background,
     },
+
+
+    header: { marginTop: 30, marginBottom: 40, paddingHorizontal: 4, backgroundColor: 'transparent', width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', },
     closeButton: {
-        position: "absolute",
-        top: 50,
-        left: 30,
+        // position: "absolute",
+        // top: 50,
+        // left: 30,
     },
+    saveButton: {
+        // marginTop: 20,
+        // position: 'absolute',
+        // top: 40,
+        // right: 22,
+        backgroundColor: theme.primaryColor,
+        padding: 10,
+        borderRadius: 30,
+        width: "24%",
+        alignItems: "center",
+    },
+    saveButtonText: {
+        color: "white",
+        fontSize: 14,
+        fontWeight: "bold",
+    },
+
+
     imageContainer: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
         // backgroundColor:'red',
         // width:'100%',
-        marginTop: 80,
+        marginTop: 0,
         padding: 30,
         marginBottom: 20,
     },
@@ -197,23 +257,11 @@ const dynamicTheme = (theme) => ({
         borderRadius: 12,
         padding: 2,
     },
-    input: { borderWidth: 1.2, borderColor: theme.primaryColor, borderRadius: 8, paddingVertical: 16, paddingLeft: 18, marginVertical: 10, fontSize: 16, color: theme.text, width: '90%' },
-    saveButton: {
-        // marginTop: 20,
-        position: 'absolute',
-        top: 40,
-        right: 22,
-        backgroundColor: theme.primaryColor,
-        padding: 10,
-        borderRadius: 30,
-        width: "24%",
-        alignItems: "center",
-    },
-    saveButtonText: {
-        color: "white",
-        fontSize: 14,
-        fontWeight: "bold",
-    },
+
+
+    inputContainer: { width: '100%', alignSelf: 'center', backgroundColor: 'transparent', justifyContent: 'center', alignItems: 'center', },
+    input: { borderWidth: 1.2, borderColor: theme.primaryColor, borderRadius: 8, paddingVertical: 16, paddingLeft: 18, marginVertical: 10, fontSize: 16, color: theme.text, width: '85%' },
+
 });
 
 export default UserInfoScreen;

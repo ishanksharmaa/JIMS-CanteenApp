@@ -27,36 +27,18 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { useTheme } from "../components/ThemeContext";
 import ProductCard from '../components/ProductCard';
 
-const fetchData = async (setProductItems, setName, setLocation) => {
+const fetchProducts = async (setProductItems) => {
     try {
-        const auth = getAuth();
-        const user = auth.currentUser;
-        let userData = { name: "Guest", location: "location" }; // Default values
-        
+
         const productPromise = firestore().collection("Products").get(); // Fetching products
         let productItems = [];
-
-        if (user) {
-            const userSnapshot = await firestore()
-            .collection("Users")
-            .where("email", "==", user.email)
-            .get();
-            
-            if (!userSnapshot.empty) {
-                userData = userSnapshot.docs[0].data();
-            }
-        }
 
         const productSnapshot = await productPromise; // Awaiting the product data
         productSnapshot.forEach(doc => {
             productItems.push({ id: doc.id, ...doc.data() });
         });
 
-        // Setting the data
-        setName(userData.name);
-        setLocation(userData.location);
         setProductItems(productItems);
-
     } catch (error) {
         console.error("Error fetching data:", error);
     }
@@ -88,34 +70,29 @@ const showToast = (productName, msg) => {
 };
 
 const HomeScreen = () => {
-    const [name, setName] = useState("");
-    const [location, setLocation] = useState("");
     const [text, setText] = useState('');
     const [productItems, setProductItems] = useState([]);
     const navigation = useNavigation();
     const { theme, toggleTheme } = useTheme();
     const styles = dynamicTheme(theme);
     const { isMemeCatsEnabled } = useMemeCat();
-    const { setUserEmail } = useUser();
+    const { userEmail, setUserEmail, username, setUsername, name, setName, dob, setDob, location, setLocation } = useUser();
 
     useFocusEffect(
         useCallback(() => {
-            fetchData(setProductItems, setName, setLocation);
+            fetchProducts(setProductItems);
 
-            // const auth = getAuth();
-            // onAuthStateChanged(auth, (user) => {
+            // const unsubscribe = auth().onAuthStateChanged((user) => {
             //     if (user) {
-            //         setUserEmail(user.email);  // User email global state me save ho jayega
+            //         setUserEmail(user.email);  // saved at global state (passed to UserContext.js)
+            //         setUsername(user.username || "User");
+            //         setName(user.name || "Guest");
+            //         setDob(user.dob);
+            //         setLocation(user.location || "location");
             //     }
             // });
 
-            const unsubscribe = auth().onAuthStateChanged((user) => {
-                if (user) {
-                    setUserEmail(user.email);  // User email global state me save ho jayega
-                }
-            });
-
-            return () => unsubscribe(); // Cleanup function to avoid memory leaks
+            // return () => unsubscribe(); // Cleanup function to avoid memory leaks
         }, [])
     );
 
