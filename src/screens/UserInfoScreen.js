@@ -77,11 +77,11 @@ const UserInfoScreen = ({ navigation }) => {
             if (!snapshot.empty) {
                 const userDoc = snapshot.docs[0];
                 const data = userDoc.data();
-                setUsername(data.username || "");
-                setEmail(data.email || "");
-                setName(data.name || "");
-                setDob(data.dob || "");
-                setLocation(data.location || "");
+                setUsername(data.username || "username");
+                setEmail(data.email || "example@email.com");
+                setName(data.name || "Your Name");
+                setDob(data.dob || "DD/MM/YYYY");
+                setLocation(data.location || "location");
                 setImage(data.profilePic || null);
             } else {
                 console.log("User not found in Firestore");
@@ -185,7 +185,7 @@ const UserInfoScreen = ({ navigation }) => {
                 )}
 
                 <View style={styles.inputContainer}>
-                    <TextInput placeholder="Username" value={username} onChangeText={setUsername} style={styles.input} placeholderTextColor={theme.text} />
+                    <TextInput placeholder="Username" value={username} onChangeText={setUsername} style={[styles.input, {textTransform: 'lowercase'}]} placeholderTextColor={theme.text} />
                     <TextInput placeholder="Email" value={email} onChangeText={setEmail} style={[styles.input, { color: 'grey', opacity: 1 }]} placeholderTextColor={theme.text} editable={false} />
                     <TextInput placeholder="Name (Optional)" value={name} onChangeText={setName} style={styles.input} placeholderTextColor={theme.text} />
                     <TextInput placeholder="Date of Birth*" value={dob} onChangeText={setDob} style={styles.input} placeholderTextColor={theme.text} />

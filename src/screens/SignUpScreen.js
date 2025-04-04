@@ -5,6 +5,7 @@ import HandleBar from "../components/HandleBar";
 import ThemeToggle from "../components/ThemeToggle";
 import { useTheme } from "../components/ThemeContext";
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import firestore from '@react-native-firebase/firestore';
 // import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Firebase Auth Import
@@ -46,39 +47,38 @@ const SignUpScreen = ({ navigation }) => {
 
     const handleSignUp = async () => {
         setErrorMessage("");
-        // Email format validation using regex
-        // const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-
         if (!email || !password || !confirmPassword) {
             setErrorMessage("All fields are required!");
         }
-        // else if (!emailRegex.test(email)) {
-        //     setErrorMessage("Invalid email format.");
-        // }
         else {
             const proceed = checkPasswordValidation(password, confirmPassword);
             if (proceed) {
                 Keyboard.dismiss();
-
-                // gotoUsernameScreen()
-
-                // try {
-                //     // await auth().createUserWithEmailAndPassword(email, password);
-                //     const verified = await sendEmailVerification(email);
-                // } catch (error) {
-                //     if (error.code === "auth/email-already-in-use") {
-                //         setErrorMessage("Email already in use!");
-                //     } else {
-                //         setErrorMessage("Error signing up. Try again!");
-                //     }
-                // }
-
-                // if (verified) {
-
+    
+                // Sign up user with Firebase Authentication
                 auth()
                     .createUserWithEmailAndPassword(email, password)
-                    .then(() => {
-                        // Successful Sign-Up
+                    .then(async (userCredential) => {
+                        // Successfully signed up
+                        const userId = userCredential.user.uid;
+    
+                        // Generate custom ID for the user, e.g., users-1, users-2, etc.
+                        const userRef = firestore().collection('Users');
+    
+                        // Get the total count of users to generate the next ID
+                        const userSnapshot = await userRef.get();
+                        const userCount = userSnapshot.size + 1;  // Increment for the next ID
+    
+                        const newUserId = `user-${userCount}`;
+    
+                        // Create a document with the generated user ID
+                        await userRef.doc(newUserId).set({
+                            email: email,
+                            username: username, // Assuming you want to add the username as well
+                            createdAt: firestore.FieldValue.serverTimestamp(),
+                        });
+    
+                        // Navigate to Home after successful sign-up
                         navigation.replace("Home");
                     })
                     .catch((error) => {
@@ -88,13 +88,13 @@ const SignUpScreen = ({ navigation }) => {
                         } else if (error.code === 'auth/invalid-email') {
                             setErrorMessage("Invalid email format!");
                         } else {
-                            setErrorMessage("Password must be atleast 6 character(s) long");
+                            setErrorMessage("Error signing up. Try again!");
                         }
                     });
             }
         }
-    }
-
+    };
+    
 
     // const sendEmailVerification = async (email) => {
     //     const actionCodeSettings = {

@@ -34,7 +34,7 @@ export const ProfileSection = ({ flexDirection, gap, scale }) => {
             />
             <View>
                 <Text style={styles.profileName}>{name}</Text>
-                <Text style={styles.username}>@{username}</Text>
+                <Text style={styles.username}>@{username.toLowerCase()}</Text>
                 {/* <Text style={styles.username}>@{dob}</Text> */}
                 <Text style={styles.roomText}>{location}</Text>
             </View>
