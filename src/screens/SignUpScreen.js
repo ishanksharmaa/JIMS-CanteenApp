@@ -10,6 +10,7 @@ import firestore from '@react-native-firebase/firestore';
 
 // Firebase Auth Import
 import auth from '@react-native-firebase/auth';
+import UserInfoScreen from "./UserInfoScreen";
 
 const SignUpScreen = ({ navigation }) => {
     const { theme } = useTheme();
@@ -26,6 +27,7 @@ const SignUpScreen = ({ navigation }) => {
     const [isPasswordValid, setIsPasswordValid] = useState(null);
     const [isOTPSent, setIsOTPSent] = useState(false);
     const [generatedOtp, setGeneratedOtp] = useState(null);
+    // const isUserFresh = true;
 
     useEffect(() => {
         const keyboardShowListener = Keyboard.addListener("keyboardDidShow", () => setKeyboardVisible(true));
@@ -54,32 +56,32 @@ const SignUpScreen = ({ navigation }) => {
             const proceed = checkPasswordValidation(password, confirmPassword);
             if (proceed) {
                 Keyboard.dismiss();
-    
+
                 // Sign up user with Firebase Authentication
                 auth()
                     .createUserWithEmailAndPassword(email, password)
                     .then(async (userCredential) => {
                         // Successfully signed up
                         const userId = userCredential.user.uid;
-    
+
                         // Generate custom ID for the user, e.g., users-1, users-2, etc.
                         const userRef = firestore().collection('Users');
-    
+
                         // Get the total count of users to generate the next ID
                         const userSnapshot = await userRef.get();
                         const userCount = userSnapshot.size + 1;  // Increment for the next ID
-    
+
                         const newUserId = `user-${userCount}`;
-    
+
                         // Create a document with the generated user ID
                         await userRef.doc(newUserId).set({
                             email: email,
                             username: username, // Assuming you want to add the username as well
                             createdAt: firestore.FieldValue.serverTimestamp(),
                         });
-    
+
                         // Navigate to Home after successful sign-up
-                        navigation.replace("Home");
+                        navigation.replace("UserInfo", { isUserFresh: true });
                     })
                     .catch((error) => {
                         // Handle errors here
@@ -94,7 +96,7 @@ const SignUpScreen = ({ navigation }) => {
             }
         }
     };
-    
+
 
     // const sendEmailVerification = async (email) => {
     //     const actionCodeSettings = {
@@ -216,7 +218,7 @@ const SignUpScreen = ({ navigation }) => {
                             <Text style={{ textAlign: 'center', marginVertical: 20, color: theme.text }}>Already have an account?</Text>
                         </TouchableOpacity>
                         <Text style={{ textAlign: 'center', marginVertical: 20, color: theme.text }}>____________  or  ____________</Text>
-                        <CustomButton btnColor={theme.customGoogleButtonBg} textColor={theme.customGoogleButtonText} title="Continue with Google" onPress={gotoUsernameScreen} />
+                        <CustomButton btnColor={theme.customGoogleButtonBg} textColor={theme.customGoogleButtonText} title="Continue with Google" onPress={() => navigation.navigate("UserInfo", { isUserFresh: true })} />
                     </View>
                 </View>
             </View>

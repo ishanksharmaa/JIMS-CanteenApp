@@ -33,10 +33,10 @@ export const ProfileSection = ({ flexDirection, gap, scale }) => {
                 style={styles.profileImage}
             />
             <View>
-                <Text style={styles.profileName}>{name}</Text>
-                <Text style={styles.username}>@{username.toLowerCase()}</Text>
+                <Text style={styles.profileName}>{name || "Your name"}</Text>
+                <Text style={styles.username}>@{username.toLowerCase() || "username"}</Text>
                 {/* <Text style={styles.username}>@{dob}</Text> */}
-                <Text style={styles.roomText}>{location}</Text>
+                <Text style={styles.roomText}>{location || "~location"}</Text>
             </View>
         </View>
     );

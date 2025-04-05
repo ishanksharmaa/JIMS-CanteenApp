@@ -26,6 +26,7 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { getFirestore, collection, doc, setDoc, getDoc, getDocs, updateDoc, query, where } from "firebase/firestore";
 
 const UserInfoScreen = ({ navigation }) => {
+    // const { isUserFresh } = route.params || {};
     const { userEmail } = useUser();
     const { theme } = useTheme();
     const styles = dynamicTheme(theme);
@@ -40,6 +41,7 @@ const UserInfoScreen = ({ navigation }) => {
     const [dob, setDob] = useState("");
     const [location, setLocation] = useState("");
     const [image, setImage] = useState(null);
+    const [errorMessage, setErrorMessage] = useState("");
     const [isKeyboardVisible, setKeyboardVisible] = useState(false);
 
     useEffect(() => {
@@ -77,14 +79,14 @@ const UserInfoScreen = ({ navigation }) => {
             if (!snapshot.empty) {
                 const userDoc = snapshot.docs[0];
                 const data = userDoc.data();
-                setUsername(data.username || "username");
-                setEmail(data.email || "example@email.com");
-                setName(data.name || "Your Name");
-                setDob(data.dob || "DD/MM/YYYY");
-                setLocation(data.location || "location");
+                setUsername(data.username || "");
+                setEmail(data.email || "");
+                setName(data.name || "");
+                setDob(data.dob || "");
+                setLocation(data.location || "");
                 setImage(data.profilePic || null);
             } else {
-                console.log("User not found in Firestore");
+                console.log("User not found in Database!");
             }
         } catch (error) {
             console.error("Error fetching data:", error);
@@ -93,10 +95,10 @@ const UserInfoScreen = ({ navigation }) => {
 
 
     const saveData = async (email) => {
-        if (!username || !dob || !location) {
-            alert("Username, DOB, and Location are required!");
-            return;
-        }
+        // if (!username || !dob || !location) {
+        //     alert("Username, DOB, and Location are required!");
+        //     return;
+        // }
 
         const db = getFirestore();
         // const auth = getAuth();
@@ -151,6 +153,26 @@ const UserInfoScreen = ({ navigation }) => {
         }
     };
 
+    const usernameValidation = (input) => {
+        let cleanedInput = input.toLowerCase().replace(/[^a-z0-9_.]/g, ""); // only valid chars
+
+        // Limit max 3 consecutive dots or underscores
+        cleanedInput = cleanedInput.replace(/(\.{4,})/g, "..."); // more than 3 dots -> ...
+        cleanedInput = cleanedInput.replace(/(_{4,})/g, "___");  // more than 3 underscores -> ___
+
+        setUsername(cleanedInput);
+
+        const usernameRegex = /^(?=[a-z0-9_.]{3,16}$)[a-z0-9_]+[a-z0-9_.]*$/;
+
+        if (!usernameRegex.test(cleanedInput)) {
+            setErrorMessage("Username can contain letters, numbers, (.) and (_)\nMax 3 (.) or (_) in a row, 3-16 chars long");
+        } else {
+            setErrorMessage("");
+        }
+    };
+
+
+
 
     const pickImage = () => {
         launchImageLibrary({ mediaType: "photo", quality: 1 }, (response) => {
@@ -184,12 +206,13 @@ const UserInfoScreen = ({ navigation }) => {
                     </TouchableOpacity>
                 )}
 
+
                 <View style={styles.inputContainer}>
-                    <TextInput placeholder="Username" value={username} onChangeText={setUsername} style={[styles.input, {textTransform: 'lowercase'}]} placeholderTextColor={theme.text} />
-                    <TextInput placeholder="Email" value={email} onChangeText={setEmail} style={[styles.input, { color: 'grey', opacity: 1 }]} placeholderTextColor={theme.text} editable={false} />
-                    <TextInput placeholder="Name (Optional)" value={name} onChangeText={setName} style={styles.input} placeholderTextColor={theme.text} />
-                    <TextInput placeholder="Date of Birth*" value={dob} onChangeText={setDob} style={styles.input} placeholderTextColor={theme.text} />
-                    <TextInput placeholder="Location in College" value={location} onChangeText={setLocation} style={styles.input} placeholderTextColor={theme.text} />
+                    <TextInput placeholder="Username" value={username} onChangeText={usernameValidation} style={[styles.inputStyle, { textTransform: 'lowercase' }]} placeholderTextColor={theme.text} />
+                    <TextInput placeholder="Email" value={email} onChangeText={setEmail} style={[styles.inputStyle, { color: 'grey', opacity: 1 }]} placeholderTextColor={theme.text} editable={false} />
+                    <TextInput placeholder="Name (Optional)" value={name} onChangeText={setName} style={styles.inputStyle} placeholderTextColor={theme.text} />
+                    <TextInput placeholder="Date of Birth*" value={dob} onChangeText={setDob} style={styles.inputStyle} placeholderTextColor={theme.text} />
+                    <TextInput placeholder="Location in College" value={location} onChangeText={setLocation} style={styles.inputStyle} placeholderTextColor={theme.text} />
                 </View>
             </View>
         </TouchableWithoutFeedback>
@@ -246,7 +269,7 @@ const dynamicTheme = (theme) => ({
         borderRadius: 50,
         borderWidth: 1,
         borderColor: theme.primaryColor,
-        transform: [{ scale: 1.6 }]
+        transform: [{ scale: 1.4 }]
     },
     editIcon: {
         position: "absolute",
@@ -261,6 +284,18 @@ const dynamicTheme = (theme) => ({
 
     inputContainer: { width: '100%', alignSelf: 'center', backgroundColor: 'transparent', justifyContent: 'center', alignItems: 'center', },
     input: { borderWidth: 1.2, borderColor: theme.primaryColor, borderRadius: 8, paddingVertical: 16, paddingLeft: 18, marginVertical: 10, fontSize: 16, color: theme.text, width: '85%' },
+
+    inputStyle: {
+        backgroundColor: theme.loginInput,
+        color: theme.text,
+        borderRadius: 12,
+        paddingHorizontal: 22,
+        height: 60,
+        width: "80%",
+        textAlignVertical: "center",
+        marginVertical: 17,
+        // alignSelf: 'center',
+    },
 
 });
 

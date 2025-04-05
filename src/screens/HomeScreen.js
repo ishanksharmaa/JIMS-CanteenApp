@@ -121,8 +121,8 @@ const HomeScreen = () => {
 
 
                     <View>
-                        <Text style={styles.profileName}>{name}</Text>
-                        <Text style={{ fontSize: 12, color: theme.text }}>{location}</Text>
+                        <Text style={styles.profileName}>{name || "Your Name"}</Text>
+                        <Text style={{ fontSize: 12, color: theme.text }}>{location || "location"}</Text>
                     </View>
                 </View>
 

@@ -13,6 +13,8 @@ const UsernameScreen = ({ navigation }) => {
 
     const [username, setUsername] = useState("");
     const [name, setName] = useState("");
+    const [dob, setDob] = useState("");
+    const [location, setLocation] = useState("");
     const [errorMessage, setErrorMessage] = useState(""); // ✅ Error message state
     const route = useRoute();
 
@@ -71,9 +73,21 @@ const UsernameScreen = ({ navigation }) => {
                 style={styles.inputStyle}
             />
             <TextInput
-                placeholder="Name (Optional)"
+                placeholder="Name"
                 value={name}
                 onChangeText={setName}
+                style={styles.inputStyle}
+            />
+            <TextInput
+                placeholder="Date of Birth: DD/MM/YYYY"
+                value={dob}
+                onChangeText={setDob}
+                style={styles.inputStyle}
+            />
+            <TextInput
+                placeholder="Location in college"
+                value={location}
+                onChangeText={setLocation}
                 style={styles.inputStyle}
             />
 

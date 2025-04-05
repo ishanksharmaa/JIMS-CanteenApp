@@ -19,6 +19,7 @@ const SettingsScreen = () => {
     const navigation = useNavigation();
     const isDarkMode = theme.mode === "dark";
     const [isLoggedIn, setIsLoggedIn] = useState(false);
+    // const isUserFresh = false;
     // const isDarkMode = true;
     const auth = getAuth();
 
@@ -39,7 +40,7 @@ const SettingsScreen = () => {
                             await signOut(auth);
                             // Alert.alert("Logged Out", "You have been logged out!");
                             setIsLoggedIn(false);
-                            navigation.replace("Login");  
+                            navigation.replace("Login");
                         } catch (error) {
                             console.log("Error signing out:", error);
                             Alert.alert("Error", error.message);
@@ -50,7 +51,7 @@ const SettingsScreen = () => {
             ]
         );
     };
-    
+
 
     useFocusEffect(
         useCallback(() => {
