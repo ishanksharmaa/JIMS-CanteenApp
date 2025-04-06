@@ -11,11 +11,10 @@ export const UserProvider = ({ children }) => {
     const [dob, setDob] = useState("");
     const [location, setLocation] = useState("");
 
-    // ✅ Ek function jo context ko refresh karega
-    const refreshUser = () => {
-        auth().onAuthStateChanged((user) => {
+    useEffect(() => {
+        const unsubscribe = auth().onAuthStateChanged((user) => {
             if (user) {
-                setUserEmail(user.email || "example@email.com"); // Email set ho raha hai
+                setUserEmail(user.email || null); // Email set ho raha hai
                 
                 fetchData(user.email); // ✅ Auto fetch
             } else {
@@ -26,10 +25,8 @@ export const UserProvider = ({ children }) => {
                 setLocation("");
             }
         });
-    };
 
-    useEffect(() => {
-        refreshUser(); // ✅ Pehli baar call hoga
+        return ()=> unsubscribe();
     }, []);
 
     // 🛠️ Firestore se user data fetch karne ka function
@@ -64,7 +61,7 @@ export const UserProvider = ({ children }) => {
             name,
             dob,
             location,
-            refreshUser, // ✅ Isko kahin bhi call karo, pura data reload ho jayega
+            // refreshUser, // ✅ Isko kahin bhi call karo, pura data reload ho jayega
         }}>
             {children}
         </UserContext.Provider>
@@ -74,6 +71,6 @@ export const UserProvider = ({ children }) => {
 // ✅ Kahin bhi import karke bas `useUser()` likho, khud fetch hoga!
 export const useUser = () => {
     const context = useContext(UserContext);
-    context.refreshUser(); // ✅ Ye likhne se har jagah auto-fetch hoga
+    // context.refreshUser(); // ✅ Ye likhne se har jagah auto-fetch hoga
     return context;
 };

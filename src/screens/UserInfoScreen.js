@@ -20,13 +20,15 @@ import {
 import { useTheme } from "../components/ThemeContext";
 import { launchImageLibrary } from "react-native-image-picker";
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { useRoute } from '@react-navigation/native';
 // import DateTimePicker from '@react-native-community/datetimepicker';
 
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { getFirestore, collection, doc, setDoc, getDoc, getDocs, updateDoc, query, where } from "firebase/firestore";
 
 const UserInfoScreen = ({ navigation }) => {
-    // const { isUserFresh } = route.params || {};
+    const route = useRoute();
+    const { isUserFresh } = route.params || {};
     const { userEmail } = useUser();
     const { theme } = useTheme();
     const styles = dynamicTheme(theme);
@@ -199,7 +201,7 @@ const UserInfoScreen = ({ navigation }) => {
                     </TouchableOpacity>
                 </View>
 
-                {!isKeyboardVisible && (
+                {(!isKeyboardVisible && !isUserFresh) && (
                     <TouchableOpacity onPress={pickImage} activeOpacity={0.85} style={styles.imageContainer}>
                         <Image source={image ? { uri: image } : require("../../assets/banana_cat.jpg")} style={styles.profileImage} />
                         <Ionicons name="create-outline" size={30} color={theme.primaryColor} style={styles.editIcon} />

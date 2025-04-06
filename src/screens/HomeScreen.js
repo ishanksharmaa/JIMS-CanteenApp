@@ -76,7 +76,7 @@ const HomeScreen = () => {
     const { theme, toggleTheme } = useTheme();
     const styles = dynamicTheme(theme);
     const { isMemeCatsEnabled } = useMemeCat();
-    const { userEmail, setUserEmail, username, setUsername, name, setName, dob, setDob, location, setLocation } = useUser();
+    const { userEmail, setUserEmail, username, setUsername, name, setName, dob, setDob, location, setLocation, user } = useUser();
 
     useFocusEffect(
         useCallback(() => {
@@ -120,10 +120,10 @@ const HomeScreen = () => {
                     </TouchableOpacity>
 
 
-                    <View>
-                        <Text style={styles.profileName}>{name || "Your Name"}</Text>
-                        <Text style={{ fontSize: 12, color: theme.text }}>{location || "location"}</Text>
-                    </View>
+                    <TouchableOpacity style={styles.nameContainer} onPress={() => { if (!user) navigation.navigate("Login") }} activeOpacity={0.5}>
+                        <Text style={styles.profileName}>{user ? name || "Your Name" : "Sign In"}</Text>
+                        <Text style={{ fontSize: 12, color: theme.text }}>{user ? location || "location" : "or Register"}</Text>
+                    </TouchableOpacity>
                 </View>
 
                 {/* Header Icons */}
@@ -207,6 +207,7 @@ const dynamicTheme = (theme) => ({
         fontWeight: '500',
         color: theme.text,
     },
+    nameContainer: {},
     headerIcons: {
         backgroundColor: '',
         flexDirection: 'row', // Arrange icons horizontally in the header

@@ -7,13 +7,15 @@ import { Section, SettingItem } from "../components/SettingsItem";
 import { ProfileSection } from "./ProfileScreen";
 import { useUser } from "../components/UserContext";
 import FontAwesome6Icon from "react-native-vector-icons/FontAwesome6";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 // Firebase Auth used as an Instance (MO CHANGES!!)
-import { getAuth, signOut } from 'firebase/auth';
-// import auth from '@react-native-firebase/auth';
+// import { getAuth, signOut } from 'firebase/auth';
+import auth from '@react-native-firebase/auth';
 
 const SettingsScreen = () => {
-    // const { userEmail, name, username, dob, location } = useUser();
+    const { user, userEmail, name, username, dob, location, refreshUser } = useUser();
     const { theme } = useTheme();
     const styles = dynamicTheme(theme);
     const navigation = useNavigation();
@@ -21,9 +23,14 @@ const SettingsScreen = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     // const isUserFresh = false;
     // const isDarkMode = true;
-    const auth = getAuth();
+    // const auth = getAuth();
 
     const handleLogout = () => {
+        if (!user) {
+            navigation.navigate("Login");
+            return;
+        }
+
         Alert.alert(
             "Confirm Logout",
             "Are you sure you want to logout?",
@@ -37,8 +44,10 @@ const SettingsScreen = () => {
                     onPress: async () => {
                         try {
                             console.log("Attempting to sign out...");
-                            await signOut(auth);
-                            // Alert.alert("Logged Out", "You have been logged out!");
+                            await auth().signOut();
+                            await AsyncStorage.clear();
+                            // refreshUser();
+                            // setUser(null);
                             setIsLoggedIn(false);
                             navigation.replace("Login");
                         } catch (error) {
@@ -68,7 +77,7 @@ const SettingsScreen = () => {
                     <Ionicons name={isDarkMode ? "chevron-back-outline" : "chevron-back"} size={24} color={theme.text} />
                 </TouchableOpacity>
                 <Text style={styles.title}>Settings</Text>
-                <TouchableOpacity activeOpacity={0.8} style={styles.editIcon} onPress={() => navigation.navigate("UserInfo")}>
+                <TouchableOpacity activeOpacity={0.8} style={styles.editIcon} onPress={() => navigation.navigate("UserInfo", { isUserFresh: false })}>
                     {/* <Text style={{ fontSize: 17, color: theme.primaryColor, fontWeight: '500'}}>Edit</Text> */}
                     <FontAwesome6Icon name="pen-to-square" size={21} color={theme.primaryColor} />
                 </TouchableOpacity>
@@ -85,7 +94,7 @@ const SettingsScreen = () => {
                 </Section>
 
                 <Section title="Account">
-                    <SettingItem icon={isDarkMode ? "person-circle-outline" : "person-circle"} label="Edit Profile" onPress={() => navigation.navigate("UserInfo")} />
+                    <SettingItem icon={isDarkMode ? "person-circle-outline" : "person-circle"} label="Edit Profile" onPress={() => navigation.navigate("UserInfo", { isUserFresh: false })} />
                     <SettingItem icon={isDarkMode ? "lock-closed-outline" : "lock-closed"} label="Privacy & Security" isLast />
                 </Section>
 
@@ -95,8 +104,9 @@ const SettingsScreen = () => {
                     <SettingItem icon={isDarkMode ? "information-circle-outline" : "information-circle"} label="About" isLast />
                 </Section>
 
-                <Section title="LogOut">
-                    <SettingItem icon={isDarkMode ? "exit-outline" : "exit"} label="LogOut" onPress={handleLogout} isLast />
+                <Section title="Exit">
+                    {/* <SettingItem icon={isDarkMode ? "exit-outline" : "add"} label="Create account" onPress={null} /> */}
+                    <SettingItem icon={isDarkMode ? "exit-outline" : "exit"} label={user ? "LogOut" : "Login"} onPress={handleLogout} isLast />
                 </Section>
             </ScrollView>
         </View>
