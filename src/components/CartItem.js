@@ -6,14 +6,14 @@ import { useCart } from "./CartContext";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
-const CartItem = ({ image, title, price }) => {
+const CartItem = ({ id, image, title, price }) => {
   const { theme } = useTheme();
   const styles = dynamicTheme(theme);
   const { removeFromCart } = useCart();
   const [count, setCount] = useState(1); // Default count 1
 
   const renderRightActions = () => (
-    <TouchableOpacity style={styles.deleteBtn} onPress={() => removeFromCart(title)}>
+    <TouchableOpacity style={styles.deleteBtn} onPress={() => removeFromCart(id, title)}>
       <Text style={styles.actionText}>Remove</Text>
     </TouchableOpacity>
   );

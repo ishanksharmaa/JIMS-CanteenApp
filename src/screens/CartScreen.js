@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useCallback } from "react";
 import { Text, View, FlatList, TouchableOpacity } from "react-native";
 import CartItem from "../components/CartItem";
 import { useCart } from "../components/CartContext";  // ✅ Context se Data Fetch karenge
@@ -7,10 +7,12 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import BackBtn from "../components/BackBtn";
 import CustomButton from "../components/CustomButton";
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import { useUser } from "../components/UserContext";
+import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
 export const HeaderBackIcon = ({ title }) => {
-    const { cartItems } = useCart();  // ✅ Cart Items Receive
+    // const { cartItems } = useCart();  // ✅ Cart Items Receive
     const { theme } = useTheme();
     const styles = dynamicTheme(theme);
 
@@ -26,6 +28,26 @@ const CartScreen = () => {
     const { cartItems } = useCart();  // ✅ Cart Items Receive
     const { theme } = useTheme();
     const styles = dynamicTheme(theme);
+    const { userEmail, setUserEmail, username, setUsername, name, setName, dob, setDob, location, setLocation, refreshUser, user, addedToCart } = useUser();
+
+    useFocusEffect(
+        useCallback(() => {
+            refreshUser();
+            // fetchProducts(setProductItems);
+
+            // const unsubscribe = auth().onAuthStateChanged((user) => {
+            //     if (user) {
+            //         setUserEmail(user.email);  // saved at global state (passed to UserContext.js)
+            //         setUsername(user.username || "User");
+            //         setName(user.name || "Guest");
+            //         setDob(user.dob);
+            //         setLocation(user.location || "location");
+            //     }
+            // });
+
+            // return () => unsubscribe(); // Cleanup function to avoid memory leaks
+        }, [])
+    );
 
     return (
         <View style={styles.container}>
@@ -42,6 +64,7 @@ const CartScreen = () => {
                     keyExtractor={(item, index) => index.toString()}
                     renderItem={({ item }) =>
                         <CartItem
+                            id={item.id}
                             image={item.image}
                             title={item.title}
                             price={item.price}

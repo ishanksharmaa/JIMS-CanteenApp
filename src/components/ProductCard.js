@@ -1,24 +1,28 @@
 import React from "react";
 import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 import FontAwesome from 'react-native-vector-icons/FontAwesome6';
-import { useNavigation } from "@react-navigation/native"; 
+import { useNavigation } from "@react-navigation/native";
 import { useTheme } from "./ThemeContext";
 import { useCart } from "./CartContext";
+import { useUser } from "../components/UserContext";
 
 const ProductCard = ({ image, title, price, descr, onAddtoCart }) => {
-  const navigation = useNavigation(); 
-  const {theme} = useTheme();
+  const navigation = useNavigation();
+  const { theme } = useTheme();
   const styles = dynamicTheme(theme);
   const { addToCart } = useCart();
+  const { userEmail, setUserEmail, username, setUsername, name, setName, dob, setDob, location, setLocation, refreshUser, user, addedToCart } = useUser();
 
   const handleAddtoCart = () => {
+    const product = { image, title, price, descr, quantity: 1, }
     onAddtoCart(title, "Added to cart");
-    addToCart({ image, title, price });
+    addToCart(product);
+    addedToCart(product);
   };
 
   return (
-    <TouchableOpacity 
-      style={styles.productCard} 
+    <TouchableOpacity
+      style={styles.productCard}
       onPress={() => navigation.navigate("ProductScreen", { image, title, price, descr, onAddtoCart })}
       activeOpacity={0.5}
     >
@@ -29,9 +33,12 @@ const ProductCard = ({ image, title, price, descr, onAddtoCart }) => {
       </View>
 
       {/* ✅ Add to Cart Button */}
-      <TouchableOpacity 
-        style={styles.addIconContainer} 
-        onPress={handleAddtoCart}
+      <TouchableOpacity
+        style={styles.addIconContainer}
+        onPress={() => {
+          handleAddtoCart();
+          refreshUser();
+        }}
         activeOpacity={0.5}
       >
         <FontAwesome name="circle-plus" size={45} color="#029232" />
@@ -41,21 +48,21 @@ const ProductCard = ({ image, title, price, descr, onAddtoCart }) => {
 };
 
 const dynamicTheme = (theme) => ({
-  productCard: { 
-    backgroundColor: theme.cardBg, 
-    borderRadius: 15, 
-    width: 200, 
-    height: 220, 
-    marginRight: 20, 
+  productCard: {
+    backgroundColor: theme.cardBg,
+    borderRadius: 15,
+    width: 200,
+    height: 220,
+    marginRight: 20,
     alignItems: "center",
-    
+
     /* ✅ SOFTER SHADOW */
     elevation: 4, // 🔹 Android Shadow (was 8)
-    shadowColor: "#000", 
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 }, // 🔹 Less height (was 4)
     shadowOpacity: 0.15, // 🔹 Lighter (was 0.3)
     shadowRadius: 3, // 🔹 Softer edges (was 5)
-},
+  },
 
   productImage: { width: '100%', height: 110, borderRadius: 10 },
   textContainer: { flexGrow: 0, justifyContent: 'space-between', alignSelf: 'stretch', padding: 10 },

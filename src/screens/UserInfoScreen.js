@@ -29,14 +29,14 @@ import { getFirestore, collection, doc, setDoc, getDoc, getDocs, updateDoc, quer
 const UserInfoScreen = ({ navigation }) => {
     const route = useRoute();
     const { isUserFresh } = route.params || {};
-    const { userEmail } = useUser();
+    const { userEmail, user } = useUser();
     const { theme } = useTheme();
     const styles = dynamicTheme(theme);
 
     // const auth = getAuth();
     const db = getFirestore();
 
-    const [user, setUser] = useState(null);
+    // const [user, setUser] = useState(null);
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
     const [name, setName] = useState("");
@@ -51,8 +51,10 @@ const UserInfoScreen = ({ navigation }) => {
             fetchData();
         }
         else {
-            alert("data not fetched!")
-            return;
+            if (user) {
+                alert("data not fetched!")
+                return;
+            }
         }
 
         const keyboardDidShowListener = RNKeyboard.addListener("keyboardDidShow", () => {
@@ -95,7 +97,6 @@ const UserInfoScreen = ({ navigation }) => {
         }
     };
 
-
     const saveData = async (email) => {
         // if (!username || !dob || !location) {
         //     alert("Username, DOB, and Location are required!");
@@ -133,12 +134,14 @@ const UserInfoScreen = ({ navigation }) => {
                         profilePic: image,
                     });
 
-                    alert("Profile updated!");
+                    if (!isUserFresh) {
+                        alert("Profile updated!");
+                    }
                     // navigation.replace("Settings"); // for fast info update in settings but double back to go Home
 
                     navigation.reset({
                         index: 1,
-                        routes: [{ name: "Home" }, { name: "Settings" }],
+                        routes: [{ name: "Home" }, { name: isUserFresh ? "Home" : "Settings" }],
                     });
 
 
@@ -147,7 +150,9 @@ const UserInfoScreen = ({ navigation }) => {
                 }
             }
             else {
-                alert("Email not found!");
+                navigation.navigate("Login");
+
+                // alert("Email not found!");
                 return;
             }
         } catch (error) {
@@ -173,9 +178,6 @@ const UserInfoScreen = ({ navigation }) => {
         }
     };
 
-
-
-
     const pickImage = () => {
         launchImageLibrary({ mediaType: "photo", quality: 1 }, (response) => {
             if (!response.didCancel && !response.error) {
@@ -197,9 +199,13 @@ const UserInfoScreen = ({ navigation }) => {
                         <Ionicons name="close" size={30} color={theme.text} />
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.saveButton} onPress={() => saveData(userEmail)}>
-                        <Text style={styles.saveButtonText}>Save</Text>
+                        <Text style={styles.saveButtonText}>{user? "Save" : "Sign In"}</Text>
                     </TouchableOpacity>
                 </View>
+
+                {!isUserFresh && (
+                    <Text style={styles.headerTitle}>Edit Profile</Text>
+                )}
 
                 {(!isKeyboardVisible && !isUserFresh) && (
                     <TouchableOpacity onPress={pickImage} activeOpacity={0.85} style={styles.imageContainer}>
@@ -211,7 +217,9 @@ const UserInfoScreen = ({ navigation }) => {
 
                 <View style={styles.inputContainer}>
                     <TextInput placeholder="Username" value={username} onChangeText={usernameValidation} style={[styles.inputStyle, { textTransform: 'lowercase' }]} placeholderTextColor={theme.text} />
-                    <TextInput placeholder="Email" value={email} onChangeText={setEmail} style={[styles.inputStyle, { color: 'grey', opacity: 1 }]} placeholderTextColor={theme.text} editable={false} />
+                    {!isUserFresh && (
+                        <TextInput placeholder="Email" value={email} onChangeText={setEmail} style={[styles.inputStyle, { color: 'grey', opacity: 1 }]} placeholderTextColor={theme.text} editable={false} />
+                    )}
                     <TextInput placeholder="Name (Optional)" value={name} onChangeText={setName} style={styles.inputStyle} placeholderTextColor={theme.text} />
                     <TextInput placeholder="Date of Birth*" value={dob} onChangeText={setDob} style={styles.inputStyle} placeholderTextColor={theme.text} />
                     <TextInput placeholder="Location in College" value={location} onChangeText={setLocation} style={styles.inputStyle} placeholderTextColor={theme.text} />
@@ -245,13 +253,22 @@ const dynamicTheme = (theme) => ({
         backgroundColor: theme.primaryColor,
         padding: 10,
         borderRadius: 30,
-        width: "24%",
+        width: "20%",
         alignItems: "center",
     },
     saveButtonText: {
         color: "white",
-        fontSize: 14,
+        fontSize: 13,
         fontWeight: "bold",
+    },
+
+    headerTitle: {
+        color: theme.text,
+        fontSize: 21,
+        fontWeight: 'bold',
+        alignSelf: 'center',
+        position: 'absolute',
+        top: 55,
     },
 
 

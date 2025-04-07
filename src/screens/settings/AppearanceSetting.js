@@ -9,8 +9,8 @@ import { useMemeCat } from "../../components/MemeCatContext";
 import { Section, SettingItem } from "../../components/SettingsItem";
 
 const themes = [
-    { name: "Rasgulla", color: "#eee", mode: "light", image: require("../../../assets/rasgulla.jpg") },
-    { name: "Gulab Jamun", color: "#222", mode: "dark", image: require("../../../assets/jamun.jpg") },
+    { name: "Light Theme", color: "#eee", mode: "light", image: require("../../../assets/rasgulla.jpg") },
+    { name: "Dark Theme", color: "#222", mode: "dark", image: require("../../../assets/jamun.jpg") },
 ];
 
 const AppearanceSetting = () => {

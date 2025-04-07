@@ -46,7 +46,7 @@ const SettingsScreen = () => {
                             console.log("Attempting to sign out...");
                             await auth().signOut();
                             await AsyncStorage.clear();
-                            // refreshUser();
+                            refreshUser();
                             // setUser(null);
                             setIsLoggedIn(false);
                             navigation.replace("Login");
@@ -64,7 +64,7 @@ const SettingsScreen = () => {
 
     useFocusEffect(
         useCallback(() => {
-
+            refreshUser();
         }, [])
     );
 
@@ -105,8 +105,10 @@ const SettingsScreen = () => {
                 </Section>
 
                 <Section title="Exit">
-                    {/* <SettingItem icon={isDarkMode ? "exit-outline" : "add"} label="Create account" onPress={null} /> */}
                     <SettingItem icon={isDarkMode ? "exit-outline" : "exit"} label={user ? "LogOut" : "Login"} onPress={handleLogout} isLast />
+                    {!user && (
+                        <SettingItem icon={isDarkMode ? "exit-outline" : "add"} label="Create account" onPress={null} />
+                    )}
                 </Section>
             </ScrollView>
         </View>

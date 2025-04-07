@@ -76,10 +76,11 @@ const HomeScreen = () => {
     const { theme, toggleTheme } = useTheme();
     const styles = dynamicTheme(theme);
     const { isMemeCatsEnabled } = useMemeCat();
-    const { userEmail, setUserEmail, username, setUsername, name, setName, dob, setDob, location, setLocation, user } = useUser();
+    const { userEmail, setUserEmail, username, setUsername, name, setName, dob, setDob, location, setLocation, refreshUser, user, addedToCart } = useUser();
 
     useFocusEffect(
         useCallback(() => {
+            refreshUser();
             fetchProducts(setProductItems);
 
             // const unsubscribe = auth().onAuthStateChanged((user) => {
@@ -120,7 +121,7 @@ const HomeScreen = () => {
                     </TouchableOpacity>
 
 
-                    <TouchableOpacity style={styles.nameContainer} onPress={() => { if (!user) navigation.navigate("Login") }} activeOpacity={0.5}>
+                    <TouchableOpacity style={styles.nameContainer} onPress={() => { if (!user) navigation.navigate("Login") }} activeOpacity={0.}>
                         <Text style={styles.profileName}>{user ? name || "Your Name" : "Sign In"}</Text>
                         <Text style={{ fontSize: 12, color: theme.text }}>{user ? location || "location" : "or Register"}</Text>
                     </TouchableOpacity>
