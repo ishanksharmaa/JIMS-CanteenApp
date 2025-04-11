@@ -108,9 +108,9 @@ const HomeScreen = () => {
 
                     <TouchableOpacity
                         onPress={() =>
-                            auth.currentUser?.email === "iishanksharma@gmail.com"
+                            userEmail === "iishanksharma@gmail.com"
                                 ? navigation.navigate("ProductsList")
-                                : navigation.navigate("Profile")
+                                : null
                         }
                         activeOpacity={0.7}
                     >

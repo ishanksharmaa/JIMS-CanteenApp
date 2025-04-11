@@ -82,7 +82,7 @@ const dynamicTheme = (theme) => ({
     container: { flex: 1, backgroundColor: theme.background, paddingHorizontal: 20 },
     headerContainer: { flexDirection: "column", marginBottom: -33, marginTop: 0, marginHorizontal: -20 },
     header: { fontSize: 26, fontWeight: "bold", color: theme.text, },
-    searchContainer: { marginBottom: 55 },
+    searchContainer: { marginBottom: 40 },
     loadingText: { fontSize: 18, color: theme.text, textAlign: "center", marginTop: 20 },
     productCard: { backgroundColor: theme.cardBg, padding: 15, borderRadius: 0, marginBottom: 0, elevation: 5, borderTopWidth: 0, borderBottomWidth: 1, borderColor: theme.primaryColor, flexDirection: 'row', justifyContent: "space-between" },
     productName: { fontSize: 18, fontWeight: "bold", color: theme.text },
