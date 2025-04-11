@@ -23,7 +23,7 @@ const SplashScreen = ({ navigation }) => {
 };
 
 const dynamicTheme = (theme) => ({
-  container: { flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "#eee" },
+  container: { flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: theme.background },
   logo: { width: 300, height: 300, resizeMode: "cover" }  // ✅ Adjust size
 });
 
