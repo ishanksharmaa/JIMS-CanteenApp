@@ -19,6 +19,8 @@ const ProductsListScreen = () => {
     const [selectedItems, setSelectedItems] = useState([]);
     const [selectionMode, setSelectionMode] = useState(false);
 
+    const fadedPrimary = `#ffdddd30`; // hex opacity (80  ~50%)
+
     useEffect(() => {
         const unsubscribe = firestore()
             .collection("Products")
@@ -31,17 +33,24 @@ const ProductsListScreen = () => {
         return () => unsubscribe();
     }, []);
 
-    const toggleSelection = (title) => {
-        if (selectedItems.includes(title)) {
-            setSelectedItems(selectedItems.filter(item => item !== title));
+    const toggleSelection = (id) => {
+        if (selectedItems.includes(id)) {
+            const updatedSelection = selectedItems.filter(item => item !== id);
+            setSelectedItems(updatedSelection);
+            if (updatedSelection.length === 0) {
+                cancelSelection();
+            }
         } else {
-            setSelectedItems([...selectedItems, title]);
+            const updatedSelection = [...selectedItems, id];
+            setSelectedItems(updatedSelection);
+            // alert(updatedSelection.length);
         }
     };
 
-    const handleLongPress = (title) => {
+
+    const handleLongPress = (id) => {
         setSelectionMode(true);
-        toggleSelection(title);
+        toggleSelection(id);
     };
 
     const cancelSelection = () => {
@@ -58,12 +67,12 @@ const ProductsListScreen = () => {
                 onPress: async () => {
                     try {
                         const batch = firestore().batch();
-    
-                        selectedItems.forEach(title => {
-                            const ref = firestore().collection("Products").doc(title);
+
+                        selectedItems.forEach(id => {
+                            const ref = firestore().collection("Products").doc(id);
                             batch.delete(ref);
                         });
-    
+
                         await batch.commit();
                         cancelSelection();
                     } catch (error) {
@@ -73,8 +82,8 @@ const ProductsListScreen = () => {
             }
         ]);
     };
-    
-    
+
+
 
     return (
         <View style={styles.container}>
@@ -95,9 +104,9 @@ const ProductsListScreen = () => {
             </TouchableOpacity>
 
             {selectionMode && (
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between', padding: 10, backgroundColor: "#f8d7da", position: 'absolute', top: 60, alignSelf: 'center', alignItems: 'center', width: '102%', height: '6%', zIndex: 20 }}>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between', padding: 10, backgroundColor: theme.background, position: 'absolute', top: 60, alignSelf: 'center', alignItems: 'center', width: '102%', height: '6%', zIndex: 20 }}>
                     <TouchableOpacity onPress={cancelSelection}>
-                        <Text style={{ color: "#000", fontWeight: 'bold' }}>Cancel</Text>
+                        <Text style={{ color: theme.text, fontWeight: 'bold' }}>Cancel</Text>
                     </TouchableOpacity>
                     <TouchableOpacity onPress={deleteSelectedItems}>
                         <Text style={{ color: "#d32f2f", fontWeight: 'bold' }}>Delete ({selectedItems.length})</Text>
@@ -122,13 +131,14 @@ const ProductsListScreen = () => {
                             <TouchableOpacity
                                 onLongPress={() => handleLongPress(item.id)}
                                 onPress={() =>
-                                    selectionMode ? toggleSelection(item.title) : null
+                                    selectionMode ? toggleSelection(item.id) : null
                                 }
+                                activeOpacity={0.8}
                                 style={[
                                     {
                                         backgroundColor:
                                             selectionMode && selectedItems.includes(item.id)
-                                                ? "#ffdddd"
+                                                ? fadedPrimary
                                                 : theme.card,
                                         marginVertical: 6,
                                         padding: 12,
@@ -165,7 +175,8 @@ const ProductsListScreen = () => {
                                         }}
                                     >
                                         <Text style={{ color: theme.text }}>₹{item.price}</Text>
-                                        <Text style={{ color: theme.text }}>{item.quantity}</Text>
+                                        {/* <Text style={{ color: theme.text }}>{item.quantity ? " | " : ""}</Text> */}
+                                        <Text style={{ color: theme.text }}>Qty: {item.quantity}</Text>
                                     </View>
 
                                     {item.category !== "" && (
