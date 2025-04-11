@@ -29,7 +29,8 @@ export const ProfileSection = ({ flexDirection, gap, scale }) => {
     return (
         <View style={styles.profileSection}>
             <Image
-                source={image && image.startsWith('http') ? { uri: image } : require('../../assets/swaggy_cat.jpg')} // Replace with your profile image path
+                // source={image && image.startsWith('http') ? { uri: image } : require('../../assets/swaggy_cat.jpg')}
+                source={image && image.startsWith('http') ? { uri: image } : require('../../assets/app_logo.jpeg')}
                 style={styles.profileImage} resizeMode="cover"
             />
             <View>

@@ -1,19 +1,16 @@
 import React, { useEffect } from "react";
 import { View, Image, Text, StyleSheet } from "react-native";
 import { useTheme } from "../components/ThemeContext";
-import { useUser } from "../components/UserContext";
+// import { useUser } from "../components/UserContext";
 
 const SplashScreen = ({ navigation }) => {
   const { theme } = useTheme();
   const styles = dynamicTheme(theme);
-  const { user } = useUser();
+  // const { userEmail } = useUser();
+
   useEffect(() => {
     setTimeout(() => {
-      if (user) {
-        navigation.replace("Home");
-      } else{
-        navigation.replace("GetStarted");
-      }
+      navigation.replace("Home");
     }, 500);
   }, []);
 

@@ -64,19 +64,34 @@ export const CartProvider = ({ children }) => {
 
                 const cartRef = collection(db, "Users", userId, "Cart");
                 const cartSnap = await getDocs(cartRef);
-                const items = cartSnap.docs.map(doc => doc.data());
 
-                setCartItems(items);
+                const productsRef = collection(db, "Products");
 
-                sumAmount(items);
+                const validItems = [];
 
+                for (const docSnap of cartSnap.docs) {
+                    const itemData = docSnap.data();
+                    const productDoc = await getDocs(query(productsRef, where("name", "==", itemData.title)));
+
+                    if (!productDoc.empty) {
+                        validItems.push(itemData); // product still exists
+                    } else {
+                        // product no longer exists, remove from cart
+                        await deleteDoc(docSnap.ref);
+                        console.warn(`🗑️ Removed orphan cart item: ${itemData.title}`);
+                    }
+                }
+
+                setCartItems(validItems);
+                sumAmount(validItems);
             } else {
                 console.warn("😕 No matching user found for email:", email);
             }
         } catch (error) {
-            console.error("💥 Error fetching cart:", error);
+            console.error("💥 Error fetching & cleaning cart:", error);
         }
     };
+
 
 
     const addedToCart = async (product) => {

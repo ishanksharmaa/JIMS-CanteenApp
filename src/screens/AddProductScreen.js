@@ -71,45 +71,43 @@ const AddProductScreen = () => {
 
     const handleAddProduct = async () => {
         if (!isFormValid()) return;
-
+    
         setUploading(true);
-
+    
         const productsRef = firestore().collection("Products");
-        const snapshot = await productsRef.orderBy("timestamp", "desc").limit(1).get();
-
-        let newProductNumber = 1;
-        if (!snapshot.empty) {
-            const lastProductId = snapshot.docs[0].id;
-            const lastProductNumber = parseInt(lastProductId.split("-")[1]);
-            if (!isNaN(lastProductNumber)) {
-                newProductNumber = lastProductNumber + 1;
-            }
-        }
-
-        const newProductId = `product-${newProductNumber}`;
-
+        const docId = product.name.trim(); // Title as doc ID
+    
         const newProduct = {
             name: product.name,
             price: product.price,
             description: product.description,
             quantity: product.quantity,
-            image: product.image, // Directly storing image URL
+            image: product.image,
             category: product.category,
             timestamp: firestore.FieldValue.serverTimestamp(),
         };
-
+    
         try {
-            await productsRef.doc(newProductId).set(newProduct);
-            console.log(`Product added successfully with ID: ${newProductId}`);
+            const existingDoc = await productsRef.doc(docId).get();
+            if (existingDoc.exists) {
+                console.warn("Product with this title already exists!");
+                setUploading(false);
+                alert("Product already exist with this name!");
+                return;
+            }
+    
+            await productsRef.doc(docId).set(newProduct);
+            console.log(`Product added successfully with ID: ${docId}`);
             setProduct({ name: "", price: "", description: "", quantity: "", image: "", category: "" });
-
+    
         } catch (error) {
             console.error("Error adding product:", error);
         } finally {
             setUploading(false);
         }
-        // <RefreshCompo name="Home" />
     };
+    
+    
 
     return (
         <View style={styles.container}>
@@ -118,35 +116,15 @@ const AddProductScreen = () => {
             <View style={styles.card}>
                 <Text style={styles.headerTitle}>Product Details:</Text>
 
-                {product.image ? (
-                    <View style={styles.imageContainer}>
-                        <Image
-                            source={{ uri: product.image }}
-                            style={styles.image}
-                            onError={() => setProduct({ ...product, image: "" })}
-                        />
-                        <TouchableOpacity style={styles.removeIcon} onPress={removeImage}>
-                            <MaterialIcons name="cancel" size={24} color="red" />
-                        </TouchableOpacity>
-                    </View>
-                ) : (
-                    <View style={styles.imageContainer}>
-                        <Image source={require('../../assets/swaggy_cat.jpg')} style={styles.image} />
-                        {/* <Image source={require('../../assets/banana_cat.jpg')} style={styles.image} /> */}
-                        {/* <Image source={require('../../assets/image.png')} style={styles.image} /> */}
-                        {/* <Image source={require('../../assets/black_sandwich.jpg')} style={styles.image} /> */}
-                    </View>
-                )}
 
-
-                {/* {product.image !== "" && (
+                {product.image !== "" && (
                     <View style={styles.imageContainer}>
                         <Image source={{ uri: product.image } || require('../../assets/swaggy_cat.jpg')} style={styles.image} />
                         <TouchableOpacity style={styles.removeIcon} onPress={removeImage}>
                             <MaterialIcons name="cancel" size={24} color="red" />
                         </TouchableOpacity>
                     </View>
-                )} */}
+                )}
 
                 <TextInput
                     style={styles.input}

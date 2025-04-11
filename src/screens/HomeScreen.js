@@ -116,7 +116,7 @@ const HomeScreen = () => {
                     >
                         <Image
                             // source={require("../../assets/swaggy_cat.jpg")}
-                            // source={require("../../assets/app_logo.png")}
+                            // source={require("../../assets/app_logo.jpeg")}
                             source={theme.logo}
                             style={styles.profileImage}
                         />
