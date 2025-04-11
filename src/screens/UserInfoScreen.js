@@ -31,7 +31,9 @@ const UserInfoScreen = ({ navigation }) => {
     const { isUserFresh } = route.params || {};
     const { userEmail, user } = useUser();
     const { theme } = useTheme();
-    const styles = dynamicTheme(theme);
+    const [isKeyboardVisible, setKeyboardVisible] = useState(false);
+    const styles = dynamicTheme(theme, isKeyboardVisible);
+    const [isInputFocused, setIsInputFocused] = useState(false);
 
     // const auth = getAuth();
     const db = getFirestore();
@@ -44,7 +46,6 @@ const UserInfoScreen = ({ navigation }) => {
     const [location, setLocation] = useState("");
     const [image, setImage] = useState(null);
     const [errorMessage, setErrorMessage] = useState("");
-    const [isKeyboardVisible, setKeyboardVisible] = useState(false);
 
     useEffect(() => {
         if (userEmail) {
@@ -199,7 +200,7 @@ const UserInfoScreen = ({ navigation }) => {
                         <Ionicons name="close" size={30} color={theme.text} />
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.saveButton} onPress={() => saveData(userEmail)}>
-                        <Text style={styles.saveButtonText}>{user? "Save" : "Sign In"}</Text>
+                        <Text style={styles.saveButtonText}>{user ? "Save" : "Sign In"}</Text>
                     </TouchableOpacity>
                 </View>
 
@@ -215,14 +216,43 @@ const UserInfoScreen = ({ navigation }) => {
                 )}
 
 
-                <View style={styles.inputContainer}>
-                    <TextInput placeholder="Username" value={username} onChangeText={usernameValidation} style={[styles.inputStyle, { textTransform: 'lowercase' }]} placeholderTextColor={theme.text} />
+                <View style={[styles.inputContainer, {marginTop: isKeyboardVisible ? 0 : 0 }]}>
+                    <TextInput placeholder="Username" value={username} onChangeText={usernameValidation} placeholderTextColor={theme.text}
+                        onFocus={() => setIsInputFocused('username')} onBlur={() => setIsInputFocused(null)}
+                        style={[
+                            styles.inputStyle, {
+                                textTransform: 'lowercase',
+                                borderWidth: isInputFocused === 'username' ? 1 : 0,
+                                // color: isInputFocused === 'username' ? theme.primaryColor : theme.text,
+                            }]}
+                    />
+
                     {!isUserFresh && (
-                        <TextInput placeholder="Email" value={email} onChangeText={setEmail} style={[styles.inputStyle, { color: 'grey', opacity: 1 }]} placeholderTextColor={theme.text} editable={false} />
+                        <TextInput placeholder="Email" value={email} onChangeText={setEmail} placeholderTextColor={theme.text} editable={false}
+                            onFocus={() => setIsInputFocused('email')} onBlur={() => setIsInputFocused(null)}
+                            style={[styles.inputStyle, { color: 'grey', opacity: 1, textTransform: 'lowercase' }]} />
                     )}
-                    <TextInput placeholder="Name (Optional)" value={name} onChangeText={setName} style={styles.inputStyle} placeholderTextColor={theme.text} />
-                    <TextInput placeholder="Date of Birth*" value={dob} onChangeText={setDob} style={styles.inputStyle} placeholderTextColor={theme.text} />
-                    <TextInput placeholder="Location in College" value={location} onChangeText={setLocation} style={styles.inputStyle} placeholderTextColor={theme.text} />
+
+                    <TextInput placeholder="Name (Optional)" value={name} onChangeText={setName} placeholderTextColor={theme.text}
+                        onFocus={() => setIsInputFocused('name')} onBlur={() => setIsInputFocused(null)}
+                        style={[styles.inputStyle, {
+                            borderWidth: isInputFocused === 'name' ? 1 : 0,
+                            // color: isInputFocused === 'name' ? theme.primaryColor : theme.text,
+                        }]} />
+
+                    <TextInput placeholder="Date of Birth" value={dob} onChangeText={setDob} placeholderTextColor={theme.text}
+                        onFocus={() => setIsInputFocused('dob')} onBlur={() => setIsInputFocused(null)}
+                        style={[styles.inputStyle, {
+                            borderWidth: isInputFocused === 'dob' ? 1 : 0,
+                            // color: isInputFocused === 'dob' ? theme.primaryColor : theme.text,
+                        }]} />
+
+                    <TextInput placeholder="Location in College" value={location} onChangeText={setLocation} placeholderTextColor={theme.text}
+                        onFocus={() => setIsInputFocused('location')} onBlur={() => setIsInputFocused(null)}
+                        style={[styles.inputStyle, {
+                            borderWidth: isInputFocused === 'location' ? 1 : 0,
+                            // color: isInputFocused === 'location' ? theme.primaryColor : theme.text,
+                        }]} />
                 </View>
             </View>
         </TouchableWithoutFeedback>
@@ -230,7 +260,7 @@ const UserInfoScreen = ({ navigation }) => {
     );
 };
 
-const dynamicTheme = (theme) => ({
+const dynamicTheme = (theme, isKeyboardVisible) => ({
     container: {
         flex: 1,
         padding: 20,
@@ -312,7 +342,8 @@ const dynamicTheme = (theme) => ({
         height: 60,
         width: "80%",
         textAlignVertical: "center",
-        marginVertical: 17,
+        marginVertical: isKeyboardVisible ? 9 : 16,
+        borderColor: theme.primaryColor,
         // alignSelf: 'center',
     },
 
