@@ -13,7 +13,7 @@ const ProductScreen = () => {
   const route = useRoute();
   const { image, title, price, descr, onAddtoCart } = route.params;
   const { theme } = useTheme();
-  const { addToCart } = useCart();
+  const { addedToCart } = useCart();
   const styles = dynamicTheme(theme);
   const navigation = useNavigation();
   const [count, setCount] = useState(1); // Default count 1
@@ -24,8 +24,9 @@ const ProductScreen = () => {
   }
 
   const handleAddtoCart = () => {
+    const product = {image, title, price}
     onAddtoCart(title, "Added to cart");
-    addToCart({ image, title, price });
+    addedToCart(product);
   };
 
 

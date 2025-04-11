@@ -3,27 +3,26 @@ import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 import FontAwesome from 'react-native-vector-icons/FontAwesome6';
 import { useNavigation } from "@react-navigation/native";
 import { useTheme } from "./ThemeContext";
-import { useCart } from "./CartContext";
 import { useUser } from "../components/UserContext";
+import { useCart } from "../components/CartContext";
 
-const ProductCard = ({ image, title, price, descr, onAddtoCart }) => {
+const ProductCard = ({ image, title, price, descr, onAddtoCart, }) => {
   const navigation = useNavigation();
   const { theme } = useTheme();
+  const { addedToCart } = useCart();
   const styles = dynamicTheme(theme);
-  const { addToCart } = useCart();
-  const { userEmail, setUserEmail, username, setUsername, name, setName, dob, setDob, location, setLocation, refreshUser, user, addedToCart } = useUser();
+  const { userEmail, setUserEmail, username, setUsername, name, setName, dob, setDob, location, setLocation, refreshUser, user } = useUser();
 
   const handleAddtoCart = () => {
     const product = { image, title, price, descr, quantity: 1, }
     onAddtoCart(title, "Added to cart");
-    addToCart(product);
     addedToCart(product);
   };
 
   return (
     <TouchableOpacity
       style={styles.productCard}
-      onPress={() => navigation.navigate("ProductScreen", { image, title, price, descr, onAddtoCart })}
+      onPress={() => navigation.navigate("ProductScreen", { image, title, price, descr, onAddtoCart, })}
       activeOpacity={0.5}
     >
       <Image source={image} style={styles.productImage} />

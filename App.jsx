@@ -148,15 +148,15 @@ const AppContent = () => {
 
 const App = () => {
   return (
-    <UserProvider>
-      <MemeCatProvider>
-        <ThemeProvider>
+    <MemeCatProvider>
+      <ThemeProvider>
+        <UserProvider>
           <CartProvider>
             <AppContent />  {/* ✅ Wrapping here so `useTheme()` works properly */}
           </CartProvider>
-        </ThemeProvider>
-      </MemeCatProvider>
-    </UserProvider>
+        </UserProvider>
+      </ThemeProvider>
+    </MemeCatProvider>
   );
 };
 
