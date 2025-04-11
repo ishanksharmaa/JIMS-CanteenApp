@@ -134,6 +134,8 @@ const SignUpScreen = ({ navigation }) => {
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss} >
             <View style={[styles.screen, { flex: 1 }]}>
+                <TouchableOpacity onPress={() => navigation.replace("Home")}><Text style={styles.skipBtn}>{"Skip>"}</Text></TouchableOpacity>
+
                 <View style={{ alignSelf: 'center', position: 'absolute', top: 120, right: null, transform: [{ scale: 5 }], zIndex: 5 }}>
                     <ThemeToggle iconColor={'transparent'} />
                 </View>
@@ -227,6 +229,17 @@ const SignUpScreen = ({ navigation }) => {
 };
 
 const dynamicTheme = (theme) => ({
+    skipBtn: {
+        position: 'absolute',
+        top: 50,
+        right: 12,
+        color: theme.text,
+        fontSize: 15,
+        padding: 10,
+        zIndex: 15,
+        // fontWeight: 'bold',
+        // backgroundColor: 'red',
+    },
     logo: {
         width: 200,
         height: 200,

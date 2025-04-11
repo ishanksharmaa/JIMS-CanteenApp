@@ -115,13 +115,15 @@ const HomeScreen = () => {
                         activeOpacity={0.7}
                     >
                         <Image
-                            source={require("../../assets/swaggy_cat.jpg")} // Replace with your profile image path
+                            // source={require("../../assets/swaggy_cat.jpg")}
+                            // source={require("../../assets/app_logo.png")}
+                            source={theme.logo}
                             style={styles.profileImage}
                         />
                     </TouchableOpacity>
 
 
-                    <TouchableOpacity style={styles.nameContainer} onPress={() => { if (!user) navigation.navigate("Login") }} activeOpacity={0.}>
+                    <TouchableOpacity style={styles.nameContainer} onPress={() => { if (!user) navigation.navigate("GetStarted") }} activeOpacity={0.}>
                         <Text style={styles.profileName}>{user ? name || "Your Name" : "Sign In"}</Text>
                         <Text style={{ fontSize: 12, color: theme.text }}>{user ? location || "location" : "or Register"}</Text>
                     </TouchableOpacity>

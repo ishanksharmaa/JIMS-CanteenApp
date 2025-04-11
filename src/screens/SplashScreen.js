@@ -1,21 +1,26 @@
 import React, { useEffect } from "react";
 import { View, Image, Text, StyleSheet } from "react-native";
 import { useTheme } from "../components/ThemeContext";
+import { useUser } from "../components/UserContext";
 
 const SplashScreen = ({ navigation }) => {
   const { theme } = useTheme();
   const styles = dynamicTheme(theme);
+  const { user } = useUser();
   useEffect(() => {
     setTimeout(() => {
-      navigation.replace("Home");
-      // navigation.replace("Settings");
+      if (user) {
+        navigation.replace("Home");
+      } else{
+        navigation.replace("GetStarted");
+      }
     }, 500);
   }, []);
 
   return (
     <View style={styles.container}>
-      <Image source={require("../../assets/app_logo2.png")} style={styles.logo} />
-      <Text style={{fontSize: 16, fontWeight: 500, position:'absolute', bottom: 25, textAlign:'center' }}>Made with love! 😍</Text>
+      <Image source={theme.logo} style={styles.logo} />
+      <Text style={{ fontSize: 16, fontWeight: 500, position: 'absolute', bottom: 25, textAlign: 'center' }}>Made with love! 😍</Text>
     </View>
   );
 };

@@ -18,7 +18,7 @@ const CustomToast = {
 
   error: ({ text1, text2, props }) => (
     <View style={[styles.toastContainer, { backgroundColor: '#FF5733' }]}>
-      <Image source={require('../../assets/eye-closed.png')} style={styles.icon} />
+      {/* <Image source={require('../../assets/eye-closed.png')} style={styles.icon} /> */}
       <View>
         <Text style={styles.toastTitle}>{text1}</Text>
         <Text style={styles.toastMessage}>{text2}</Text>

@@ -9,7 +9,7 @@ const ThemeToggle = ({ iconColor }) => {
     return (
         <TouchableOpacity onPress={() => changeTheme(theme.mode === "dark" ? "light" : "dark")}>
             <Ionicons
-                name={theme.mode === "dark" ? "sunny" : "moon"}
+                name={theme.mode === "dark" ? "moon" : "sunny"}
                 size={28}
                 color={iconColor}
             />

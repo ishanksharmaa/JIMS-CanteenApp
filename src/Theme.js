@@ -1,6 +1,6 @@
 export const lightTheme = {
     mode: 'light',
-    logo: require("../assets/app_logo2.png"),
+    logo: require("../assets/app_logo_black.png"),
     statusBarIcons: "dark-content",
     background: "#eee",
     text: "#111",
@@ -39,7 +39,7 @@ export const lightTheme = {
 
 export const darkTheme = {
     mode: 'dark',
-    logo: require("../assets/app_logo2_white.png"),
+    logo: require("../assets/app_logo_white.png"),
     statusBarIcons: "light-content",
     background: "#121212",
     text: "#eee",

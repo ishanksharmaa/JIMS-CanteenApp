@@ -8,6 +8,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 
 // Firebase Auth Import
 import auth from '@react-native-firebase/auth';
+import { transform } from "typescript";
 
 const LoginScreen = ({ navigation }) => {
     const { theme, changeTheme } = useTheme();
@@ -19,6 +20,8 @@ const LoginScreen = ({ navigation }) => {
     const [isPasswordVisible, setPasswordVisible] = useState(false);  // ✅ Toggle Password Visibility
     const [keyboardVisible, setKeyboardVisible] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
+
+
 
     useEffect(() => {
         const keyboardShowListener = Keyboard.addListener("keyboardDidShow", () => setKeyboardVisible(true));
@@ -96,6 +99,8 @@ const LoginScreen = ({ navigation }) => {
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss} >
             <View style={[styles.screen, { flex: 1 }]}>
+                <TouchableOpacity onPress={() => navigation.replace("Home")}><Text style={styles.skipBtn}>{"Skip>"}</Text></TouchableOpacity>
+
                 <View style={{ alignSelf: 'center', position: 'absolute', top: 120, transform: [{ scale: 5 }], zIndex: 5 }}>
                     <ThemeToggle iconColor={'transparent'} />
                 </View>
@@ -108,7 +113,7 @@ const LoginScreen = ({ navigation }) => {
                     {/* Display Error Message */}
                     {errorMessage ? <Text style={{ color: "red", textAlign: "center", marginTop: 10, marginBottom: -10, }}>{errorMessage}</Text> : null}
 
-                    <View style={styles.emailContainer}>
+                    <View style={styles.emailContainer} >
                         {/* <TextInput
                             style={styles.inputStyle}
                             placeholder="Email or Username"
@@ -166,6 +171,17 @@ const LoginScreen = ({ navigation }) => {
 };
 
 const dynamicTheme = (theme) => ({
+    skipBtn: {
+        position: 'absolute',
+        top: 50,
+        right: 12,
+        color: theme.text,
+        fontSize: 15,
+        padding: 10,
+        zIndex: 15,
+        // fontWeight: 'bold',
+        // backgroundColor: 'red',
+    },
     logo: {
         width: 200,
         height: 200,
