@@ -11,6 +11,7 @@ export const UserProvider = ({ children }) => {
     const [name, setName] = useState("");
     const [dob, setDob] = useState("");
     const [location, setLocation] = useState("");
+    const [image, setImage] = useState("");
 
     const refreshUser = () => {
         const unsubscribe = auth().onAuthStateChanged((user) => {
@@ -25,6 +26,7 @@ export const UserProvider = ({ children }) => {
                 setName("");
                 setDob("");
                 setLocation("");
+                setImage("")
             }
         });
 
@@ -52,6 +54,7 @@ export const UserProvider = ({ children }) => {
                 setName(userData.name || "");
                 setDob(userData.dob || "");
                 setLocation(userData.location || "");
+                setImage(userData.image || "");
             }
         } catch (error) {
             console.error("💥 Error fetching user data:", error);
@@ -66,6 +69,7 @@ export const UserProvider = ({ children }) => {
             name,
             dob,
             location,
+            image,
             refreshUser,
         }}>
             {children}

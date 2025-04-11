@@ -16,7 +16,7 @@ const combos = [
 ];
 
 export const ProfileSection = ({ flexDirection, gap, scale }) => {
-    const { userEmail, username, name, dob, location } = useUser();
+    const { userEmail, username, name, dob, location, image } = useUser();
     const { theme } = useTheme();
     const styles = dynamicTheme(theme, flexDirection, gap, scale);
 
@@ -29,8 +29,8 @@ export const ProfileSection = ({ flexDirection, gap, scale }) => {
     return (
         <View style={styles.profileSection}>
             <Image
-                source={require('../../assets/swaggy_cat.jpg')} // Replace with your profile image path
-                style={styles.profileImage}
+                source={image && image.startsWith('http') ? { uri: image } : require('../../assets/swaggy_cat.jpg')} // Replace with your profile image path
+                style={styles.profileImage} resizeMode="cover"
             />
             <View>
                 <Text style={styles.profileName}>{name || "Your name"}</Text>
