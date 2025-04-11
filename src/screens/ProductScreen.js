@@ -11,7 +11,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 const ProductScreen = () => {
   const route = useRoute();
-  const { image, title, price, descr, onAddtoCart } = route.params;
+  const { image, title, price, descr, onAddtoCart, quantity, amount } = route.params;
   const { theme } = useTheme();
   const { addedToCart } = useCart();
   const styles = dynamicTheme(theme);
@@ -24,7 +24,7 @@ const ProductScreen = () => {
   }
 
   const handleAddtoCart = () => {
-    const product = {image, title, price}
+    const product = {image, title, price, quantity, amount}
     onAddtoCart(title, "Added to cart");
     addedToCart(product);
   };

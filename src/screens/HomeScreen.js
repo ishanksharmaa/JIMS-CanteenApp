@@ -166,7 +166,7 @@ const HomeScreen = () => {
                     keyExtractor={(item) => item.id}
                     horizontal={true}
                     showsHorizontalScrollIndicator={false}
-                    renderItem={({ item }) => <ProductCard image={{ uri: item.image }} title={item.name} price={item.price} descr={item.description} onAddtoCart={showToast} />}
+                    renderItem={({ item }) => <ProductCard image={{ uri: item.image }} title={item.name} price={item.price} descr={item.description} onAddtoCart={showToast} quantity={item.quantity} amount={item.amount} />}
                 />
             </View>
         </View> // container end

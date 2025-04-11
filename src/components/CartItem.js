@@ -6,11 +6,11 @@ import { useCart } from "./CartContext";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
-const CartItem = ({ image, title, price }) => {
+const CartItem = ({ image, title, price, quantity }) => {
   const { theme } = useTheme();
   const styles = dynamicTheme(theme);
   const { removedFromCart, updateQuantity } = useCart();
-  const [count, setCount] = useState(1); // Default count 1
+  const [count, setCount] = useState(quantity); // Default count 1
   const swipeableRef = useRef(null);
 
   const handleSwipeOpen = () => {
@@ -72,9 +72,11 @@ const CartItem = ({ image, title, price }) => {
             <FontAwesome name="caret-down" size={32} color={"grey"} />
             </TouchableOpacity> */}
           <TouchableOpacity onPress={() => {
-            const newCount = count - 1;
-            setCount(newCount);
-            updateQuantity(title, newCount);
+            if (count > 1) {
+              const newCount = count - 1;
+              setCount(newCount);
+              updateQuantity(title, newCount);
+            }
           }}>
             <FontAwesome name="caret-down" size={32} color={"grey"} />
           </TouchableOpacity>

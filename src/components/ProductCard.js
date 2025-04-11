@@ -6,7 +6,7 @@ import { useTheme } from "./ThemeContext";
 import { useUser } from "../components/UserContext";
 import { useCart } from "../components/CartContext";
 
-const ProductCard = ({ image, title, price, descr, onAddtoCart, }) => {
+const ProductCard = ({ image, title, price, descr, onAddtoCart, quantity, amount }) => {
   const navigation = useNavigation();
   const { theme } = useTheme();
   const { addedToCart } = useCart();
@@ -14,7 +14,7 @@ const ProductCard = ({ image, title, price, descr, onAddtoCart, }) => {
   const { userEmail, setUserEmail, username, setUsername, name, setName, dob, setDob, location, setLocation, refreshUser, user } = useUser();
 
   const handleAddtoCart = () => {
-    const product = { image, title, price, descr, quantity: 1, }
+    const product = { image, title, price, descr, quantity: 1, amount: price }
     onAddtoCart(title, "Added to cart");
     addedToCart(product);
   };
@@ -22,7 +22,7 @@ const ProductCard = ({ image, title, price, descr, onAddtoCart, }) => {
   return (
     <TouchableOpacity
       style={styles.productCard}
-      onPress={() => navigation.navigate("ProductScreen", { image, title, price, descr, onAddtoCart, })}
+      onPress={() => navigation.navigate("ProductScreen", { image, title, price, descr, onAddtoCart, quantity: 1, amount: price })}
       activeOpacity={0.5}
     >
       <Image source={image} style={styles.productImage} />

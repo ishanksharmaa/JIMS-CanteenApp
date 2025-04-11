@@ -29,7 +29,7 @@ const CartScreen = () => {
     const { theme } = useTheme();
     const styles = dynamicTheme(theme);
     // const { refreshUser } = useUser();
-    const { cartItems, fetchCart } = useCart();
+    const { cartItems, fetchCart, totalAmount } = useCart();
 
     useEffect(() => {
         fetchCart();
@@ -38,7 +38,7 @@ const CartScreen = () => {
 
     return (
         <View style={styles.container}>
-            <HeaderBackIcon title={`Cart ${cartItems.length}`} />
+            <HeaderBackIcon title={`Cart (${cartItems.length})`} />
             <Ionicons name="add" size={29} color={theme.text} style={styles.addIcon} />
 
             {cartItems.length === 0 ? (
@@ -51,7 +51,7 @@ const CartScreen = () => {
                         data={cartItems}
                         keyExtractor={(item) => item.title}
                         renderItem={({ item }) => (
-                            <CartItem image={item.image} title={item.title} price={item.price} />
+                            <CartItem image={item.image} title={item.title} price={item.price} quantity={item.quantity} />
                         )}
                         contentContainerStyle={{ paddingBottom: 50 }}
                     />
@@ -63,7 +63,7 @@ const CartScreen = () => {
                     <MaterialIcons name="call-split" size={29} color={theme.customButtonBg} />
                 </TouchableOpacity>
                 <View style={styles.buttonContainer}>
-                    <CustomButton btnColor={theme.customButtonBg} textColor={theme.customButtonText} title="Order Now" onPress={() => alert("Order placed! (Functionality coming soon)")} />
+                    <CustomButton btnColor={theme.customButtonBg} textColor={theme.customButtonText} title={`Order for ${totalAmount}`} onPress={() => alert("Order placed! (Functionality coming soon)")} />
                 </View>
             </View>
 

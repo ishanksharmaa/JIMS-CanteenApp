@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { getFirestore, collection, getDocs, setDoc, doc, query, where, deleteDoc } from "firebase/firestore";
+import { getFirestore, collection, getDocs, setDoc, doc, query, where, deleteDoc, updateDoc } from "firebase/firestore";
 import auth from "@react-native-firebase/auth";
 import { useUser } from "./UserContext";
 
@@ -8,6 +8,7 @@ export const CartContext = createContext();
 export const CartProvider = ({ children }) => {
     const { user, userEmail } = useUser();
     const [cartItems, setCartItems] = useState([]);
+    const [totalAmount, setTotalAmount] = useState(0);
 
     useEffect(() => {
         if (user) {
@@ -16,6 +17,37 @@ export const CartProvider = ({ children }) => {
             setCartItems([]);
         }
     }, [user]);
+
+    useEffect(() => {
+        sumAmount(cartItems); // jab bhi cartItems change honge, totalAmount auto update
+    }, [cartItems]);
+
+    const sumAmount = async (items) => {
+        const total = items.reduce((sum, item) => sum + Number(item.amount || 0), 0);
+        setTotalAmount(total);
+
+        try {
+            const db = getFirestore();
+            const userRef = collection(db, "Users");
+            const q = query(userRef, where("email", "==", userEmail));
+            const snapshot = await getDocs(q);
+
+            if (!snapshot.empty) {
+                const userDoc = snapshot.docs[0];
+                const userId = userDoc.id;
+
+                const userDocRef = doc(db, "Users", userId);
+                await updateDoc(userDocRef, {
+                    totalAmount: total
+                });
+
+                console.log("💾 Total amount updated in Firestore:", total);
+            }
+        } catch (error) {
+            console.error("🚫 Error updating totalAmount in Firestore:", error);
+        }
+    };
+
 
     const fetchCart = async (email) => {
         try {
@@ -35,6 +67,9 @@ export const CartProvider = ({ children }) => {
                 const items = cartSnap.docs.map(doc => doc.data());
 
                 setCartItems(items);
+
+                sumAmount(items);
+
             } else {
                 console.warn("😕 No matching user found for email:", email);
             }
@@ -64,7 +99,11 @@ export const CartProvider = ({ children }) => {
                 const productRef = doc(db, "Users", uid, "Cart", product.title);
                 await setDoc(productRef, product);
 
-                setCartItems((prev) => [...prev, product]);
+                setCartItems((prev) => {
+                    const updated = [...prev, product];
+                    sumAmount(updated);
+                    return updated;
+                });
                 console.log("✅ Product added to Firestore cart");
             }
         } catch (error) {
@@ -91,7 +130,11 @@ export const CartProvider = ({ children }) => {
                     await deleteDoc(docSnap.ref);
                 }
 
-                setCartItems((prev) => prev.filter(item => item.title !== title));
+                setCartItems((prev) => {
+                    const updated = prev.filter(item => item.title !== title);
+                    sumAmount(updated);
+                    return updated;
+                });
                 console.log(`🧹 Removed ${title} from cart`);
             } else {
                 console.warn("😕 User not found for removal");
@@ -101,24 +144,47 @@ export const CartProvider = ({ children }) => {
         }
     };
 
-    const updateQuantity = async (title, quantity) => {
-  try {
-    const q = query(collection(db, "cart"), where("title", "==", title));
-    const snapshot = await getDocs(q);
-    snapshot.forEach(async (docSnap) => {
-      const docRef = doc(db, "cart", docSnap.id);
-      await updateDoc(docRef, {
-        quantity: quantity
-      });
-    });
-  } catch (error) {
-    console.error("Quantity update failed: ", error);
-  }
-};
+    const updateQuantity = async (itemTitle, newQuantity) => {
+        try {
+            const db = getFirestore();
+            const userRef = collection(db, "Users");
+            const q = query(userRef, where("email", "==", userEmail));
+            const snapshot = await getDocs(q);
+
+            if (!snapshot.empty) {
+                const userDoc = snapshot.docs[0];
+                const userId = userDoc.id;
+
+                const item = cartItems.find(item => item.title === itemTitle);
+
+                const itemRef = doc(db, "Users", userId, "Cart", itemTitle);
+                await updateDoc(itemRef, {
+                    quantity: newQuantity,
+                    amount: newQuantity * item.price,
+                });
+
+                // Update local cartItems state too
+                setCartItems(prev => {
+                    const updated = prev.map(item =>
+                        item.title === itemTitle
+                            ? { ...item, quantity: newQuantity, amount: newQuantity * item.price }
+                            : item
+                    );
+                    sumAmount(updated);
+                    return updated;
+                });
+
+                console.log(`🔄 Updated ${itemTitle} quantity to ${newQuantity}`);
+            }
+        } catch (err) {
+            console.error("🚫 Error updating quantity:", err);
+        }
+    };
+
 
 
     return (
-        <CartContext.Provider value={{ cartItems, addedToCart, removedFromCart, fetchCart, updateQuantity }}>
+        <CartContext.Provider value={{ cartItems, addedToCart, removedFromCart, fetchCart, updateQuantity, totalAmount }}>
             {children}
         </CartContext.Provider>
     );
