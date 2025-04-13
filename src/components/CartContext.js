@@ -126,7 +126,7 @@ export const CartProvider = ({ children }) => {
                 console.log("✅ Product added to Firestore cart");
             }
         } catch (error) {
-            console.error("🔥 Error adding to cart:", error);
+            console.error("🔥 Error adding to Cart:", error);
         }
     };
 
