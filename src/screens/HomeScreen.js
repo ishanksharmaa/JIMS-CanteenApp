@@ -11,8 +11,6 @@ import { getAuth, onAuthStateChanged } from "@react-native-firebase/auth";
 import { collection, query, where, getDocs } from "firebase/firestore";
 
 
-
-import Toast from 'react-native-toast-message';
 import { TextInput } from "react-native-gesture-handler";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import MemeCat from "../components/MemeCat";
@@ -57,17 +55,17 @@ const categories = [
     { id: '10', title: 'Noodles', image: { uri: 'https://images.pexels.com/photos/1435904/pexels-photo-1435904.jpeg' } },
 ];
 
-const showToast = (productName, msg) => {
-    Toast.show({
-        type: 'success',
-        text1: productName,
-        text2: msg,
-        position: 'top',
-        visibilityTime: 4000,
-        autoHide: true,
-        topOffset: 50,
-    });
-};
+// const showToast = (productName, msg) => {
+//     Toast.show({
+//         type: 'success',
+//         text1: productName,
+//         text2: msg,
+//         position: 'top',
+//         visibilityTime: 4000,
+//         autoHide: true,
+//         topOffset: 50,
+//     });
+// };
 
 const HomeScreen = () => {
     const [text, setText] = useState('');
@@ -82,18 +80,6 @@ const HomeScreen = () => {
         useCallback(() => {
             refreshUser();
             fetchProducts(setProductItems);
-
-            // const unsubscribe = auth().onAuthStateChanged((user) => {
-            //     if (user) {
-            //         setUserEmail(user.email);  // saved at global state (passed to UserContext.js)
-            //         setUsername(user.username || "User");
-            //         setName(user.name || "Guest");
-            //         setDob(user.dob);
-            //         setLocation(user.location || "location");
-            //     }
-            // });
-
-            // return () => unsubscribe(); // Cleanup function to avoid memory leaks
         }, [])
     );
 
@@ -141,9 +127,9 @@ const HomeScreen = () => {
             </View> {/* header end */}
 
             {/* SEARCH BAR HERE */}
-            <View style={styles.searchContainer}>
-                <SearchBar placeholder="Search food, menu..." onChange={setText} />
-            </View>
+            <TouchableOpacity style={styles.searchContainer} >
+                <SearchBar placeholder="Search food, menu..." onChange={setText} navigatePage="SearchPage" editable={false} />
+            </TouchableOpacity>
 
 
             <View style={styles.categoryContainer}>
@@ -168,7 +154,7 @@ const HomeScreen = () => {
                     keyExtractor={(item) => item.id}
                     horizontal={true}
                     showsHorizontalScrollIndicator={false}
-                    renderItem={({ item }) => <ProductCard image={{ uri: item.image }} title={item.name} price={item.price} descr={item.description} onAddtoCart={showToast} quantity={item.quantity} amount={item.amount} />}
+                    renderItem={({ item }) => <ProductCard image={{ uri: item.image }} title={item.name} price={item.price} descr={item.description} quantity={item.quantity} amount={item.amount} />}
                 />
             </View>
         </View> // container end

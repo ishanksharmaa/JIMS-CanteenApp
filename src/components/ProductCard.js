@@ -6,23 +6,21 @@ import { useTheme } from "./ThemeContext";
 import { useUser } from "../components/UserContext";
 import { useCart } from "../components/CartContext";
 
-const ProductCard = ({ image, title, price, descr, onAddtoCart, quantity, amount }) => {
+const ProductCard = ({ image, title, price, descr, quantity, amount }) => {
   const navigation = useNavigation();
   const { theme } = useTheme();
-  const { addedToCart } = useCart();
   const styles = dynamicTheme(theme);
   const { userEmail, setUserEmail, username, setUsername, name, setName, dob, setDob, location, setLocation, refreshUser, user } = useUser();
 
   const handleAddtoCart = () => {
     const product = { image, title, price, descr, quantity: 1, amount: price }
-    onAddtoCart(title, "Added to cart");
     addedToCart(product);
   };
 
   return (
     <TouchableOpacity
       style={styles.productCard}
-      onPress={() => navigation.navigate("ProductScreen", { image, title, price, descr, onAddtoCart, quantity: 1, amount: price })}
+      onPress={() => navigation.navigate("ProductScreen", { image, title, price, descr, quantity: 1, amount: price })}
       activeOpacity={0.5}
     >
       <Image source={image} style={styles.productImage} />
@@ -65,7 +63,7 @@ const dynamicTheme = (theme) => ({
 
   productImage: { width: '100%', height: 110, borderRadius: 10 },
   textContainer: { flexGrow: 0, justifyContent: 'space-between', alignSelf: 'stretch', padding: 10 },
-  productTitle: { textAlign: "left", fontSize: 16, fontWeight: 'bold', color: theme.cardTitle },
+  productTitle: { textAlign: "left", fontSize: 16, fontWeight: 'bold', color: theme.cardTitle, textTransform: 'capitalize', },
   productPrice: { textAlign: "left", fontSize: 14, fontWeight: 'bold', color: theme.cardPrice },
   addIconContainer: { position: "absolute", bottom: 16, right: 16 }
 });

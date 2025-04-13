@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { getFirestore, collection, getDocs, setDoc, doc, query, where, deleteDoc, updateDoc } from "firebase/firestore";
 import auth from "@react-native-firebase/auth";
+import Toast from 'react-native-toast-message';
 import { useUser } from "./UserContext";
 
 export const CartContext = createContext();
@@ -119,11 +120,25 @@ export const CartProvider = ({ children }) => {
                     sumAmount(updated);
                     return updated;
                 });
+
+                onAddtoCart(product.title, "Added to cart")
                 console.log("✅ Product added to Firestore cart");
             }
         } catch (error) {
             console.error("🔥 Error adding to cart:", error);
         }
+    };
+
+    const onAddtoCart = (productName, msg) => {
+        Toast.show({
+            type: 'success',
+            text1: productName,
+            text2: msg,
+            position: 'top',
+            visibilityTime: 4000,
+            autoHide: true,
+            topOffset: 50,
+        });
     };
 
     const removedFromCart = async (title) => {
@@ -199,7 +214,7 @@ export const CartProvider = ({ children }) => {
 
 
     return (
-        <CartContext.Provider value={{ cartItems, addedToCart, removedFromCart, fetchCart, updateQuantity, totalAmount }}>
+        <CartContext.Provider value={{ cartItems, addedToCart, removedFromCart, fetchCart, updateQuantity, totalAmount, onAddtoCart }}>
             {children}
         </CartContext.Provider>
     );

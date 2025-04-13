@@ -26,20 +26,20 @@ const AddProductScreen = () => {
     const handleChange = (field, value) => {
         setProduct(prevProduct => {
             let updatedValue = value;
-    
+
             if (field === "price") {
                 updatedValue = value.replace(/\D/g, ""); // Only numbers allowed for price
             }
-    
+
             if (field === "category") {
-                if (value.endsWith(" ")) { 
+                if (value.endsWith(" ")) {
                     // Last character agar space hai, toh last word ke aage # laga do
                     updatedValue = value
                         .trim()
                         .split(' ')
-                        .map(word => 
-                            word.startsWith("#") 
-                                ? word 
+                        .map(word =>
+                            word.startsWith("#")
+                                ? word
                                 : `#${word.charAt(0).toUpperCase()}${word.slice(1).toLowerCase()}`
                         ) // Ensure first letter capital & rest small
                         .join(' ') + ' '; // Space maintain rakhne ke liye
@@ -48,11 +48,11 @@ const AddProductScreen = () => {
                     updatedValue = value.slice(0, -1);
                 }
             }
-    
+
             return { ...prevProduct, [field]: updatedValue };
         });
     };
-    
+
 
 
     const removeImage = () => {
@@ -60,33 +60,39 @@ const AddProductScreen = () => {
     };
 
     const isFormValid = () => {
+        const lastWord = product.category.trim().split(" ").pop();
+
         return (
             product.name.trim() !== "" &&
             product.price.trim() !== "" &&
-            product.description.trim() !== "" &&
-            product.quantity.trim() !== ""
-            // && product.category.trim() !== ""
+            // product.description.trim() !== "" &&
+            product.quantity.trim() !== "" &&
+            product.category !== "" &&
+            lastWord.startsWith("#")
         );
     };
 
     const handleAddProduct = async () => {
-        if (!isFormValid()) return;
-    
+        if (!isFormValid()) {
+            alert("All fields required and category field must ends with '#' ");
+            return;
+        }
+
         setUploading(true);
-    
+
         const productsRef = firestore().collection("Products");
         const docId = product.name.trim(); // Title as doc ID
-    
+
         const newProduct = {
-            name: product.name,
+            name: product.name.toLowerCase(),
             price: product.price,
             description: product.description,
             quantity: product.quantity,
             image: product.image,
-            category: product.category,
+            category: product.category.toLowerCase(),
             timestamp: firestore.FieldValue.serverTimestamp(),
         };
-    
+
         try {
             const existingDoc = await productsRef.doc(docId).get();
             if (existingDoc.exists) {
@@ -95,19 +101,19 @@ const AddProductScreen = () => {
                 alert("Product already exist with this name!");
                 return;
             }
-    
+
             await productsRef.doc(docId).set(newProduct);
             console.log(`Product added successfully with ID: ${docId}`);
             setProduct({ name: "", price: "", description: "", quantity: "", image: "", category: "" });
-    
+
         } catch (error) {
             console.error("Error adding product:", error);
         } finally {
             setUploading(false);
         }
     };
-    
-    
+
+
 
     return (
         <View style={styles.container}>
@@ -128,14 +134,14 @@ const AddProductScreen = () => {
 
                 <TextInput
                     style={styles.input}
-                    placeholder="Product Name"
+                    placeholder="Name"
                     value={product.name}
                     placeholderTextColor={'grey'}
                     onChangeText={(text) => handleChange("name", text)}
                 />
                 <TextInput
                     style={styles.input}
-                    placeholder="Product Description"
+                    placeholder="Description (optional)"
                     value={product.description}
                     placeholderTextColor={'grey'}
                     onChangeText={(text) => handleChange("description", text)}
@@ -167,7 +173,7 @@ const AddProductScreen = () => {
                 />
                 <TextInput
                     style={styles.input}
-                    placeholder="# Category"
+                    placeholder="# Categories"
                     value={product.category}
                     placeholderTextColor={'grey'}
                     onChangeText={(text) => handleChange("category", text)}

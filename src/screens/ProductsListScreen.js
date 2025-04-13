@@ -21,12 +21,36 @@ const ProductsListScreen = () => {
 
     const fadedPrimary = `#ffdddd30`; // hex opacity (80  ~50%)
 
+    const toTitleCase = str => {
+        return str
+            ?.toLowerCase()
+            .split(' ')
+            .map(word => {
+                if (word.startsWith('#')) {
+                    // return '#' + word.slice(1, 2).toLowerCase() + word.slice(2);
+                    return '#' + word.slice(1, 2).toUpperCase() + word.slice(2);
+                } else {
+                    return word.charAt(0).toUpperCase() + word.slice(1);
+                }
+            })
+            .join(' ');
+    };
+
+
     useEffect(() => {
         const unsubscribe = firestore()
             .collection("Products")
             .orderBy("timestamp", "desc")
             .onSnapshot(snapshot => {
-                const productList = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                const productList = snapshot.docs.map(doc => {
+                    const data = doc.data();
+                    return {
+                        id: doc.id,
+                        ...data,
+                        category: toTitleCase(data.category),
+                    };
+                });
+
                 setProducts(productList);
                 setLoading(false);
             });
@@ -117,7 +141,7 @@ const ProductsListScreen = () => {
 
             {/* Search */}
             <View style={styles.searchContainer}>
-                <SearchBar placeholder="Search your products..." onChange={setText} />
+                <SearchBar placeholder="Search the product list..." onChange={setText} navigatePage={null} editable={true} />
             </View>
 
             {loading ? (
@@ -162,7 +186,7 @@ const ProductsListScreen = () => {
                                 )}
 
                                 <View style={{ flex: 1 }}>
-                                    <Text style={{ color: theme.text, fontWeight: "bold", fontSize: 16 }}>
+                                    <Text style={{ color: theme.text, fontWeight: "bold", fontSize: 16, textTransform: 'capitalize' }}>
                                         {item.name}
                                     </Text>
 
@@ -238,7 +262,7 @@ const dynamicTheme = (theme) => ({
         borderRadius: 0,
         elevation: 5,
     },
-    productName: { fontSize: 18, fontWeight: "bold", color: theme.text },
+    productName: { fontSize: 18, fontWeight: "bold", color: theme.text, textTransform: 'capitalize' },
     productPrice: { fontSize: 16, fontWeight: "bold", color: theme.primaryColor },
     modalContainer: { flex: 1, justifyContent: "center", backgroundColor: "rgba(0,0,0,0.5)", paddingHorizontal: 10 },
     closeButton: {

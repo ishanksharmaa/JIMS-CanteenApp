@@ -94,7 +94,7 @@ const ProfileScreen = () => {
                 keyExtractor={(item) => item.id}
                 horizontal={true}
                 showsHorizontalScrollIndicator={false}
-                renderItem={({ item }) => <ProductCard image={{ uri: item.image }} title={item.title} price={item.price} onAddtoCart={null} />}
+                renderItem={({ item }) => <ProductCard image={{ uri: item.image }} title={item.title} price={item.price} />}
             />
         </View>
     );

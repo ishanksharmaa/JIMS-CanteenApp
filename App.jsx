@@ -25,7 +25,7 @@ const auth = getAuth(app);
 
 
 import React, { useState, useEffect } from "react";
-import { Appearance, StatusBar, View } from "react-native";
+import { Appearance, StatusBar, View, Keyboard, Platform } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -47,6 +47,7 @@ import LoginScreen from "./src/screens/LoginScreen";
 import SignUpScreen from "./src/screens/SignUpScreen";
 import UsernameScreen from "./src/screens/UsernameScreen";
 import HomeScreen from "./src/screens/HomeScreen";
+import SearchScreen from "./src/screens/SearchScreen";
 import CartScreen from "./src/screens/CartScreen";
 import FavoriteScreen from "./src/screens/FavoriteScreen";
 import MenuScreen from "./src/screens/MenuScreen";
@@ -63,22 +64,54 @@ import { UserProvider } from './src/components/UserContext';
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
+const useKeyboardVisibility = () => {
+  const [keyboardVisible, setKeyboardVisible] = useState(false);
+
+  useEffect(() => {
+    const showSubscription = Keyboard.addListener(
+      Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow',
+      () => setKeyboardVisible(true)
+    );
+    const hideSubscription = Keyboard.addListener(
+      Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide',
+      () => setKeyboardVisible(false)
+    );
+
+    return () => {
+      showSubscription.remove();
+      hideSubscription.remove();
+    };
+  }, []);
+
+  return keyboardVisible;
+};
+
 const BottomTabs = () => {
   const { theme } = useTheme();
+  const keyboardVisible = useKeyboardVisibility(); // Use the hook
   return (
     <Tab.Navigator
       initialRouteName="Home"
       screenOptions={{
         headerShown: false,
+        tabBarHideOnKeyboard: true,
         tabBarStyle: {
-          backgroundColor: theme.tabBarBg,  // ✅ Dark/Light mode works here
+          backgroundColor: theme.tabBarBg,
           borderTopWidth: 0,
           height: 80,
           paddingVertical: theme.tabBarPaddingVertical,
           borderRadius: theme.tabBarRadius,
-          marginBottom: theme.tabBarMarginBottom,
           marginHorizontal: theme.tabBarMarginHorizontal,
+          // marginBottom: theme.tabBarMarginBottom,
+          marginBottom: keyboardVisible ? -80 : theme.tabBarMarginBottom,
+          position: 'absolute',
+          bottom: 0,
+          left: 0,
+          right: 0,
+          elevation: 0,
+          display: keyboardVisible ? 'none' : 'flex',
         },
+
         tabBarLabelStyle: {
           fontSize: 12,
           fontWeight: "bold",
@@ -119,7 +152,7 @@ const AppContent = () => {
   }, []);
 
   return (
-    <View style={{ flex: 1, backgroundColor: 'transparent' }}>
+    <View style={{ flex: 1, backgroundColor: 'transparent' }} >
       <NavigationContainer>
         <StatusBar backgroundColor="transparent" barStyle="default" translucent />
         <Stack.Navigator screenOptions={{ headerShown: false }}>
@@ -129,6 +162,7 @@ const AppContent = () => {
           <Stack.Screen name="SignUp" component={SignUpScreen} />
           <Stack.Screen name="UsernameScreen" component={UsernameScreen} />
           <Stack.Screen name="Home" component={BottomTabs} />
+          <Stack.Screen name="SearchPage" component={SearchScreen} />
           <Stack.Screen name="Favorites" component={FavoriteScreen} />
           <Stack.Screen name="Menu" component={MenuScreen} />
           <Stack.Screen name="Cart" component={CartScreen} />
