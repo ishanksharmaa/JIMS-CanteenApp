@@ -51,7 +51,7 @@ const CartScreen = () => {
                         data={cartItems}
                         keyExtractor={(item) => item.title}
                         renderItem={({ item }) => (
-                            <CartItem image={item.image} title={item.title} price={item.price} quantity={item.quantity} />
+                            <CartItem image={item.image} title={item.title} price={item.price} quantity={item.quantity} qty={item.qty} />
                         )}
                         contentContainerStyle={{ paddingBottom: 50 }}
                     />

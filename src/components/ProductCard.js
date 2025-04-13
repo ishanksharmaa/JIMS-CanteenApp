@@ -7,7 +7,7 @@ import { useUser } from "../components/UserContext";
 import { useCart } from "../components/CartContext";
 import { transform } from "typescript";
 
-const ProductCard = ({ image, title, price, descr, quantity, amount, size = 1, gapV = 20, gapH = 20 }) => {
+const ProductCard = ({ image, title, price, descr, quantity, qty, amount, size = 1, gapV = 20, gapH = 20 }) => {
   const navigation = useNavigation();
   const { theme } = useTheme();
   const styles = dynamicTheme(theme, size, gapH, gapV);
@@ -15,20 +15,21 @@ const ProductCard = ({ image, title, price, descr, quantity, amount, size = 1, g
   const { userEmail, setUserEmail, username, setUsername, name, setName, dob, setDob, location, setLocation, refreshUser, user } = useUser();
 
   const handleAddtoCart = () => {
-    const product = { image, title, price, descr, quantity: 1, amount: price }
+    const product = { image, title, price, descr, quantity, qty: 1, amount: price }
     addedToCart(product);
   };
 
   return (
     <TouchableOpacity
       style={styles.productCard}
-      onPress={() => navigation.navigate("ProductScreen", { image, title, price, descr, quantity: 1, amount: price })}
+      onPress={() => navigation.navigate("ProductScreen", { image, title, price, descr, quantity, qty: 1, amount: price })}
       activeOpacity={0.5}
     >
       <Image source={image} style={styles.productImage} />
       <View style={styles.textContainer}>
         <Text style={styles.productTitle}>{title}</Text>
         <Text style={styles.productPrice}>{'₹' + price}</Text>
+        <Text style={styles.productQuantity}>{'Qty: ' + quantity}</Text>
       </View>
 
       {/* ✅ Add to Cart Button */}
@@ -69,6 +70,7 @@ const dynamicTheme = (theme, size, gapH, gapV) => ({
   textContainer: { flexGrow: 0, justifyContent: 'space-between', alignSelf: 'stretch', padding: 10 },
   productTitle: { textAlign: "left", fontSize: 16, fontWeight: 'bold', color: theme.cardTitle, textTransform: 'capitalize', },
   productPrice: { textAlign: "left", fontSize: 14, fontWeight: 'bold', color: theme.cardPrice },
+  productQuantity: { textAlign: "left", fontSize: 12, fontWeight: 'bold', color: theme.cardPrice },
   addIconContainer: { position: "absolute", bottom: 16, right: 16 }
 });
 

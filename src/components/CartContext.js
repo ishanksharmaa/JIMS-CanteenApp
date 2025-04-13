@@ -190,7 +190,7 @@ export const CartProvider = ({ children }) => {
 
                 const itemRef = doc(db, "Users", userId, "Cart", itemTitle);
                 await updateDoc(itemRef, {
-                    quantity: newQuantity,
+                    qty: newQuantity,
                     amount: newQuantity * item.price,
                 });
 
@@ -198,17 +198,17 @@ export const CartProvider = ({ children }) => {
                 setCartItems(prev => {
                     const updated = prev.map(item =>
                         item.title === itemTitle
-                            ? { ...item, quantity: newQuantity, amount: newQuantity * item.price }
+                            ? { ...item, qty: newQuantity, amount: newQuantity * item.price }
                             : item
                     );
                     sumAmount(updated);
                     return updated;
                 });
 
-                console.log(`🔄 Updated ${itemTitle} quantity to ${newQuantity}`);
+                console.log(`🔄 Updated ${itemTitle} qty to ${newQuantity}`);
             }
         } catch (err) {
-            console.error("🚫 Error updating quantity:", err);
+            console.error("🚫 Error updating qty:", err);
         }
     };
 

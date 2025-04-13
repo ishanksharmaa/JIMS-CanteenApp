@@ -11,7 +11,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 const ProductScreen = () => {
   const route = useRoute();
-  const { image, title, price, descr, quantity, amount } = route.params;
+  const { image, title, price, descr, quantity, qty, amount } = route.params;
   const { theme } = useTheme();
   const { addedToCart } = useCart();
   const styles = dynamicTheme(theme);
@@ -24,7 +24,7 @@ const ProductScreen = () => {
   }
 
   const handleAddtoCart = () => {
-    const product = {image, title, price, quantity, amount}
+    const product = { image, title, price, quantity, qty, amount }
     addedToCart(product);
   };
 
@@ -50,6 +50,7 @@ const ProductScreen = () => {
 
         <Text style={styles.productTitle}>{title}</Text>
         <Text style={styles.productPrice}>{'₹' + price}</Text>
+        <Text style={styles.productQuantity}>{'Qty: ' + quantity}</Text>
 
         <View style={styles.countHandler}>
           <TouchableOpacity activeOpacity={1} onPress={() => setCount((prev) => (prev > 1 ? prev - 1 : 1))}>
@@ -64,7 +65,7 @@ const ProductScreen = () => {
         </View>
 
         <View style={styles.descContainer}>
-          <Text style={styles.descTitle}>description:</Text>
+          <Text style={styles.descTitle}>description: { }</Text>
           <Text style={styles.descContent}>{descr || "Info not provided..."}</Text>
           {/* <Text style={styles.descContent}>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</Text> */}
 
@@ -113,6 +114,7 @@ const dynamicTheme = (theme) => ({
   productImage: { width: '100%', height: 250, borderRadius: 10, marginBottom: 0, marginTop: 40 },
   productTitle: { fontSize: 24, fontWeight: "bold", color: theme.text, marginLeft: 20, width: '50%', backgroundColor: 'transparent', textTransform: 'capitalize' },
   productPrice: { fontSize: 22.5, color: theme.cardPrice, marginTop: 10, marginLeft: 20, fontWeight: 'bold' },
+  productQuantity: { fontSize: 14, color: theme.cardPrice, marginTop: 10, marginLeft: 20, fontWeight: 'bold' },
 
   countHandler: { backgroundColor: '', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: '36%', position: 'absolute', right: '5%', top: '6.5%' },
 
