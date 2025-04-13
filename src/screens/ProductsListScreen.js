@@ -199,7 +199,6 @@ const ProductsListScreen = () => {
                                         }}
                                     >
                                         <Text style={{ color: theme.text }}>₹{item.price}</Text>
-                                        {/* <Text style={{ color: theme.text }}>{item.quantity ? " | " : ""}</Text> */}
                                         <Text style={{ color: theme.text }}>Qty: {item.quantity}</Text>
                                     </View>
 
