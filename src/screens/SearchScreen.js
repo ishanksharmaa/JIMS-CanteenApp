@@ -55,27 +55,27 @@ const SearchScreen = () => {
         setLoading(true);
         const lowerCaseSearch = searchText.toLowerCase().trim();
         console.log("Searching:", lowerCaseSearch);
-    
+
         try {
             let query = firestore().collection('Products');
-    
+
             if (!lowerCaseSearch) {
                 const allSnapshot = await query.get();
                 const allProducts = allSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 setFilteredProducts(allProducts);
                 return;
             }
-    
+
             query = query
                 .where('name_lowercase', '>=', lowerCaseSearch)
                 .where('name_lowercase', '<=', lowerCaseSearch + '\uf8ff');
-    
+
             const snapshot = await query.get();
             console.log("Snapshot size:", snapshot.size);
-    
+
             const products = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
             console.log("Products found:", products);
-    
+
             setFilteredProducts(products);
         } catch (err) {
             console.error("Error:", err);
@@ -84,7 +84,7 @@ const SearchScreen = () => {
             setLoading(false);
         }
     };
-    
+
 
 
 
@@ -104,25 +104,28 @@ const SearchScreen = () => {
                 />
             </View>
 
-            <View style={{ height: 300 }}>
+            <View style={{ height: '82%', alignSelf: 'center' }}>
                 <FlatList
                     data={filteredProducts}
                     keyExtractor={(item) => item.id}
-                    horizontal={true}
+                    numColumns={2}
+                    horizontal={false}
                     showsHorizontalScrollIndicator={false}
-                    contentContainerStyle={{ paddingHorizontal: 20 }}
                     ListEmptyComponent={
                         <Text style={{ textAlign: 'center' }}>
                             {loading ? 'Loading...' : 'No products found'}
                         </Text>
                     }
                     renderItem={({ item }) => (
-                        <ProductCard
-                            image={{ uri: item.image }}
-                            title={item.name}
-                            price={item.price}
-                            descr={item.description}
-                        />
+                        <View style={{ flex: 0, padding: 0, backgroundColor: 'transparent', margin: 1, alignItems: 'center', justifyContent: 'center' }}>
+                            <ProductCard
+                                image={{ uri: item.image }}
+                                title={item.name}
+                                price={item.price}
+                                descr={item.description}
+                                size={0.9} gapV={0} gapH={0}
+                            />
+                        </View>
                     )}
                 />
             </View>
@@ -133,12 +136,13 @@ const SearchScreen = () => {
 const dynamicTheme = (theme) => ({
     container: {
         flex: 1,
-        padding: 10,
+        padding: 0,
         backgroundColor: theme.background,
     },
     searchContainer: {
-        marginTop: 24,
-        marginHorizontal: 7,
+        marginTop: 34,
+        marginHorizontal: 17,
+        marginBottom: 50,
     },
     notFoundText: {
         textAlign: 'center',

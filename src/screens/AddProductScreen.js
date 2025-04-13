@@ -4,6 +4,7 @@ import { useTheme } from "../components/ThemeContext";
 import RefreshCompo from "../components/RefreshCompo";
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 // import { BlurView } from "@react-native-community/blur";
+import {useCart} from "../components/CartContext";
 
 import firestore from '@react-native-firebase/firestore';
 
@@ -11,6 +12,7 @@ import firestore from '@react-native-firebase/firestore';
 const AddProductScreen = () => {
     const { theme } = useTheme();
     const styles = dynamicTheme(theme);
+    const {onAddtoCart} = useCart();
 
     const [product, setProduct] = useState({
         name: "",
@@ -104,6 +106,7 @@ const AddProductScreen = () => {
 
             await productsRef.doc(docId).set(newProduct);
             console.log(`Product added successfully with ID: ${docId}`);
+            onAddtoCart(`${product.name} Added`, "New Product Added!!")
             setProduct({ name: "", price: "", description: "", quantity: "", image: "", category: "" });
 
         } catch (error) {

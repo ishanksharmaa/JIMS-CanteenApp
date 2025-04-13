@@ -5,11 +5,13 @@ import { useNavigation } from "@react-navigation/native";
 import { useTheme } from "./ThemeContext";
 import { useUser } from "../components/UserContext";
 import { useCart } from "../components/CartContext";
+import { transform } from "typescript";
 
-const ProductCard = ({ image, title, price, descr, quantity, amount }) => {
+const ProductCard = ({ image, title, price, descr, quantity, amount, size = 1, gapV = 20, gapH = 20 }) => {
   const navigation = useNavigation();
   const { theme } = useTheme();
-  const styles = dynamicTheme(theme);
+  const styles = dynamicTheme(theme, size, gapH, gapV);
+  const {addedToCart} = useCart();
   const { userEmail, setUserEmail, username, setUsername, name, setName, dob, setDob, location, setLocation, refreshUser, user } = useUser();
 
   const handleAddtoCart = () => {
@@ -44,13 +46,15 @@ const ProductCard = ({ image, title, price, descr, quantity, amount }) => {
   );
 };
 
-const dynamicTheme = (theme) => ({
+const dynamicTheme = (theme, size, gapH, gapV) => ({
   productCard: {
+    transform: [{ scale: size }],
     backgroundColor: theme.cardBg,
     borderRadius: 15,
     width: 200,
     height: 220,
-    marginRight: 20,
+    marginRight: gapH,
+    marginBottom: gapV,
     alignItems: "center",
 
     /* ✅ SOFTER SHADOW */

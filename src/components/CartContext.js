@@ -99,7 +99,8 @@ export const CartProvider = ({ children }) => {
         try {
             const alreadyExists = cartItems.some(item => item.title === product.title);
             if (alreadyExists) {
-                alert("⚠️ Item already in cart");
+                // alert(`⚠️ ${product.title.charAt(0).toUpperCase() + product.title.slice(1) } already in cart!`);
+                alert(`⚠️ ${product.title.toUpperCase() } already in cart!\n\nIncrease product quantity from the cart.`);
                 return;
             }
 
