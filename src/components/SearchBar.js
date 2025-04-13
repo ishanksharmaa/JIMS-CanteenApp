@@ -3,14 +3,15 @@ import { View, TextInput, StyleSheet, TouchableOpacity } from "react-native";
 import { useTheme } from "../components/ThemeContext";
 import { useNavigation } from "@react-navigation/native";
 
-const SearchBar = ({ placeholder = "Search here...", onChange, navigatePage, editable }) => {
+const SearchBar = ({ placeholder = "Search here...", onChange, navigatePage, editable, inputRef }) => {
     const { theme } = useTheme();
     const styles = dynamicTheme(theme);
     const navigation = useNavigation();
 
     return (
-        <TouchableOpacity style={styles.searchContainer} onPress={()=> navigation.navigate(navigatePage)} >
+        <TouchableOpacity style={styles.searchContainer} onPress={() => navigation.navigate(navigatePage)} >
             <TextInput
+                ref={inputRef}
                 style={styles.searchBar}
                 placeholder={placeholder}
                 placeholderTextColor={"grey"}

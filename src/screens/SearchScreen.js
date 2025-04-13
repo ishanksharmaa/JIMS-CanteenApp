@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { View, FlatList, Text, StyleSheet, Keyboard, TouchableWithoutFeedback, TouchableOpacity } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import { useTheme } from '../components/ThemeContext';
@@ -12,6 +12,8 @@ const SearchScreen = () => {
     const [loading, setLoading] = useState(false);
     const { theme } = useTheme();
     const styles = dynamicTheme(theme);
+    const searchInputRef = useRef(null);
+
 
     // Load initial data
     // useEffect(() => {
@@ -21,10 +23,21 @@ const SearchScreen = () => {
     useEffect(() => {
         const delayDebounce = setTimeout(() => {
             fetchProducts(searchText);
-        }, 500); // 0.5 second debounce
+            searchInputRef.current.focus();
+        }, 500); // 0.1 second debounce
 
         return () => clearTimeout(delayDebounce);
     }, [searchText]);
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            if (searchInputRef.current) {
+                searchInputRef.current.focus();
+            }
+        }, 100); // slight delay so layout finishes
+
+        return () => clearTimeout(timer);
+    }, []);
 
     // const fetchProducts = async (searchText) => {
     //     setLoading(true);
@@ -86,8 +99,6 @@ const SearchScreen = () => {
     };
 
 
-
-
     return (
         <View style={styles.container}>
             <View style={styles.searchContainer}>
@@ -95,11 +106,12 @@ const SearchScreen = () => {
                     placeholder='Search food, menu...'
                     onChangeText={setSearchText}
                     onSubmitEditing={() => fetchProducts(searchText.toLowerCase())}
+                    inputRef={searchInputRef}
                 />
             </View>
             <View style={styles.searchBtn}>
                 <CustomButton
-                    title="Search" btnColor={"#333"} textColor={theme.customButtonText}
+                    title="Search" btnColor={theme.searchBtnColor} textColor={theme.customButtonText}
                     onPress={() => fetchProducts(searchText)} size={0.7} radius={50} opacity={1}
                 />
             </View>
