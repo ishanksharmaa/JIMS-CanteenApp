@@ -62,17 +62,17 @@ const AddProductScreen = ({ closeModal, product: initialProduct, mode }) => {
         setProduct(prevProduct => {
             let updatedValue = value;
 
-            if (field === "price" || field === "quantity") {
+            if (field === "price") {
                 updatedValue = value.replace(/\D/g, ""); // Only numbers allowed for price and quantity
             }
 
-            if (field === "category") {
-                updatedValue = value
-                    .trim()
-                    .split(' ')
-                    .map(word => word.toLowerCase())
-                    .filter(word => word.length > 0);
-            }
+            // if (field === "category") {
+            //     updatedValue = value
+            //         .trim()
+            //         .split(' ')
+            //         .map(word => word.toLowerCase())
+            //         .filter(word => word.length > 0);
+            // }
 
             return { ...prevProduct, [field]: updatedValue };
         });
@@ -103,13 +103,19 @@ const AddProductScreen = ({ closeModal, product: initialProduct, mode }) => {
         const productsRef = firestore().collection("Products");
         const docId = product.name.trim().toLowerCase().replace(/\s+/g, '-'); // Consistent lowercase IDs with hyphens
 
+        const categoryArray = product.category
+            .trim()
+            .split(' ')
+            .map(word => word.toLowerCase())
+            .filter(word => word.length > 0);
+
         const productData = {
             name: product.name.toLowerCase(),
             price: parseInt(product.price, 10),
             description: product.description,
-            quantity: parseInt(product.quantity, 10),
+            quantity: product.quantity.toLowerCase(),
             image: product.image,
-            category: product.category,
+            category: categoryArray,
             timestamp: firestore.FieldValue.serverTimestamp(),
         };
 
@@ -199,7 +205,7 @@ const AddProductScreen = ({ closeModal, product: initialProduct, mode }) => {
                             value={product.quantity}
                             placeholderTextColor={'grey'}
                             onChangeText={(text) => handleChange("quantity", text)}
-                            keyboardType="numeric"
+                            // keyboardType="numeric"
                         />
                     </View>
 
@@ -213,8 +219,8 @@ const AddProductScreen = ({ closeModal, product: initialProduct, mode }) => {
                     <TextInput
                         style={styles.input}
                         placeholder="# Categories (separate by space) *"
-                        // value={Array.isArray(product.category) ? product.category.join(' ') : product.category}
-                        value={product.category}
+                        value={Array.isArray(product.category) ? product.category.join(' ') : product.category}
+                        // value={product.category}
                         placeholderTextColor={'grey'}
                         onChangeText={(text) => handleChange("category", text)}
                     />
