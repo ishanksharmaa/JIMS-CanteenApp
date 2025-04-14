@@ -5,40 +5,92 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import firestore from "@react-native-firebase/firestore";
 import { useUser } from "../components/UserContext";
 import ProductCard from '../components/ProductCard';
-import { useCart } from "../components/CartContext";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 
 const FavoriteScreen = () => {
   const { theme } = useTheme();
-  const { userEmail, user } = useUser();
+  const { userEmail } = useUser();
   const styles = dynamicTheme(theme);
 
+  const [favoriteProducts, setFavoriteProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const { fetchFavorites, favItems, setFavItems, setCartItems } = useCart();
+  const [uid, setUid] = useState(null);
 
+  // Get user's UID from email
   useEffect(() => {
-    let unsubscribe;
+    if (!userEmail) return;
 
-    const loadFavorites = async () => {
+    const fetchUserId = async () => {
       try {
-        if (user) {
-          // Use real-time listener instead of one-time fetch
-          unsubscribe = await fetchFavorites(user.email);
+        const userSnapshot = await firestore()
+          .collection("Users")
+          .where("email", "==", userEmail)
+          .get();
+
+        if (!userSnapshot.empty) {
+          setUid(userSnapshot.docs[0].id);
         }
       } catch (error) {
-        console.error("Error loading favorites:", error);
-      } finally {
+        console.error("Error fetching user ID:", error);
         setLoading(false);
       }
     };
 
-    loadFavorites();
+    fetchUserId();
+  }, [userEmail]);
 
-    return () => {
-      if (unsubscribe) unsubscribe();
-    };
-  }, [user]);
+  // Fetch favorites based on title field
+  useEffect(() => {
+    if (!uid) return;
 
+    const unsubscribe = firestore()
+      .collection("Users")
+      .doc(uid)
+      .collection("Favorites")
+      .onSnapshot(async (favoritesSnapshot) => {
+        const favoriteTitles = favoritesSnapshot.docs.map(doc => doc.data().title);
+
+        if (favoriteTitles.length === 0) {
+          setFavoriteProducts([]);
+          setLoading(false);
+          return;
+        }
+
+        try {
+          // Fetch products where name matches any favorite title
+          const productsSnapshot = await firestore()
+            .collection("Products")
+            .where("name", "in", favoriteTitles)
+            .get();
+
+          const products = productsSnapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+          }));
+
+          setFavoriteProducts(products);
+        } catch (error) {
+          console.error("Error fetching favorite products:", error);
+        } finally {
+          setLoading(false);
+        }
+      });
+
+    return () => unsubscribe();
+  }, [uid]);
+
+  // const renderProduct = ({ item }) => (
+  //   <TouchableOpacity style={styles.productCard}>
+  //     <View style={styles.productInfo}>
+  //       <Text style={styles.productName}>{item.name}</Text>
+  //       <Text style={styles.productPrice}>₹{item.price}</Text>
+  //       {item.category && (
+  //         <Text style={styles.productCategory}>{item.category}</Text>
+  //       )}
+  //     </View>
+  //     <MaterialIcons name="favorite" size={24} color="red" />
+  //   </TouchableOpacity>
+  // );
 
   if (loading) {
     return (
@@ -50,7 +102,7 @@ const FavoriteScreen = () => {
 
   return (
     <View style={styles.container}>
-      {favItems.length === 0 ? (
+      {favoriteProducts.length === 0 ? (
         <View style={styles.emptyContainer}>
           <Ionicons name="heart" size={80} color="red" />
           <Text style={styles.text}>No Favorites Yet</Text>
@@ -60,7 +112,7 @@ const FavoriteScreen = () => {
           <Text style={styles.header}>Favorites</Text>
           <FlatList
             style={styles.listContainer}
-            data={favItems}
+            data={favoriteProducts}
             keyExtractor={(item) => item.id}
             numColumns={2}
             horizontal={false}

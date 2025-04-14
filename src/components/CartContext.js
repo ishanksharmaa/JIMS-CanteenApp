@@ -2,6 +2,7 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import { getFirestore, collection, getDocs, setDoc, doc, query, where, deleteDoc, updateDoc } from "firebase/firestore";
 import auth from "@react-native-firebase/auth";
 import Toast from 'react-native-toast-message';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useUser } from "./UserContext";
 
 export const CartContext = createContext();
@@ -12,18 +13,41 @@ export const CartProvider = ({ children }) => {
     const [favItems, setFavItems] = useState([]);
     const [totalAmount, setTotalAmount] = useState(0);
     const [favorites, setFavorites] = useState([]);
+    // const [favoriteProducts, setFavoriteProducts] = useState([]);
     const isFavorite = (title) => favorites.includes(title);
 
 
     useEffect(() => {
         if (user) {
             fetchCart(userEmail);
-            fetchFavorites(userEmail);
+
+            const loadFavorites = async () => {
+                try {
+                    const savedFavorites = await AsyncStorage.getItem('favorites');
+                    if (savedFavorites) {
+                        setFavorites(JSON.parse(savedFavorites));
+                    }
+                } catch (error) {
+                    console.error("Error loading favorites:", error);
+                }
+            };
+            loadFavorites();
         } else {
             setCartItems([]);
             setFavItems([]);
         }
     }, [user]);
+
+    useEffect(() => {
+        const saveFavorites = async () => {
+            try {
+                await AsyncStorage.setItem('favorites', JSON.stringify(favorites));
+            } catch (error) {
+                console.error("Error saving favorites:", error);
+            }
+        };
+        saveFavorites();
+    }, [favorites]);
 
     useEffect(() => {
         sumAmount(cartItems); // jab bhi cartItems change honge, totalAmount auto update
@@ -224,9 +248,8 @@ export const CartProvider = ({ children }) => {
     const toggleFavoriteItem = async (title) => {
         try {
             if (isFavorite(title)) {
-                setFavItems(prev => prev.filter(item => item.title !== title));
-                setFavorites(prev => prev.filter(t => t !== title));
                 await removedFromFav(title);
+                setFavorites(prev => prev.filter(t => t !== title));
             } else {
                 await addedToFav(title);
                 setFavorites(prev => [...prev, title]);
@@ -250,25 +273,22 @@ export const CartProvider = ({ children }) => {
                 const userId = userDoc.id;
 
                 const favRef = collection(db, "Users", userId, "Favorites");
+                const favSnap = await getDocs(favRef);
 
-                // const favSnap = await getDocs(favRef);
-                return onSnapshot(favRef, async (favSnap) => {
+                const favoriteTitles = favSnap.docs.map(doc => doc.data().title);
+                setFavorites(favoriteTitles);
 
-                    const favoriteTitles = favSnap.docs.map(doc => doc.data().title);
-                    setFavorites(favoriteTitles);
+                // Fetch full product details for each favorite
+                const productsRef = collection(db, "Products");
+                const productsQuery = query(productsRef, where("name", "in", favoriteTitles));
+                const productsSnap = await getDocs(productsQuery);
 
-                    // Fetch full product details for each favorite
-                    const productsRef = collection(db, "Products");
-                    const productsQuery = query(productsRef, where("name", "in", favoriteTitles));
-                    const productsSnap = await getDocs(productsQuery);
+                const favoriteProducts = productsSnap.docs.map(doc => ({
+                    id: doc.id,
+                    ...doc.data()
+                }));
 
-                    const favoriteProducts = productsSnap.docs.map(doc => ({
-                        id: doc.id,
-                        ...doc.data()
-                    }));
-
-                    setFavItems(favoriteProducts);
-                });
+                setFavItems(favoriteProducts);
             }
         } catch (error) {
             console.error("Error fetching favorites:", error);
@@ -338,16 +358,14 @@ export const CartProvider = ({ children }) => {
                 const userId = userDoc.id;
 
                 const favRef = doc(db, "Users", userId, "Favorites", title);
+                await deleteDoc(favRef);
 
                 setFavItems(prev => prev.filter(item => item.title !== title));
-                setFavorites(prev => prev.filter(t => t !== title));
-                await deleteDoc(favRef);
                 onAddtoCart("heart-dislike", title, "Removed from favorites", true);
                 console.log(`🧹 Removed ${title} from fav`);
             }
         } catch (error) {
             console.error("🔥 Error removing from favorites:", error);
-            fetchFavorites(userEmail);
             alert("Failed to remove from favorites");
         }
     };
