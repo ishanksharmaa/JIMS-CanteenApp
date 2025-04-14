@@ -33,7 +33,7 @@ export const ProfileSection = ({ flexDirection, gap, scale }) => {
                 source={image ? { uri: image } : require('../../assets/app_logo.jpeg')}
                 style={styles.profileImage} resizeMode="cover"
             />
-            <View>
+            <View style={{alignItems:'center', backgroundColor: 'transparent'}}>
                 <Text style={styles.profileName}>{name || "Your name"}</Text>
                 <Text style={styles.username}>@{username.toLowerCase() || "username"}</Text>
                 {/* <Text style={styles.username}>@{dob}</Text> */}
@@ -106,7 +106,7 @@ const dynamicTheme = (theme, flexDirection, gap, scale) => ({
     backBtn: { flexDirection: 'row', alignItems: 'center', backgroundColor: theme.backBtnBg, padding: 7, borderRadius: '50%', justifyContent: 'space-between' },
     title: { fontSize: 21, fontWeight: 'bold', alignSelf: 'center', color: theme.text, marginHorizontal: 18 },
     headerIcons: { flexDirection: 'row', width: '18%', backgroundColor: '', justifyContent: 'space-between', position: 'absolute', right: 10 },
-    profileSection: { transform: [{ scale: scale }], flexDirection: flexDirection, alignItems: 'center', justifyContent: 'center', alignSelf: 'center', marginBottom: 20, gap: gap, backgroundColor: 'transparent' },
+    profileSection: { transform: [{ scale: scale }], flexDirection: flexDirection, alignItems: 'center', justifyContent: 'center', alignSelf: 'center', marginBottom: 20, gap: gap, backgroundColor: 'transparent', alignSelf: 'center' },
     profileImage: { width: 75, height: 75, borderRadius: 40, marginRight: 15 },
     profileName: { fontSize: 17, fontWeight: 'bold', color: theme.text },
     username: { fontSize: 13, color: 'gray' },

@@ -44,7 +44,8 @@ const ProductCard = ({ image, title, price, descr, quantity, qty, amount, size =
     >
       <Image source={image} style={styles.productImage} />
       <TouchableOpacity style={styles.favBtn} onPress={() => toggleFavoriteItem(title)} activeOpacity={0.6} >
-        <Ionicons name={isFavorite(title) ? "heart" : "heart-outline"} size={22} color={isFavorite(title) ? theme.customButtonBg : theme.text} />
+        {/* <Ionicons name={isFavorite(title) ? "heart" : "heart-outline"} size={22} color={isFavorite(title) ? theme.customButtonBg : theme.text} /> */}
+        <Ionicons name={isFavorite(title) ? "heart" : "heart-outline"} size={22} color={isFavorite(title) ? theme.text : theme.text} />
       </TouchableOpacity>
       <View style={styles.textContainer}>
         <Text style={styles.productTitle}>{title}</Text>
@@ -64,7 +65,8 @@ const ProductCard = ({ image, title, price, descr, quantity, qty, amount, size =
         <FontAwesome
           name={isInCart ? "circle-minus" : "circle-plus"}
           size={45}
-          color={isInCart ? "#C40233" : "#029232"}
+          // color={isInCart ? "#C40233" : "#029232"}
+          color={isInCart ? "#C40233" : theme.customButtonBg}
         />
       </TouchableOpacity>
     </TouchableOpacity>
@@ -96,9 +98,9 @@ const dynamicTheme = (theme, size, gapH, gapV) => ({
     // backgroundColor: theme.backBtnBg,
     backgroundColor: theme.cardBg,
     position: 'absolute',
-    // top: 7,
-    bottom: 87,
-    right: 8,
+    top: 7,
+    // bottom: 87,
+    left: 8,
   },
   textContainer: { flexGrow: 0, justifyContent: 'space-between', alignSelf: 'stretch', padding: 10 },
   productTitle: { textAlign: "left", fontSize: 16, fontWeight: 'bold', color: theme.cardTitle, textTransform: 'capitalize', },

@@ -122,7 +122,7 @@ const FavoriteScreen = () => {
               </Text>
             }
             renderItem={({ item }) => (
-              <View style={{ flex: 1, padding: 0, backgroundColor: 'transparent', margin: 1 }}>
+              <View style={{ flex: 1, padding: 0, backgroundColor: 'transparent', margin: 0 }}>
                 <ProductCard
                   image={{ uri: item.image }}
                   title={item.name}
@@ -154,6 +154,7 @@ const dynamicTheme = (theme) => ({
   listContainer: {
     marginHorizontal: 8,
     // backgroundColor: 'red',
+    marginBottom: '19%'
   },
   text: {
     fontSize: 24,

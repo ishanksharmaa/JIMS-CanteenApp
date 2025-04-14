@@ -100,7 +100,8 @@ const SearchScreen = () => {
             <View style={styles.searchBtn}>
                 <CustomButton
                     title="Search"
-                    btnColor={theme.searchBtnColor}
+                    // btnColor={theme.searchBtnColor}
+                    btnColor={theme.customButtonBg}
                     textColor={theme.customButtonText}
                     onPress={() => fetchProducts(searchText)}
                     size={0.7}
@@ -109,7 +110,7 @@ const SearchScreen = () => {
                 />
             </View>
 
-            <View style={{ height: '82%', marginHorizontal: 9, backgroundColor: 'transparent', marginLeft: 7, }}>
+            <View style={{ height: '82%', marginHorizontal: 9, backgroundColor: 'transparent', marginLeft: 7 }}>
                 <FlatList
                     data={filteredProducts}
                     keyExtractor={(item) => item.id}
