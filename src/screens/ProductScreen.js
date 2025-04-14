@@ -116,7 +116,7 @@ const dynamicTheme = (theme) => ({
 
   countHandler: { backgroundColor: '', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: '36%', position: 'absolute', right: '5%', top: '6.5%' },
 
-  descContainer: { alignItems: 'left', backgroundColor: 'transparent', maxHeight: '24%', margin: 20, overflow: 'hidden' },
+  descContainer: { alignItems: 'left', backgroundColor: 'transparent', maxHeight: '22%', margin: 20, overflow: 'hidden' },
   descTitle: { fontWeight: 'bold', textTransform: 'capitalize', paddingBottom: 5, color: theme.text },
   descContent: { textAlign: 'left', color: theme.text },
 
