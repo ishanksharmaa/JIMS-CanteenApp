@@ -6,9 +6,9 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 // Custom Toast Component
 const CustomToast = {
   success: ({ text1, text2, props }) => (
-    <View style={[styles.toastContainer, { backgroundColor: '#4CAF50' }]}>
+    <View style={[styles.toastContainer, { backgroundColor: props.negative ? '#C40233' : '#4CAF50' }]}>
       {/* <Image source={require('../../assets/eye-open.png')} style={styles.icon} /> */}
-      <Ionicons name="cart" size={24} color={"#eee"} style={styles.icon} />
+      <Ionicons name={props.icon} size={24} color={"#eee"} style={styles.icon} />
       <View>
         <Text style={styles.toastTitle}>{text1}</Text>
         <Text style={styles.toastMessage}>{text2}</Text>
@@ -17,7 +17,7 @@ const CustomToast = {
   ),
 
   error: ({ text1, text2, props }) => (
-    <View style={[styles.toastContainer, { backgroundColor: '#FF5733' }]}>
+    <View style={[styles.toastContainer, { backgroundColor: props.negative ? '#C40233' : '#FF5733' }]}>
       {/* <Image source={require('../../assets/eye-closed.png')} style={styles.icon} /> */}
       <View>
         <Text style={styles.toastTitle}>{text1}</Text>

@@ -6,6 +6,7 @@ import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import AddProductScreen from "./AddProductScreen";
 import SearchBar from "../components/SearchBar";
 import { HeaderBackIcon } from "./CartScreen";
+import { useCart } from "../components/CartContext";
 
 const ProductsListScreen = () => {
     const [text, setText] = useState('');
@@ -15,6 +16,7 @@ const ProductsListScreen = () => {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [modalVisible, setModalVisible] = useState(false);
+    const { onAddtoCart } = useCart();
 
     const [selectedItems, setSelectedItems] = useState([]);
     const [selectionMode, setSelectionMode] = useState(false);
@@ -95,6 +97,7 @@ const ProductsListScreen = () => {
                         selectedItems.forEach(id => {
                             const ref = firestore().collection("Products").doc(id);
                             batch.delete(ref);
+                            onAddtoCart("remove-circle", "Selected Items deleted!", "", true);
                         });
 
                         await batch.commit();
@@ -235,10 +238,7 @@ const ProductsListScreen = () => {
                 onRequestClose={() => setModalVisible(false)}
             >
                 <View style={styles.modalContainer}>
-                    <AddProductScreen />
-                    <TouchableOpacity style={styles.closeButton} onPress={() => setModalVisible(false)}>
-                        <Text style={styles.closeText}>Cancel</Text>
-                    </TouchableOpacity>
+                    <AddProductScreen closeModal={() => setModalVisible(false)} />
                 </View>
             </Modal>
         </View>
@@ -264,15 +264,6 @@ const dynamicTheme = (theme) => ({
     productName: { fontSize: 18, fontWeight: "bold", color: theme.text, textTransform: 'capitalize' },
     productPrice: { fontSize: 16, fontWeight: "bold", color: theme.primaryColor },
     modalContainer: { flex: 1, justifyContent: "center", backgroundColor: "rgba(0,0,0,0.5)", paddingHorizontal: 10 },
-    closeButton: {
-        backgroundColor: "red",
-        width: '71%',
-        paddingVertical: 16.2,
-        borderRadius: 22,
-        margin: 28,
-        alignItems: "center",
-        alignSelf: 'center',
-    },
     closeText: { color: "white", fontSize: 16, fontWeight: "bold" },
 });
 

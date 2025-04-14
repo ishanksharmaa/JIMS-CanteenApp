@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 import FontAwesome from 'react-native-vector-icons/FontAwesome6';
+import Ionicons from "react-native-vector-icons/Ionicons";
 import { useNavigation } from "@react-navigation/native";
 import { useTheme } from "./ThemeContext";
 import { useUser } from "../components/UserContext";
@@ -11,13 +12,29 @@ const ProductCard = ({ image, title, price, descr, quantity, qty, amount, size =
   const navigation = useNavigation();
   const { theme } = useTheme();
   const styles = dynamicTheme(theme, size, gapH, gapV);
-  const {addedToCart} = useCart();
-  const { userEmail, setUserEmail, username, setUsername, name, setName, dob, setDob, location, setLocation, refreshUser, user } = useUser();
+  const { addedToCart, removedFromCart, toggleFavoriteItem, isFavorite, cartItems, setCartItems, setFavItems, fetchFavorites } = useCart();
+  const { refreshUser, user, userEmail } = useUser();
+  const isInCart = cartItems.some(item => item.title === title);
 
-  const handleAddtoCart = () => {
-    const product = { image, title, price, descr, quantity, qty: 1, amount: price }
-    addedToCart(product);
+  useEffect(() => {
+          if (user) {
+              fetchFavorites(userEmail);
+          } else {
+              setCartItems([]);
+              setFavItems([]);
+          }
+      }, [user]);
+
+  const handleCartAction = () => {
+    if (isInCart) {
+      removedFromCart(title);
+    } else {
+      const product = { image, title, price, descr, quantity, qty: 1, amount: price };
+      addedToCart(product);
+    }
+    refreshUser();
   };
+  
 
   return (
     <TouchableOpacity
@@ -26,6 +43,9 @@ const ProductCard = ({ image, title, price, descr, quantity, qty, amount, size =
       activeOpacity={0.5}
     >
       <Image source={image} style={styles.productImage} />
+      <TouchableOpacity style={styles.favBtn} onPress={() => toggleFavoriteItem(title)} activeOpacity={0.6} >
+        <Ionicons name={isFavorite(title) ? "heart" : "heart-outline"} size={22} color={isFavorite(title) ? theme.customButtonBg : theme.text} />
+      </TouchableOpacity>
       <View style={styles.textContainer}>
         <Text style={styles.productTitle}>{title}</Text>
         <Text style={styles.productPrice}>{'₹' + price}</Text>
@@ -36,12 +56,16 @@ const ProductCard = ({ image, title, price, descr, quantity, qty, amount, size =
       <TouchableOpacity
         style={styles.addIconContainer}
         onPress={() => {
-          handleAddtoCart();
+          handleCartAction();
           refreshUser();
         }}
         activeOpacity={0.5}
       >
-        <FontAwesome name="circle-plus" size={45} color="#029232" />
+        <FontAwesome
+          name={isInCart ? "circle-minus" : "circle-plus"}
+          size={45}
+          color={isInCart ? "#C40233" : "#029232"}
+        />
       </TouchableOpacity>
     </TouchableOpacity>
   );
@@ -67,11 +91,20 @@ const dynamicTheme = (theme, size, gapH, gapV) => ({
   },
 
   productImage: { width: '100%', height: 110, borderRadius: 10 },
+  favBtn: {
+    padding: 7, borderRadius: 20,
+    // backgroundColor: theme.backBtnBg,
+    backgroundColor: theme.cardBg,
+    position: 'absolute',
+    // top: 7,
+    bottom: 87,
+    right: 8,
+  },
   textContainer: { flexGrow: 0, justifyContent: 'space-between', alignSelf: 'stretch', padding: 10 },
   productTitle: { textAlign: "left", fontSize: 16, fontWeight: 'bold', color: theme.cardTitle, textTransform: 'capitalize', },
   productPrice: { textAlign: "left", fontSize: 14, fontWeight: 'bold', color: theme.cardPrice },
   productQuantity: { textAlign: "left", fontSize: 12, fontWeight: 'bold', color: theme.cardPrice },
-  addIconContainer: { position: "absolute", bottom: 16, right: 16 }
+  addIconContainer: { position: "absolute", bottom: 16, right: 16 },
 });
 
 export default ProductCard;

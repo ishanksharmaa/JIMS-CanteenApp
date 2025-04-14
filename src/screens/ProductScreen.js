@@ -13,15 +13,11 @@ const ProductScreen = () => {
   const route = useRoute();
   const { image, title, price, descr, quantity, qty, amount } = route.params;
   const { theme } = useTheme();
-  const { addedToCart } = useCart();
+  const { addedToCart, toggleFavoriteItem, isFavorite } = useCart();
   const styles = dynamicTheme(theme);
   const navigation = useNavigation();
   const [count, setCount] = useState(1); // Default count 1
-  const [isFavorite, setIsFavorite] = useState(false);
 
-  const toggleFavoriteItem = (fav) => {
-    setIsFavorite((prev) => !prev);
-  }
 
   const handleAddtoCart = () => {
     const product = { image, title, price, quantity, qty, amount }
@@ -40,8 +36,8 @@ const ProductScreen = () => {
         <TouchableOpacity style={styles.shareBtn} onPress={() => navigation.goBack()} activeOpacity={0.6} >
           <Ionicons name="share-outline" size={24} color={theme.text} />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.favBtn} onPress={toggleFavoriteItem} activeOpacity={0.6} >
-          <Ionicons name={isFavorite ? "heart" : "heart-outline"} size={24} color={isFavorite ? theme.customButtonBg : theme.text} />
+        <TouchableOpacity style={styles.favBtn} onPress={() => toggleFavoriteItem(title)} activeOpacity={0.6} >
+          <Ionicons name={isFavorite(title) ? "heart" : "heart-outline"} size={24} color={isFavorite(title) ? theme.customButtonBg : theme.text} />
         </TouchableOpacity>
       </View>
       <Image source={image} style={styles.productImage} />
@@ -65,7 +61,7 @@ const ProductScreen = () => {
         </View>
 
         <View style={styles.descContainer}>
-          <Text style={styles.descTitle}>description: {}</Text>
+          <Text style={styles.descTitle}>description: { }</Text>
           <Text style={styles.descContent}>{descr || "Info not provided..."}</Text>
           {/* <Text style={styles.descContent}>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</Text> */}
 

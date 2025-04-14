@@ -9,13 +9,19 @@ export const CartContext = createContext();
 export const CartProvider = ({ children }) => {
     const { user, userEmail } = useUser();
     const [cartItems, setCartItems] = useState([]);
+    const [favItems, setFavItems] = useState([]);
     const [totalAmount, setTotalAmount] = useState(0);
+    const [favorites, setFavorites] = useState([]);
+    const isFavorite = (title) => favorites.includes(title);
+
 
     useEffect(() => {
         if (user) {
             fetchCart(userEmail);
+            fetchFavorites(userEmail);
         } else {
             setCartItems([]);
+            setFavItems([]);
         }
     }, [user]);
 
@@ -100,7 +106,7 @@ export const CartProvider = ({ children }) => {
             const alreadyExists = cartItems.some(item => item.title === product.title);
             if (alreadyExists) {
                 // alert(`⚠️ ${product.title.charAt(0).toUpperCase() + product.title.slice(1) } already in cart!`);
-                alert(`⚠️ ${product.title.toUpperCase() } already in cart!\n\nIncrease product quantity from the cart.`);
+                alert(`⚠️ ${product.title.toUpperCase()} already in cart!\n\nIncrease product quantity from the cart.`);
                 return;
             }
 
@@ -122,7 +128,7 @@ export const CartProvider = ({ children }) => {
                     return updated;
                 });
 
-                onAddtoCart(product.title, "Added to cart")
+                onAddtoCart("cart", product.title, "Added to cart")
                 console.log("✅ Product added to Firestore cart");
             }
         } catch (error) {
@@ -130,11 +136,12 @@ export const CartProvider = ({ children }) => {
         }
     };
 
-    const onAddtoCart = (productName, msg) => {
+    const onAddtoCart = (icon, productName, msg, negative) => {
         Toast.show({
             type: 'success',
             text1: productName,
             text2: msg,
+            props: { icon, negative },
             position: 'top',
             visibilityTime: 4000,
             autoHide: true,
@@ -166,6 +173,7 @@ export const CartProvider = ({ children }) => {
                     sumAmount(updated);
                     return updated;
                 });
+                onAddtoCart("remove-circle", title, "Removed from cart", true);
                 console.log(`🧹 Removed ${title} from cart`);
             } else {
                 console.warn("😕 User not found for removal");
@@ -213,9 +221,154 @@ export const CartProvider = ({ children }) => {
     };
 
 
+    const toggleFavoriteItem = async (title) => {
+        try {
+            if (isFavorite(title)) {
+                setFavItems(prev => prev.filter(item => item.title !== title));
+                setFavorites(prev => prev.filter(t => t !== title));
+                await removedFromFav(title);
+            } else {
+                await addedToFav(title);
+                setFavorites(prev => [...prev, title]);
+            }
+        } catch (error) {
+            console.error("Error toggling favorite:", error);
+        }
+    };
+
+    const fetchFavorites = async (userEmail) => {
+        try {
+            if (!userEmail) return;
+
+            const db = getFirestore();
+            const userRef = collection(db, "Users");
+            const q = query(userRef, where("email", "==", userEmail));
+            const snapshot = await getDocs(q);
+
+            if (!snapshot.empty) {
+                const userDoc = snapshot.docs[0];
+                const userId = userDoc.id;
+
+                const favRef = collection(db, "Users", userId, "Favorites");
+
+                // const favSnap = await getDocs(favRef);
+                return onSnapshot(favRef, async (favSnap) => {
+
+                    const favoriteTitles = favSnap.docs.map(doc => doc.data().title);
+                    setFavorites(favoriteTitles);
+
+                    // Fetch full product details for each favorite
+                    const productsRef = collection(db, "Products");
+                    const productsQuery = query(productsRef, where("name", "in", favoriteTitles));
+                    const productsSnap = await getDocs(productsQuery);
+
+                    const favoriteProducts = productsSnap.docs.map(doc => ({
+                        id: doc.id,
+                        ...doc.data()
+                    }));
+
+                    setFavItems(favoriteProducts);
+                });
+            }
+        } catch (error) {
+            console.error("Error fetching favorites:", error);
+            throw error;
+        }
+    };
+
+
+    const addedToFav = async (title) => {
+        try {
+            const alreadyExists = favItems.some(item => item.title === title);
+            if (alreadyExists) {
+                alert(`❤️ ${title.toUpperCase()} is already in your favorites!`);
+                return;
+            }
+
+            const db = getFirestore();
+            const userRef = collection(db, "Users");
+            const q = query(userRef, where("email", "==", userEmail));
+            const snapshot = await getDocs(q);
+
+            if (!snapshot.empty) {
+                const userDoc = snapshot.docs[0];
+                const uid = userDoc.id;
+
+                // First fetch the full product details from Products collection
+                const productsRef = collection(db, "Products");
+                const productQuery = query(productsRef, where("name", "==", title));
+                const productSnap = await getDocs(productQuery);
+
+                if (!productSnap.empty) {
+                    const productDoc = productSnap.docs[0];
+                    const productData = productDoc.data();
+
+                    // Store in Favorites with title as document ID
+                    const favRef = doc(db, "Users", uid, "Favorites", title);
+                    await setDoc(favRef, {
+                        title: title,
+                        timestamp: new Date().toISOString()
+                    });
+
+                    setFavItems(prev => [...prev, {
+                        title: title,
+                    }]);
+
+                    onAddtoCart("heart", title, "Added to favorites");
+                    console.log("✅ Product added to Firestore fav");
+                } else {
+                    alert("Product not found in database");
+                }
+            }
+        } catch (error) {
+            console.error("🔥 Error adding to fav:", error);
+            alert("Failed to add to favorites. Please try again.");
+        }
+    };
+
+    const removedFromFav = async (title) => {
+        try {
+            const db = getFirestore();
+            const userRef = collection(db, "Users");
+            const q = query(userRef, where("email", "==", userEmail));
+            const snapshot = await getDocs(q);
+
+            if (!snapshot.empty) {
+                const userDoc = snapshot.docs[0];
+                const userId = userDoc.id;
+
+                const favRef = doc(db, "Users", userId, "Favorites", title);
+
+                setFavItems(prev => prev.filter(item => item.title !== title));
+                setFavorites(prev => prev.filter(t => t !== title));
+                await deleteDoc(favRef);
+                onAddtoCart("heart-dislike", title, "Removed from favorites", true);
+                console.log(`🧹 Removed ${title} from fav`);
+            }
+        } catch (error) {
+            console.error("🔥 Error removing from favorites:", error);
+            fetchFavorites(userEmail);
+            alert("Failed to remove from favorites");
+        }
+    };
 
     return (
-        <CartContext.Provider value={{ cartItems, addedToCart, removedFromCart, fetchCart, updateQuantity, totalAmount, onAddtoCart }}>
+        <CartContext.Provider value={{
+            cartItems,
+            favItems,
+            addedToCart,
+            removedFromCart,
+            addedToFav,
+            removedFromFav,
+            fetchCart,
+            updateQuantity,
+            totalAmount,
+            onAddtoCart,
+            toggleFavoriteItem,
+            isFavorite,
+            favorites,
+            fetchFavorites,
+        }}>
             {children}
         </CartContext.Provider>
     );

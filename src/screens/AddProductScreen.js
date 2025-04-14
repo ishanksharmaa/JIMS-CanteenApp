@@ -4,15 +4,16 @@ import { useTheme } from "../components/ThemeContext";
 import RefreshCompo from "../components/RefreshCompo";
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 // import { BlurView } from "@react-native-community/blur";
-import {useCart} from "../components/CartContext";
+import { useCart } from "../components/CartContext";
 
 import firestore from '@react-native-firebase/firestore';
 
 
-const AddProductScreen = () => {
+const AddProductScreen = ({ closeModal }) => {
     const { theme } = useTheme();
     const styles = dynamicTheme(theme);
-    const {onAddtoCart} = useCart();
+    const { onAddtoCart } = useCart();
+
 
     const [product, setProduct] = useState({
         name: "",
@@ -106,8 +107,9 @@ const AddProductScreen = () => {
 
             await productsRef.doc(docId).set(newProduct);
             console.log(`Product added successfully with ID: ${docId}`);
-            onAddtoCart(`${product.name} Added`, "New Product Added!!")
+            onAddtoCart("pricetag", `${product.name} Added`, "New Product Added!");
             setProduct({ name: "", price: "", description: "", quantity: "", image: "", category: "" });
+            // closeModal();
 
         } catch (error) {
             console.error("Error adding product:", error);
@@ -120,11 +122,12 @@ const AddProductScreen = () => {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.header}>Add Product</Text>
 
             <View style={styles.card}>
                 <Text style={styles.headerTitle}>Product Details:</Text>
-
+                <TouchableOpacity style={styles.closeButton} onPress={closeModal}>
+                    <MaterialIcons name="cancel" size={27} color={'red'} />
+                </TouchableOpacity>
 
                 {product.image !== "" && (
                     <View style={styles.imageContainer}>
@@ -203,7 +206,7 @@ const dynamicTheme = (theme) => ({
     // blurBackground: { ...StyleSheet.absoluteFillObject, position: "absolute", },
     // container: { flex: 1, backgroundColor: '#FFFFFFA0', padding: 20, height: '100%', borderRadius: 20, justifyContent: 'center' },
     // header: { fontSize: 26, fontWeight: "bold", color: theme.text, textAlign: "center", marginBottom: 50, marginTop: 0, position: 'absolute', top: 33, alignSelf: 'center', },
-    card: { backgroundColor: theme.cardBg, borderRadius: 15, padding: 20, elevation: 10, borderWidth: 1, borderColor: theme.primaryColor, marginHorizontal: 16, },
+    card: { backgroundColor: theme.cardBg, borderRadius: 15, padding: 20, elevation: 10, borderWidth: 1, borderColor: theme.primaryColor, marginHorizontal: 16, selfAlign: 'center', marginBottom: 24 },
     headerTitle: { color: theme.primaryColor, fontSize: 22, fontWeight: 'bold', alignSelf: 'center', marginBottom: 20, },
     input: { borderWidth: 1.4, borderColor: theme.primaryColor, borderRadius: 8, padding: 12, marginVertical: 10, fontSize: 16, color: theme.text },
     row: { flexDirection: "row", justifyContent: "space-between" },
@@ -213,6 +216,16 @@ const dynamicTheme = (theme) => ({
     imageContainer: { position: "relative", alignItems: "center" },
     image: { width: "100%", height: 200, borderRadius: 10, marginBottom: 10 },
     removeIcon: { position: "absolute", top: 5, right: 5, backgroundColor: "white", borderRadius: 50, padding: 0 },
+    closeButton: {
+        backgroundColor: theme.cardBg,
+        borderRadius: 50,
+        padding: 2,
+        alignItems: "center",
+        alignSelf: 'center',
+        position: 'absolute',
+        top: 12,
+        right: 12,
+    },
 });
 
 export default AddProductScreen;

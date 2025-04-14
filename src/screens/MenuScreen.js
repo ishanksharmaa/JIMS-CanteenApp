@@ -117,7 +117,7 @@ const MenuScreen = () => {
                         </Text>
                     }
                     renderItem={({ item }) => (
-                        <View style={{ flex: 0, padding: 0, backgroundColor: 'transparent', margin: 1, alignItems: 'center', justifyContent: 'center' }}>
+                        <View style={{ flex: 0, padding: 0, backgroundColor: 'transparent', margin: 1 }}>
                             <ProductCard
                                 image={{ uri: item.image }}
                                 title={item.name}
