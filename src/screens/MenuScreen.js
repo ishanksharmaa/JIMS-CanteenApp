@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { View, FlatList, Text, StyleSheet, Keyboard, TouchableWithoutFeedback, TouchableOpacity } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import { useTheme } from '../components/ThemeContext';
 import ProductCard from '../components/ProductCard';
-import SearchBar from '../components/SearchBar';
+// import SearchBar from '../components/SearchBar';
 import CustomButton from "../components/CustomButton";
+import { TextInput } from 'react-native-gesture-handler';
 
 const MenuScreen = () => {
     const [searchText, setSearchText] = useState('');
@@ -12,73 +13,69 @@ const MenuScreen = () => {
     const [loading, setLoading] = useState(false);
     const { theme } = useTheme();
     const styles = dynamicTheme(theme);
+    const searchInputRef = useRef(null);
 
-    // Load initial data
-    // useEffect(() => {
-    //     fetchProducts('');
-    // }, []);
 
+    // Debounce effect for search
     useEffect(() => {
         const delayDebounce = setTimeout(() => {
             fetchProducts(searchText);
-        }, 500); // 0.5 second debounce
+        }, 500); // 500ms delay
 
         return () => clearTimeout(delayDebounce);
     }, [searchText]);
 
-    // const fetchProducts = async (searchText) => {
-    //     setLoading(true);
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            if (searchInputRef.current) {
+                searchInputRef.current.focus();
+            }
+        }, 100); // slight delay so layout finishes
 
-    //     try {
-    //         let query = firestore().collection('Products');
+        return () => clearTimeout(timer);
+    }, []);
 
-    //         if (searchText.trim()) {
-    //             const lowerCaseSearch = searchText.toLowerCase().trim();
-    //             query = query
-    //                 .where('name_lowercase', '>=', lowerCaseSearch)
-    //                 .where('name_lowercase', '<=', lowerCaseSearch + '\uf8ff');
-    //         }
 
-    //         const snapshot = await query.get();
-    //         const products = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
-    //         setFilteredProducts(products);
-    //     } catch (err) {
-    //         console.error("Error:", err);
-    //         alert("Error loading products");
-    //     } finally {
-    //         setLoading(false);
-    //     }
-    // };
-
+    // Function to fetch products based on name
     const fetchProducts = async (searchText) => {
         setLoading(true);
-        const lowerCaseSearch = searchText.toLowerCase().trim();
-        console.log("Searching:", lowerCaseSearch);
+        const productName = searchText.toLowerCase().trim();
+        const productCategory = productName;
 
         try {
-            let query = firestore().collection('Products');
+            // Search by product name
+            const querySnapshot = await firestore()
+                .collection('Products')
+                .where('name', '>=', productName)
+                .where('name', '<=', productName + '\uf8ff') // For prefix match
+                .get();
 
-            if (!lowerCaseSearch) {
-                const allSnapshot = await query.get();
-                const allProducts = allSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                setFilteredProducts(allProducts);
-                return;
-            }
+            // Search by category (array-contains query)
+            const categoryQuerySnapshot = await firestore()
+                .collection('Products')
+                .where('category', 'array-contains', productCategory) // Match categories
+                .get();
 
-            query = query
-                .where('name_lowercase', '>=', lowerCaseSearch)
-                .where('name_lowercase', '<=', lowerCaseSearch + '\uf8ff');
+            // Combine products from both queries
+            const products = [
+                ...querySnapshot.docs.map(doc => ({
+                    id: doc.id,
+                    ...doc.data()
+                })),
+                ...categoryQuerySnapshot.docs.map(doc => ({
+                    id: doc.id,
+                    ...doc.data()
+                }))
+            ];
 
-            const snapshot = await query.get();
-            console.log("Snapshot size:", snapshot.size);
+            // Remove duplicates (if any)
+            const uniqueProducts = Array.from(new Set(products.map(a => a.id)))
+                .map(id => products.find(a => a.id === id));
 
-            const products = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            console.log("Products found:", products);
-
-            setFilteredProducts(products);
+            setFilteredProducts(uniqueProducts);
         } catch (err) {
-            console.error("Error:", err);
+            console.error("Error fetching products:", err);
             alert("Error loading products");
         } finally {
             setLoading(false);
@@ -91,20 +88,28 @@ const MenuScreen = () => {
     return (
         <View style={styles.container}>
             <View style={styles.searchContainer}>
-                <SearchBar
-                    placeholder='Search food, menu...'
+                <TextInput
+                    style={styles.searchBar}
+                    placeholder={"Search food, menu..."}
+                    placeholderTextColor={"grey"}
                     onChangeText={setSearchText}
-                    onSubmitEditing={() => fetchProducts(searchText.toLowerCase())}
-                />
-            </View>
-            <View style={styles.searchBtn}>
-                <CustomButton
-                    title="Search" btnColor={"#333"} textColor={theme.customButtonText}
-                    onPress={() => fetchProducts(searchText)} size={0.7} radius={50} opacity={1}
+                    onSubmitEditing={() => fetchProducts(searchText)}
                 />
             </View>
 
-            <View style={{ height: '82%', alignSelf: 'center' }}>
+            <View style={styles.searchBtn}>
+                <CustomButton
+                    title="Search"
+                    btnColor={theme.searchBtnColor}
+                    textColor={theme.customButtonText}
+                    onPress={() => fetchProducts(searchText)}
+                    size={0.7}
+                    radius={50}
+                    opacity={1}
+                />
+            </View>
+
+            <View style={{ height: '82%', marginHorizontal: 9, backgroundColor: 'transparent', marginLeft: 7, }}>
                 <FlatList
                     data={filteredProducts}
                     keyExtractor={(item) => item.id}
@@ -117,13 +122,13 @@ const MenuScreen = () => {
                         </Text>
                     }
                     renderItem={({ item }) => (
-                        <View style={{ flex: 0, padding: 0, backgroundColor: 'transparent', margin: 1 }}>
+                        <View style={{ flex: 0, padding: 0, backgroundColor: 'transparent', marginHorizontal: 0 }}>
                             <ProductCard
                                 image={{ uri: item.image }}
                                 title={item.name}
                                 price={item.price}
                                 descr={item.description}
-                                size={0.9} gapV={0} gapH={0}
+                                size={0.86} gapV={0} gapH={0}
                             />
                         </View>
                     )}
@@ -144,6 +149,17 @@ const dynamicTheme = (theme) => ({
         marginHorizontal: 17,
         marginBottom: 50,
     },
+    searchBar: {
+        backgroundColor: theme.searchBg,
+        color: theme.searchText,
+        height: 55,
+        width: '96%',
+        alignSelf: 'center',
+        justifyContent: 'center',
+        paddingHorizontal: '8%',
+        borderRadius: 16,
+        marginTop: 30,
+    },
     notFoundText: {
         textAlign: 'center',
         fontSize: 18,
@@ -151,7 +167,6 @@ const dynamicTheme = (theme) => ({
         marginTop: 40,
     },
     searchBtn: {
-        // backgroundColor: 'red',
         width: '30%',
         position: 'absolute',
         top: 62,

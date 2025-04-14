@@ -109,7 +109,7 @@ const SearchScreen = () => {
                 />
             </View>
 
-            <View style={{ height: '82%', marginHorizontal: 9 }}>
+            <View style={{ height: '82%', marginHorizontal: 9, backgroundColor: 'transparent', marginLeft: 7, }}>
                 <FlatList
                     data={filteredProducts}
                     keyExtractor={(item) => item.id}
@@ -122,13 +122,13 @@ const SearchScreen = () => {
                         </Text>
                     }
                     renderItem={({ item }) => (
-                        <View style={{ flex: 0, padding: 0, backgroundColor: 'transparent', margin: 1 }}>
+                        <View style={{ flex: 0, padding: 0, backgroundColor: 'transparent', marginHorizontal: 0 }}>
                             <ProductCard
                                 image={{ uri: item.image }}
                                 title={item.name}
                                 price={item.price}
                                 descr={item.description}
-                                size={0.9} gapV={0} gapH={0}
+                                size={0.86} gapV={0} gapH={0}
                             />
                         </View>
                     )}
