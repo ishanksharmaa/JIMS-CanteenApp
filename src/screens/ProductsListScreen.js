@@ -6,6 +6,7 @@ import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import AddProductScreen from "./AddProductScreen";
 import SearchBar from "../components/SearchBar";
 import { HeaderBackIcon } from "./CartScreen";
+import { useNavigation } from "@react-navigation/native";
 import { useCart } from "../components/CartContext";
 
 const ProductsListScreen = () => {
@@ -16,27 +17,29 @@ const ProductsListScreen = () => {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [modalVisible, setModalVisible] = useState(false);
+    const [selectedProduct, setSelectedProduct] = useState(null);
     const { onAddtoCart } = useCart();
+    const navigation = useNavigation();
 
     const [selectedItems, setSelectedItems] = useState([]);
     const [selectionMode, setSelectionMode] = useState(false);
 
     const fadedPrimary = `#ffdddd30`; // hex opacity (80  ~50%)
 
-    const toTitleCase = str => {
-        return str
-            ?.toLowerCase()
-            .split(' ')
-            .map(word => {
-                if (word.startsWith('#')) {
-                    // return '#' + word.slice(1, 2).toLowerCase() + word.slice(2);
-                    return '#' + word.slice(1, 2).toUpperCase() + word.slice(2);
-                } else {
-                    return word.charAt(0).toUpperCase() + word.slice(1);
-                }
-            })
-            .join(' ');
-    };
+    // const toTitleCase = str => {
+    //     return str
+    //         ?.toLowerCase()
+    //         .split(' ')
+    //         .map(word => {
+    //             if (word.startsWith('#')) {
+    //                 // return '#' + word.slice(1, 2).toLowerCase() + word.slice(2);
+    //                 return '#' + word.slice(1, 2).toUpperCase() + word.slice(2);
+    //             } else {
+    //                 return word.charAt(0).toUpperCase() + word.slice(1);
+    //             }
+    //         })
+    //         .join(' ');
+    // };
 
 
     useEffect(() => {
@@ -49,7 +52,7 @@ const ProductsListScreen = () => {
                     return {
                         id: doc.id,
                         ...data,
-                        category: toTitleCase(data.category),
+                        category: data.category,
                     };
                 });
 
@@ -110,6 +113,15 @@ const ProductsListScreen = () => {
         ]);
     };
 
+    const handleProductPress = (item) => {
+        if (selectionMode) {
+            toggleSelection(item.id);
+        } else {
+            setSelectedProduct(item); // Set the product to edit
+            setModalVisible(true);   // Show the modal
+        }
+    };
+
 
 
     return (
@@ -157,9 +169,7 @@ const ProductsListScreen = () => {
                         <View>
                             <TouchableOpacity
                                 onLongPress={() => handleLongPress(item.id)}
-                                onPress={() =>
-                                    selectionMode ? toggleSelection(item.id) : null
-                                }
+                                onPress={() => handleProductPress(item)}
                                 activeOpacity={0.8}
                                 style={[
                                     {
@@ -235,10 +245,20 @@ const ProductsListScreen = () => {
                 visible={modalVisible}
                 animationType="slide"
                 transparent={true}
-                onRequestClose={() => setModalVisible(false)}
+                onRequestClose={() => {
+                    setModalVisible(false);
+                    setSelectedProduct(null);
+                }}
             >
                 <View style={styles.modalContainer}>
-                    <AddProductScreen closeModal={() => setModalVisible(false)} />
+                    <AddProductScreen
+                        closeModal={() => {
+                            setModalVisible(false);
+                            setSelectedProduct(null);
+                        }}
+                        product={selectedProduct}
+                        mode={selectedProduct ? 'edit' : 'add'}
+                    />
                 </View>
             </Modal>
         </View>

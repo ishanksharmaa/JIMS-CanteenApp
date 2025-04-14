@@ -37,31 +37,53 @@ const SearchScreen = () => {
 
 
 
-    // Function to fetch products based on search text
+    // Function to fetch products based on name
     const fetchProducts = async (searchText) => {
         setLoading(true);
         const productName = searchText.toLowerCase().trim();
+        const productCategory = productName;
 
         try {
+            // Search by product name
             const querySnapshot = await firestore()
                 .collection('Products')
                 .where('name', '>=', productName)
                 .where('name', '<=', productName + '\uf8ff') // For prefix match
                 .get();
 
-            const products = querySnapshot.docs.map(doc => ({
-                id: doc.id,
-                ...doc.data()
-            }));
+            // Search by category (array-contains query)
+            const categoryQuerySnapshot = await firestore()
+                .collection('Products')
+                .where('category', 'array-contains', productCategory) // Match categories
+                .get();
 
-            setFilteredProducts(products);
+            // Combine products from both queries
+            const products = [
+                ...querySnapshot.docs.map(doc => ({
+                    id: doc.id,
+                    ...doc.data()
+                })),
+                ...categoryQuerySnapshot.docs.map(doc => ({
+                    id: doc.id,
+                    ...doc.data()
+                }))
+            ];
+
+            // Remove duplicates (if any)
+            const uniqueProducts = Array.from(new Set(products.map(a => a.id)))
+                .map(id => products.find(a => a.id === id));
+
+            setFilteredProducts(uniqueProducts);
         } catch (err) {
-            console.error("Error:", err);
+            console.error("Error fetching products:", err);
             alert("Error loading products");
         } finally {
             setLoading(false);
         }
     };
+
+
+
 
     return (
         <View style={styles.container}>
