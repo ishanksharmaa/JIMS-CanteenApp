@@ -213,7 +213,8 @@ const AddProductScreen = ({ closeModal, product: initialProduct, mode }) => {
                     <TextInput
                         style={styles.input}
                         placeholder="# Categories (separate by space) *"
-                        value={Array.isArray(product.category) ? product.category.join(' ') : product.category}
+                        // value={Array.isArray(product.category) ? product.category.join(' ') : product.category}
+                        value={product.category}
                         placeholderTextColor={'grey'}
                         onChangeText={(text) => handleChange("category", text)}
                     />
