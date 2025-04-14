@@ -3,8 +3,9 @@ import { View, FlatList, Text, StyleSheet, Keyboard, TouchableWithoutFeedback, T
 import firestore from '@react-native-firebase/firestore';
 import { useTheme } from '../components/ThemeContext';
 import ProductCard from '../components/ProductCard';
-import SearchBar from '../components/SearchBar';
+// import SearchBar from '../components/SearchBar';
 import CustomButton from "../components/CustomButton";
+import { TextInput } from 'react-native-gesture-handler';
 
 const SearchScreen = () => {
     const [searchText, setSearchText] = useState('');
@@ -15,16 +16,11 @@ const SearchScreen = () => {
     const searchInputRef = useRef(null);
 
 
-    // Load initial data
-    // useEffect(() => {
-    //     fetchProducts('');
-    // }, []);
-
+    // Debounce effect for search
     useEffect(() => {
         const delayDebounce = setTimeout(() => {
             fetchProducts(searchText);
-            searchInputRef.current.focus();
-        }, 500); // 0.1 second debounce
+        }, 500); // 500ms delay
 
         return () => clearTimeout(delayDebounce);
     }, [searchText]);
@@ -39,55 +35,24 @@ const SearchScreen = () => {
         return () => clearTimeout(timer);
     }, []);
 
-    // const fetchProducts = async (searchText) => {
-    //     setLoading(true);
 
-    //     try {
-    //         let query = firestore().collection('Products');
 
-    //         if (searchText.trim()) {
-    //             const lowerCaseSearch = searchText.toLowerCase().trim();
-    //             query = query
-    //                 .where('name_lowercase', '>=', lowerCaseSearch)
-    //                 .where('name_lowercase', '<=', lowerCaseSearch + '\uf8ff');
-    //         }
-
-    //         const snapshot = await query.get();
-    //         const products = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-
-    //         setFilteredProducts(products);
-    //     } catch (err) {
-    //         console.error("Error:", err);
-    //         alert("Error loading products");
-    //     } finally {
-    //         setLoading(false);
-    //     }
-    // };
-
+    // Function to fetch products based on search text
     const fetchProducts = async (searchText) => {
         setLoading(true);
-        const lowerCaseSearch = searchText.toLowerCase().trim();
-        console.log("Searching:", lowerCaseSearch);
+        const productName = searchText.toLowerCase().trim();
 
         try {
-            let query = firestore().collection('Products');
+            const querySnapshot = await firestore()
+                .collection('Products')
+                .where('name', '>=', productName)
+                .where('name', '<=', productName + '\uf8ff') // For prefix match
+                .get();
 
-            if (!lowerCaseSearch) {
-                const allSnapshot = await query.get();
-                const allProducts = allSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                setFilteredProducts(allProducts);
-                return;
-            }
-
-            query = query
-                .where('name_lowercase', '>=', lowerCaseSearch)
-                .where('name_lowercase', '<=', lowerCaseSearch + '\uf8ff');
-
-            const snapshot = await query.get();
-            console.log("Snapshot size:", snapshot.size);
-
-            const products = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            console.log("Products found:", products);
+            const products = querySnapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data()
+            }));
 
             setFilteredProducts(products);
         } catch (err) {
@@ -98,25 +63,31 @@ const SearchScreen = () => {
         }
     };
 
-
     return (
         <View style={styles.container}>
             <View style={styles.searchContainer}>
-                <SearchBar
-                    placeholder='Search food, menu...'
+                <TextInput
+                    style={styles.searchBar}
+                    placeholder={"Search food, menu..."}
+                    placeholderTextColor={"grey"}
                     onChangeText={setSearchText}
-                    onSubmitEditing={() => fetchProducts(searchText.toLowerCase())}
-                    inputRef={searchInputRef}
-                />
-            </View>
-            <View style={styles.searchBtn}>
-                <CustomButton
-                    title="Search" btnColor={theme.searchBtnColor} textColor={theme.customButtonText}
-                    onPress={() => fetchProducts(searchText)} size={0.7} radius={50} opacity={1}
+                    onSubmitEditing={() => fetchProducts(searchText)}
                 />
             </View>
 
-            <View style={{ height: '82%', alignSelf: 'center' }}>
+            <View style={styles.searchBtn}>
+                <CustomButton
+                    title="Search"
+                    btnColor={theme.searchBtnColor}
+                    textColor={theme.customButtonText}
+                    onPress={() => fetchProducts(searchText)}
+                    size={0.7}
+                    radius={50}
+                    opacity={1}
+                />
+            </View>
+
+            <View style={{ height: '82%', marginHorizontal: 9 }}>
                 <FlatList
                     data={filteredProducts}
                     keyExtractor={(item) => item.id}
@@ -156,6 +127,17 @@ const dynamicTheme = (theme) => ({
         marginHorizontal: 17,
         marginBottom: 50,
     },
+    searchBar: {
+        backgroundColor: theme.searchBg,
+        color: theme.searchText,
+        height: 55,
+        width: '96%',
+        alignSelf: 'center',
+        justifyContent: 'center',
+        paddingHorizontal: '8%',
+        borderRadius: 16,
+        marginTop: 30,
+    },
     notFoundText: {
         textAlign: 'center',
         fontSize: 18,
@@ -163,7 +145,6 @@ const dynamicTheme = (theme) => ({
         marginTop: 40,
     },
     searchBtn: {
-        // backgroundColor: 'red',
         width: '30%',
         position: 'absolute',
         top: 62,

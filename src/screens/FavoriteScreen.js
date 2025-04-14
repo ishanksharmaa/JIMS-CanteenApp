@@ -5,7 +5,6 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import firestore from "@react-native-firebase/firestore";
 import { useUser } from "../components/UserContext";
 import ProductCard from '../components/ProductCard';
-import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 
 const FavoriteScreen = () => {
   const { theme } = useTheme();

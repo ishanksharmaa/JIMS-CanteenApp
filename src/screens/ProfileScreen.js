@@ -30,7 +30,7 @@ export const ProfileSection = ({ flexDirection, gap, scale }) => {
         <View style={styles.profileSection}>
             <Image
                 // source={image && image.startsWith('http') ? { uri: image } : require('../../assets/swaggy_cat.jpg')}
-                source={image && image.startsWith('http') ? { uri: image } : require('../../assets/app_logo.jpeg')}
+                source={image ? { uri: image } : require('../../assets/app_logo.jpeg')}
                 style={styles.profileImage} resizeMode="cover"
             />
             <View>
