@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, Image, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
 import { useRoute } from "@react-navigation/native";
 import CustomButton from "../components/CustomButton";
 import { useTheme } from "../components/ThemeContext";
@@ -62,8 +62,10 @@ const ProductScreen = () => {
 
         <View style={styles.descContainer}>
           <Text style={styles.descTitle}>description: { }</Text>
-          <Text style={styles.descContent}>{descr || "Info not provided..."}</Text>
-          {/* <Text style={styles.descContent}>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</Text> */}
+          <ScrollView>
+            <Text style={styles.descContent}>{descr || "Info not provided..."}</Text>
+            {/* <Text style={styles.descContent}>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</Text> */}
+          </ScrollView>
 
         </View>
 
@@ -114,7 +116,7 @@ const dynamicTheme = (theme) => ({
 
   countHandler: { backgroundColor: '', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: '36%', position: 'absolute', right: '5%', top: '6.5%' },
 
-  descContainer: { alignItems: 'left', backgroundColor: '', margin: 20 },
+  descContainer: { alignItems: 'left', backgroundColor: 'transparent', maxHeight: '24%', margin: 20, overflow: 'hidden' },
   descTitle: { fontWeight: 'bold', textTransform: 'capitalize', paddingBottom: 5, color: theme.text },
   descContent: { textAlign: 'left', color: theme.text },
 

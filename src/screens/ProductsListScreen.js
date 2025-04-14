@@ -122,6 +122,18 @@ const ProductsListScreen = () => {
         }
     };
 
+    const formatCategories = (categories) => {
+        const capitalizeFirstLetter = (str) => {
+            if (!str) return '';
+            return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+        };
+    
+        if (Array.isArray(categories)) {
+            return categories.map(cat => `#${capitalizeFirstLetter(cat)}`).join(' ');
+        }
+        return categories ? `#${capitalizeFirstLetter(categories)}` : '';
+    };
+
 
 
     return (
@@ -217,7 +229,7 @@ const ProductsListScreen = () => {
 
                                     {item.category !== "" && (
                                         <Text style={{ color: theme.primaryColor, marginTop: 5 }}>
-                                            {item.category}
+                                            {formatCategories(item.category)}
                                         </Text>
                                     )}
                                 </View>
