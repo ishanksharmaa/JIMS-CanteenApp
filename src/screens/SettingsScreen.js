@@ -83,7 +83,7 @@ const SettingsScreen = () => {
                 </TouchableOpacity>
             </View>
 
-            <ScrollView style={{ flex: 1, backgroundColor: theme.background, paddingTop: 20 }}>
+            <ScrollView style={{ flex: 1, backgroundColor: theme.background, paddingTop: 20, marginBottom: '20%' }}>
                 <View style={{ flex: 0, justifyContent: 'center', alignItems: 'center', marginBottom: 10, paddingLeft: 10, backgroundColor: '' }}>
                     <ProfileSection flexDirection='column' gap={10} scale={1.1} />
                 </View>

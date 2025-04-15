@@ -40,7 +40,16 @@ const FavoriteScreen = () => {
 
   // Fetch favorites based on title field
   useEffect(() => {
-    if (!uid) return;
+    // if (!uid) {
+    //   return (
+    //     <View style={styles.container}>
+    //       <View style={styles.emptyContainer}>
+    //         <Ionicons name="log-in" size={80} color={theme.primaryColor} />
+    //         <Text style={styles.text}>Please login to view favorites</Text>
+    //       </View>
+    //     </View>
+    //   );
+    // }
 
     const unsubscribe = firestore()
       .collection("Users")

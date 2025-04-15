@@ -45,7 +45,8 @@ const ProductCard = ({ image, title, price, descr, quantity, qty, amount, size =
       <Image source={image} style={styles.productImage} />
       <TouchableOpacity style={styles.favBtn} onPress={() => toggleFavoriteItem(title)} activeOpacity={0.6} >
         {/* <Ionicons name={isFavorite(title) ? "heart" : "heart-outline"} size={22} color={isFavorite(title) ? theme.customButtonBg : theme.text} /> */}
-        <Ionicons name={isFavorite(title) ? "heart" : "heart-outline"} size={22} color={isFavorite(title) ? theme.text : theme.text} />
+        {/* <Ionicons name={isFavorite(title) ? "heart" : "heart-outline"} size={22} color={isFavorite(title) ? theme.text : theme.text} /> */}
+        <Ionicons name={isFavorite(title) ? "heart" : "heart-outline"} size={22} color={isFavorite(title) ? "#DC143C" : theme.text} />
       </TouchableOpacity>
       <View style={styles.textContainer}>
         <Text style={styles.productTitle}>{title}</Text>
