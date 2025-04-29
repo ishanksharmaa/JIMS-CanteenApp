@@ -107,7 +107,7 @@ const SettingsScreen = () => {
                 <Section title="Exit">
                     <SettingItem icon={isDarkMode ? "exit-outline" : "exit"} label={user ? "LogOut" : "Login"} onPress={handleLogout} isLast />
                     {!user && (
-                        <SettingItem icon={isDarkMode ? "exit-outline" : "add"} label="Create account" onPress={null} />
+                        <SettingItem icon={isDarkMode ? "add" : "add"} label="Create account" onPress={() => navigation.navigate("SignUp")} />
                     )}
                 </Section>
             </ScrollView>

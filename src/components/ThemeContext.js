@@ -33,15 +33,17 @@ export const ThemeProvider = ({ children }) => {
         setTheme((prevTheme) => {
             const newTheme = mode === "dark" ? darkTheme : lightTheme;
             const defaultPrimaryColor = "#007AFF";
+            const isDefaultColor = prevTheme.primaryColor === defaultPrimaryColor;
 
             const updatedTheme = {
                 ...newTheme,
                 mode,
-                primaryColor: prevTheme.primaryColor || defaultPrimaryColor, 
-                customButtonBg: prevTheme.primaryColor === defaultPrimaryColor ? (mode === "dark" ? "#ddd" : "#111") : prevTheme.customButtonBg,
-                customButtonText: prevTheme.primaryColor === defaultPrimaryColor 
-                    ? (mode === "dark" ? "#999" : "#eee") 
+                primaryColor: prevTheme.primaryColor || defaultPrimaryColor,
+                customButtonBg: isDefaultColor ? (mode === "dark" ? "#ddd" : "#111") : prevTheme.customButtonBg,
+                customButtonText: isDefaultColor
+                    ? (mode === "dark" ? "#999" : "#eee")
                     : (prevTheme.customButtonBg === "#FDDA0D" ? "#333" : "#eee"),
+                    // : prevTheme.customButtonBg,
             };
 
             AsyncStorage.setItem("theme", JSON.stringify(updatedTheme)); // Save theme

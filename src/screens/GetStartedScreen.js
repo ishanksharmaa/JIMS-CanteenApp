@@ -2,6 +2,7 @@ import React from "react";
 import { View, Text, Image, ImageBackground, TouchableOpacity, StyleSheet, Button } from "react-native";
 import CustomButton from "../components/CustomButton";
 import { useTheme } from "../components/ThemeContext";
+import { useUser } from "../components/UserContext";
 import ThemeToggle from "../components/ThemeToggle";
 
 const TextSection = () => {
@@ -19,6 +20,7 @@ const TextSection = () => {
 
 const GetStartedScreen = ({ navigation }) => {
   const { theme } = useTheme();
+  const { user } = useUser();
   const styles = dynamicTheme(theme);
   return (
     <View style={styles.container}>
@@ -33,7 +35,7 @@ const GetStartedScreen = ({ navigation }) => {
         <TextSection />
 
         <View style={styles.buttonPosition}>
-          <CustomButton btnColor={theme.customButtonBg} textColor={theme.customButtonText} title="Get Started ->" onPress={() => navigation.navigate("Login")} />
+          <CustomButton btnColor={theme.customButtonBg} textColor={theme.primaryColor == "#007AFF" ? theme.customButtonText2 : "#eee"} title="Get Started ->" onPress={() => navigation.navigate(user ? "Home" : "Login")} />
         </View>
       </ImageBackground>
     </View>

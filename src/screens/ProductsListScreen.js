@@ -18,7 +18,7 @@ const ProductsListScreen = () => {
     const [loading, setLoading] = useState(true);
     const [modalVisible, setModalVisible] = useState(false);
     const [selectedProduct, setSelectedProduct] = useState(null);
-    const { onAddtoCart } = useCart();
+    const { onAddtoCart, removedFromCart, removedFromFav } = useCart();
     const navigation = useNavigation();
 
     const [selectedItems, setSelectedItems] = useState([]);
@@ -97,12 +97,43 @@ const ProductsListScreen = () => {
                     try {
                         const batch = firestore().batch();
 
+                        // 1. Delete item from Products collection
                         selectedItems.forEach(id => {
                             const ref = firestore().collection("Products").doc(id);
                             batch.delete(ref);
                             onAddtoCart("remove-circle", "Selected Items deleted!", "", true);
                         });
 
+                        // 2. Fetch all users
+                        const usersSnapshot = await firestore().collection("Users").get();
+
+                        // 3. For each user, remove selectedItems from Cart and Favorites
+                        // usersSnapshot.forEach(userDoc => {
+                        //     selectedItems.forEach(itemId => {
+                        //         const cartRef = firestore()
+                        //             .collection("Users")
+                        //             .doc(userDoc.id)
+                        //             .collection("Cart")
+                        //             .doc(itemId);
+                        //         const favRef = firestore()
+                        //             .collection("Users")
+                        //             .doc(userDoc.id)
+                        //             .collection("Favorites")
+                        //             .doc(itemId);
+
+                        //         batch.delete(cartRef);
+                        //         batch.delete(favRef);
+                        //     });
+                        // });
+
+                        usersSnapshot.forEach(userDoc => {
+                            selectedItems.forEach(title => {
+                                removedFromCart(title);
+                                removedFromFav(title);
+                            });
+                        });
+
+                        // 4. Commit all deletions
                         await batch.commit();
                         cancelSelection();
                     } catch (error) {
@@ -127,7 +158,7 @@ const ProductsListScreen = () => {
             if (!str) return '';
             return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
         };
-    
+
         if (Array.isArray(categories)) {
             return categories.map(cat => `#${capitalizeFirstLetter(cat)}`).join(' ');
         }

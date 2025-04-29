@@ -137,6 +137,9 @@ const FavoriteScreen = () => {
                   title={item.name}
                   price={item.price}
                   descr={item.description}
+                  quantity={item.quantity}
+                  qty={item.qty}
+                  amount={item.amount}
                   size={0.9} gapV={0} gapH={0}
                 />
               </View>

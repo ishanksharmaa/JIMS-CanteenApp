@@ -17,7 +17,7 @@ const SplashScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <Image source={theme.logo} style={styles.logo} />
-      <Text style={{ fontSize: 16, fontWeight: 500, position: 'absolute', bottom: 25, textAlign: 'center' }}>Made with love! 😍</Text>
+      <Text style={{ color: theme.text, fontSize: 16, fontWeight: 500, position: 'absolute', bottom: 25, textAlign: 'center' }}>Made with love! 😍</Text>
     </View>
   );
 };

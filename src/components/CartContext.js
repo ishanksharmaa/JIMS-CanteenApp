@@ -82,7 +82,9 @@ export const CartProvider = ({ children }) => {
 
     const fetchCart = async (email) => {
         try {
-            if (!email) return;
+            if (!user) {
+                onAddtoCart("person", "Login required!", "to add items into the cart", true);
+            };
 
             const db = getFirestore();
             const userRef = collection(db, "Users");
@@ -127,12 +129,12 @@ export const CartProvider = ({ children }) => {
 
     const addedToCart = async (product) => {
         try {
-            const alreadyExists = cartItems.some(item => item.title === product.title);
-            if (alreadyExists) {
-                // alert(`⚠️ ${product.title.charAt(0).toUpperCase() + product.title.slice(1) } already in cart!`);
-                alert(`⚠️ ${product.title.toUpperCase()} already in cart!\n\nIncrease product quantity from the cart.`);
-                return;
-            }
+            // const alreadyExists = cartItems.some(item => item.title === product.title);
+            // if (alreadyExists) {
+            //     // alert(`⚠️ ${product.title.charAt(0).toUpperCase() + product.title.slice(1) } already in cart!`);
+            //     alert(`⚠️ ${product.title.toUpperCase()} already in cart!\n\nIncrease product quantity from the cart.`);
+            //     return;
+            // }
 
             const db = getFirestore();
             const userRef = collection(db, "Users");
@@ -160,14 +162,14 @@ export const CartProvider = ({ children }) => {
         }
     };
 
-    const onAddtoCart = (icon, productName, msg, negative) => {
+    const onAddtoCart = (icon, productName, msg, negative = false) => {
         Toast.show({
             type: 'success',
             text1: productName,
             text2: msg,
             props: { icon, negative },
             position: 'top',
-            visibilityTime: 4000,
+            visibilityTime: 2600,
             autoHide: true,
             topOffset: 50,
         });

@@ -215,7 +215,7 @@ const SignUpScreen = ({ navigation }) => {
 
 
                     <View style={styles.buttonPosition}>
-                        <CustomButton btnColor={theme.customButtonBg} textColor={theme.customButtonText} title="SignUp" onPress={handleSignUp} />
+                        <CustomButton btnColor={theme.customButtonBg} textColor={theme.primaryColor == "#007AFF" ? theme.customButtonText2 : "#eee"} title="SignUp" onPress={handleSignUp} />
                         <TouchableOpacity onPress={() => { Keyboard.dismiss, navigation.replace("Login"); }} >
                             <Text style={{ textAlign: 'center', marginVertical: 20, color: theme.text }}>Already have an account?</Text>
                         </TouchableOpacity>
