@@ -50,7 +50,8 @@ const categories = [
     { id: '5', title: 'Dessert', image: { uri: 'https://images.pexels.com/photos/4110002/pexels-photo-4110002.jpeg' } },
     { id: '6', title: 'Quick Bites', image: { uri: 'https://images.pexels.com/photos/1435904/pexels-photo-1435904.jpeg' } },
     { id: '7', title: 'Sushi', image: { uri: 'https://images.pexels.com/photos/3026803/pexels-photo-3026803.jpeg' } },
-    { id: '8', title: 'Steak', image: { uri: 'https://images.pexels.com/photos/616354/pexels-photo-616354.jpeg' } },
+    { id: '8', title: 'Pan Cakes', image: { uri: 'https://images.pexels.com/photos/376464/pexels-photo-376464.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2' } },
+    // { id: '8', title: 'Steak', image: { uri: 'https://images.pexels.com/photos/616354/pexels-photo-616354.jpeg' } },
     { id: '9', title: 'Tacos', image: { uri: 'https://images.pexels.com/photos/70497/pexels-photo-70497.jpeg' } },
     { id: '10', title: 'Noodles', image: { uri: 'https://images.pexels.com/photos/1435904/pexels-photo-1435904.jpeg' } },
 ];
