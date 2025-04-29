@@ -154,7 +154,7 @@ export const CartProvider = ({ children }) => {
                     return updated;
                 });
 
-                onAddtoCart("cart", product.title, "Added to cart")
+                onAddtoCart("cart", product.title, "Added to cart", false)
                 console.log("✅ Product added to Firestore cart");
             }
         } catch (error) {
@@ -162,14 +162,14 @@ export const CartProvider = ({ children }) => {
         }
     };
 
-    const onAddtoCart = (icon, productName, msg, negative = false) => {
+    const onAddtoCart = (icon, productName, msg, negative = false, time=2500) => {
         Toast.show({
             type: 'success',
             text1: productName,
             text2: msg,
             props: { icon, negative },
             position: 'top',
-            visibilityTime: 2600,
+            visibilityTime: time,
             autoHide: true,
             topOffset: 50,
         });
@@ -301,11 +301,11 @@ export const CartProvider = ({ children }) => {
 
     const addedToFav = async (title) => {
         try {
-            const alreadyExists = favItems.some(item => item.title === title);
-            if (alreadyExists) {
-                alert(`❤️ ${title.toUpperCase()} is already in your favorites!`);
-                return;
-            }
+            // const alreadyExists = favItems.some(item => item.title === title);
+            // if (alreadyExists) {
+            //     alert(`❤️ ${title.toUpperCase()} is already in your favorites!`);
+            //     return;
+            // }
 
             const db = getFirestore();
             const userRef = collection(db, "Users");
@@ -336,7 +336,7 @@ export const CartProvider = ({ children }) => {
                         title: title,
                     }]);
 
-                    onAddtoCart("heart", title, "Added to favorites");
+                    onAddtoCart("heart", title, "Added to favorites", false, 1000);
                     console.log("✅ Product added to Firestore fav");
                 } else {
                     alert("Product not found in database");
@@ -363,7 +363,7 @@ export const CartProvider = ({ children }) => {
                 await deleteDoc(favRef);
 
                 setFavItems(prev => prev.filter(item => item.title !== title));
-                onAddtoCart("heart-dislike", title, "Removed from favorites", true);
+                onAddtoCart("heart-dislike", title, "Removed from favorites", true, 1000);
                 console.log(`🧹 Removed ${title} from fav`);
             }
         } catch (error) {

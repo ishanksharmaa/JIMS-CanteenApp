@@ -81,7 +81,11 @@ const SignUpScreen = ({ navigation }) => {
                         });
 
                         // Navigate to Home after successful sign-up
-                        navigation.replace("UserInfo", { isUserFresh: true });
+                        // navigation.replace("UserInfo", { isUserFresh: true });
+                        navigation.reset({
+                            index: 0,
+                            routes: [{ name: "UserInfo" }, {name: "Home"}],
+                        });
                     })
                     .catch((error) => {
                         // Handle errors here
@@ -134,7 +138,17 @@ const SignUpScreen = ({ navigation }) => {
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss} >
             <View style={[styles.screen, { flex: 1 }]}>
-                <TouchableOpacity onPress={() => navigation.replace("Home")}><Text style={styles.skipBtn}>{"Skip>"}</Text></TouchableOpacity>
+                <TouchableOpacity
+                    onPress={() =>
+                        navigation.reset({
+                            index: 0,
+                            routes: [{ name: "Home" }],
+                        })
+                    }
+                >
+                    <Text style={styles.skipBtn}>{"Skip>"}</Text>
+                </TouchableOpacity>
+
 
                 <View style={{ alignSelf: 'center', position: 'absolute', top: 120, right: null, transform: [{ scale: 5 }], zIndex: 5 }}>
                     <ThemeToggle iconColor={'transparent'} />

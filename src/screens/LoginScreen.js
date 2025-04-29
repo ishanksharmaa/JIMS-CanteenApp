@@ -48,7 +48,12 @@ const LoginScreen = ({ navigation }) => {
                 .then(() => {
                     // Login successful, navigate to Home screen
                     Keyboard.dismiss();
-                    navigation.replace("Home");
+                    navigation.reset({
+                        index: 0,
+                        routes: [{ name: "Home" }],
+                    });
+                    // navigation.replace("Home");
+
                 })
                 .catch((error) => {
                     // Handle errors here
@@ -99,7 +104,17 @@ const LoginScreen = ({ navigation }) => {
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss} >
             <View style={[styles.screen, { flex: 1 }]}>
-                <TouchableOpacity onPress={() => navigation.replace("Home")}><Text style={styles.skipBtn}>{"Skip>"}</Text></TouchableOpacity>
+                <TouchableOpacity
+                    onPress={() =>
+                        navigation.reset({
+                            index: 0,
+                            routes: [{ name: "Home" }],
+                        })
+                    }
+                >
+                    <Text style={styles.skipBtn}>{"Skip>"}</Text>
+                </TouchableOpacity>
+
 
                 <View style={{ alignSelf: 'center', position: 'absolute', top: 120, transform: [{ scale: 5 }], zIndex: 5 }}>
                     <ThemeToggle iconColor={'transparent'} />
@@ -166,7 +181,7 @@ const LoginScreen = ({ navigation }) => {
                     </View>
                 </View>
             </View>
-        </TouchableWithoutFeedback>
+        </TouchableWithoutFeedback >
     );
 };
 

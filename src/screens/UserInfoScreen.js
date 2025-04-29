@@ -99,10 +99,12 @@ const UserInfoScreen = ({ navigation }) => {
     };
 
     const saveData = async (email) => {
-        // if (!username || !dob || !location) {
-        //     alert("Username, DOB, and Location are required!");
-        //     return;
-        // }
+        if (isUserFresh) {
+            if (!name || !location) {
+                alert("Name and Location are required!");
+                return;
+            }
+        }
 
         const db = getFirestore();
         // const auth = getAuth();
@@ -216,7 +218,7 @@ const UserInfoScreen = ({ navigation }) => {
                 )}
 
 
-                <View style={[styles.inputContainer, {marginTop: isKeyboardVisible ? 0 : 0 }]}>
+                <View style={[styles.inputContainer, { marginTop: isKeyboardVisible ? 0 : 0 }]}>
                     <TextInput placeholder="Username" value={username} onChangeText={usernameValidation} placeholderTextColor={theme.text}
                         onFocus={() => setIsInputFocused('username')} onBlur={() => setIsInputFocused(null)}
                         style={[
@@ -233,7 +235,7 @@ const UserInfoScreen = ({ navigation }) => {
                             style={[styles.inputStyle, { color: 'grey', opacity: 1, textTransform: 'lowercase' }]} />
                     )}
 
-                    <TextInput placeholder="Name (Optional)" value={name} onChangeText={setName} placeholderTextColor={theme.text}
+                    <TextInput placeholder="Name (Required)" value={name} onChangeText={setName} placeholderTextColor={theme.text}
                         onFocus={() => setIsInputFocused('name')} onBlur={() => setIsInputFocused(null)}
                         style={[styles.inputStyle, {
                             borderWidth: isInputFocused === 'name' ? 1 : 0,

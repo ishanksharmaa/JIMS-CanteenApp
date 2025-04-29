@@ -114,8 +114,8 @@ const MenuScreen = () => {
                 <FlatList
                     data={filteredProducts}
                     keyExtractor={(item) => item.id}
-                    numColumns={2}
                     horizontal={false}
+                    numColumns={2}
                     showsHorizontalScrollIndicator={false}
                     ListEmptyComponent={
                         <Text style={{ textAlign: 'center' }}>

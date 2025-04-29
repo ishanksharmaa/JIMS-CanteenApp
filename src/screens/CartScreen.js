@@ -42,7 +42,7 @@ const CartScreen = () => {
             <HeaderBackIcon title={cartItems.length == 0 ? "Cart" : `Cart (${cartItems.length})`} />
             {
                 user ? (
-                    <Ionicons name="add" size={29} color={theme.text} style={styles.addIcon} />
+                    <Ionicons name="add" size={29} color={"transparent"} style={styles.addIcon} />
                 ) : (
                     <TouchableOpacity style={styles.saveButton} onPress={() => navigation.navigate("Login")} activeOpacity={0.8}>
                         <Text style={styles.saveButtonText}>{user ? "Save" : "Sign In"}</Text>

@@ -14,7 +14,7 @@ const ProductScreen = () => {
   const route = useRoute();
   const { image, title, price, descr, quantity, qty, amount } = route.params;
   const { theme } = useTheme();
-  const { addedToCart, toggleFavoriteItem, isFavorite, cartItems, removedFromCart } = useCart();
+  const { addedToCart, toggleFavoriteItem, isFavorite, cartItems, removedFromCart, user } = useCart();
   const styles = dynamicTheme(theme);
   const navigation = useNavigation();
   const { refreshUser } = useUser();
@@ -45,7 +45,7 @@ const ProductScreen = () => {
           <Ionicons name="share-outline" size={24} color={theme.text} />
         </TouchableOpacity>
         <TouchableOpacity style={styles.favBtn} onPress={() => toggleFavoriteItem(title)} activeOpacity={0.6} >
-          <Ionicons name={isFavorite(title) ? "heart" : "heart-outline"} size={24} color={isFavorite(title) ? theme.customButtonBg : theme.text} />
+          <Ionicons name={user && isFavorite(title) ? "heart" : "heart-outline"} size={24} color={user && isFavorite(title) ? theme.customButtonBg : theme.text} />
         </TouchableOpacity>
       </View>
       <Image source={image} style={styles.productImage} />

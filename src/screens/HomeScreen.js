@@ -12,7 +12,7 @@ import { collection, query, where, getDocs } from "firebase/firestore";
 
 
 import { TextInput } from "react-native-gesture-handler";
-import { useNavigation, useFocusEffect } from "@react-navigation/native";
+import { useNavigation, useFocusEffect, StackActions, CommonActions } from "@react-navigation/native";
 import MemeCat from "../components/MemeCat";
 import { useMemeCat } from "../components/MemeCatContext";
 
@@ -84,6 +84,7 @@ const HomeScreen = () => {
         }, [])
     );
 
+
     return (
         <View style={styles.container}>
             <MemeCat available={true} active={true} onTouch={() => console.log("Cat touched!")} isMemeCatsEnabled={isMemeCatsEnabled} />
@@ -150,12 +151,13 @@ const HomeScreen = () => {
             </View> {/* categoryContainer end */}
             <View style={styles.productContainer}>
                 <Text style={styles.heading}>Recommended for you</Text>
-                <FlatList style={{ marginHorizontal: -20, paddingHorizontal: 20 }}
+                <FlatList style={{ marginHorizontal: -20, paddingHorizontal: 10 }}
                     data={productItems}
                     keyExtractor={(item) => item.id}
                     horizontal={true}
+                    // numColumns={2}
                     showsHorizontalScrollIndicator={false}
-                    renderItem={({ item }) => <ProductCard image={{ uri: item.image }} title={item.name} price={item.price} descr={item.description} quantity={item.quantity} qty={item.qty} amount={item.amount} />}
+                    renderItem={({ item }) => <ProductCard image={{ uri: item.image }} title={item.name} price={item.price} descr={item.description} quantity={item.quantity} qty={item.qty} amount={item.amount} size={0.86} gapV={10} gapH={0} />}
                 />
             </View>
         </View> // container end

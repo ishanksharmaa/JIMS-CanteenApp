@@ -46,7 +46,7 @@ const ProductCard = ({ image, title, price, descr, quantity, qty, amount, size =
       <TouchableOpacity style={styles.favBtn} onPress={() => toggleFavoriteItem(title)} activeOpacity={0.6} >
         {/* <Ionicons name={isFavorite(title) ? "heart" : "heart-outline"} size={22} color={isFavorite(title) ? theme.customButtonBg : theme.text} /> */}
         {/* <Ionicons name={isFavorite(title) ? "heart" : "heart-outline"} size={22} color={isFavorite(title) ? theme.text : theme.text} /> */}
-        <Ionicons name={isFavorite(title) ? "heart" : "heart-outline"} size={22} color={isFavorite(title) ? "#DC143C" : theme.text} />
+        <Ionicons name={user && isFavorite(title) ? "heart" : "heart-outline"} size={22} color={user && isFavorite(title) ? "#DC143C" : theme.text} />
       </TouchableOpacity>
       <View style={styles.textContainer}>
         <Text style={styles.productTitle}>{title}</Text>
@@ -66,8 +66,11 @@ const ProductCard = ({ image, title, price, descr, quantity, qty, amount, size =
         <FontAwesome
           name={isInCart ? "circle-minus" : "circle-plus"}
           size={45}
+          // color={isInCart ? "grey" : "#029232"}
+          color={isInCart ? "grey" : theme.customButtonBg}
+          
           // color={isInCart ? "#C40233" : "#029232"}
-          color={isInCart ? "#C40233" : theme.customButtonBg}
+          // color={isInCart ? "#C40233" : theme.customButtonBg}
         />
       </TouchableOpacity>
     </TouchableOpacity>
