@@ -14,7 +14,9 @@ export const CartProvider = ({ children }) => {
     const [totalAmount, setTotalAmount] = useState(0);
     const [favorites, setFavorites] = useState([]);
     // const [favoriteProducts, setFavoriteProducts] = useState([]);
+    const [quantities, setQuantities] = useState({});
     const isFavorite = (title) => favorites.includes(title);
+    const isInCart = (title) => cartItems.some(item => item.title === title);
 
 
     useEffect(() => {
@@ -107,7 +109,11 @@ export const CartProvider = ({ children }) => {
                     const productDoc = await getDocs(query(productsRef, where("name", "==", itemData.title)));
 
                     if (!productDoc.empty) {
-                        validItems.push(itemData); // product still exists
+                        // validItems.push(itemData);
+                        validItems.push({
+                            ...itemData,
+                            qty: itemData.qty || 1,  // 👈 Add qty directly into item object
+                        });
                     } else {
                         // product no longer exists, remove from cart
                         await deleteDoc(docSnap.ref);
@@ -162,7 +168,7 @@ export const CartProvider = ({ children }) => {
         }
     };
 
-    const onAddtoCart = (icon, productName, msg, negative = false, time=2500) => {
+    const onAddtoCart = (icon, productName, msg, negative = false, time = 2500) => {
         Toast.show({
             type: 'success',
             text1: productName,
@@ -210,6 +216,10 @@ export const CartProvider = ({ children }) => {
     };
 
     const updateQuantity = async (itemTitle, newQuantity) => {
+        if (!isInCart) {
+            return
+        }
+
         try {
             const db = getFirestore();
             const userRef = collection(db, "Users");
