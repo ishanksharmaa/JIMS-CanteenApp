@@ -9,19 +9,50 @@ import { useUser } from "../components/UserContext";
 import { useNavigation } from "@react-navigation/native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+// import { runOnJS } from 'react-native-reanimated';
+import Animated, { useSharedValue, useAnimatedStyle, withSequence, withSpring, withTiming, withRepeat, withDelay, runOnJS } from 'react-native-reanimated';
+import { GestureDetector, Gesture } from 'react-native-gesture-handler';
 
 const ProductScreen = () => {
   const route = useRoute();
-  const { image, title, price, descr, quantity, qty, amount } = route.params;
+  const { image, title, price, descr, quantity, qty, amount, available } = route.params;
   const { theme } = useTheme();
   const { addedToCart, toggleFavoriteItem, isFavorite, cartItems, removedFromCart, user, updateQuantity } = useCart();
-  const styles = dynamicTheme(theme);
+  const styles = dynamicTheme(theme, available);
   const navigation = useNavigation();
   const { refreshUser } = useUser();
   const isInCart = cartItems.some(item => item.title === title);
+  const item = cartItems.find(cartItem => cartItem.title === title);
   const [count, setCount] = useState(1); // Default count 1
 
-  const item = cartItems.find(cartItem => cartItem.title === title);
+  const scaleBag = useSharedValue(1);
+  const scaleText = useSharedValue(1);
+  const bagOffset = useSharedValue(1);
+
+
+  const animatedBagStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{ scale: scaleBag.value }],
+    };
+  });
+  const animatedTextStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{ scale: scaleText.value }],
+    };
+  });
+
+  const bounceBag = () => {
+    scaleBag.value = withSequence(
+      withTiming(1.2, { duration: 100 }),
+      withSpring(1)
+    );
+  };
+  const bounceText = () => {
+    scaleText.value = withSequence(
+      withTiming(1.2, { duration: 100 }),
+      withSpring(1)
+    );
+  };
 
   useEffect(() => {
     if (item) {
@@ -30,14 +61,63 @@ const ProductScreen = () => {
   }, [item]);  // Runs only when item changes
 
 
+  const swipeUp = Gesture.Pan()
+    .onEnd((e) => {
+      if (e.translationY < -40) {
+        runOnJS(navigation.navigate)("Cart");
+      }
+    });
+
+  // const checkCart = () => {
+  //   bagOffset.value = withSequence(
+  //     withTiming(-12, { duration: 150 }),
+  //     withTiming(0, { duration: 150 })
+  //   );
+  // };
+
+  const swipeHintStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{ translateY: bagOffset.value }],
+    };
+  });
+
+  useEffect(() => {
+    if (isInCart) {
+      bagOffset.value = withRepeat(
+        withSequence(
+          withTiming(-21, { duration: 800 }),  // Move up
+          withTiming(0, { duration: 500 }),    // Move down
+          withDelay(2000, withTiming(0, { duration: 0 })) // 0.5s pause
+        ),
+        -1, // infinite repeat
+        true // reverse
+      );
+    }
+    else {
+      bagOffset.value = 0; // reset on unmount
+    }
+
+    return () => {
+      bagOffset.value = 0; // reset on unmount
+    };
+  }, [isInCart]);
+
+
+
+
+
+
   const handleCartAction = (count) => {
     if (isInCart) {
       removedFromCart(title);
+      bounceBag();
       updateQuantity(title, 1)
     } else {
       const product = { image, title, price, descr, quantity, qty: 1, amount: price };
       addedToCart(product);
+      bounceBag();
       updateQuantity(title, count);
+      // checkCart();
     }
     refreshUser();
   };
@@ -55,7 +135,7 @@ const ProductScreen = () => {
           <Ionicons name="share-outline" size={24} color={theme.text} />
         </TouchableOpacity>
         <TouchableOpacity style={styles.favBtn} onPress={() => toggleFavoriteItem(title)} activeOpacity={0.6} >
-          <Ionicons name={user && isFavorite(title) ? "heart" : "heart-outline"} size={24} color={user && isFavorite(title) ? theme.customButtonBg : theme.text} />
+          <Ionicons name={isFavorite(title) ? "heart" : "heart-outline"} size={24} color={user && isFavorite(title) ? theme.customButtonBg : theme.text} />
         </TouchableOpacity>
       </View>
       <Image source={image} style={styles.productImage} />
@@ -72,6 +152,7 @@ const ProductScreen = () => {
             onPress={() => {
               const newCount = count - 1;
               if (newCount >= 1) {
+                bounceText();
                 setCount(newCount);
                 if (isInCart) {
                   updateQuantity(title, newCount);
@@ -82,13 +163,16 @@ const ProductScreen = () => {
             <Ionicons name="remove-circle" size={58} color={"grey"} />
           </TouchableOpacity>
 
-          <Text style={{ fontSize: 20, fontWeight: 'bold', textAlign: 'center', color: theme.text }}>{count}</Text>
+          <Animated.View style={animatedTextStyle}>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', textAlign: 'center', color: theme.text }}>{count}</Text>
+          </Animated.View>
 
           <TouchableOpacity activeOpacity={1}
             // onPress={() => setCount((prev) => (prev = prev + 1))}
             onPress={() => {
               const newCount = count + 1;
               if (newCount >= 1) {
+                bounceText();
                 setCount(newCount);
                 if (isInCart) {
                   updateQuantity(title, newCount);
@@ -103,7 +187,7 @@ const ProductScreen = () => {
         <View style={styles.descContainer}>
           <Text style={styles.descTitle}>description: { }</Text>
           <ScrollView>
-            <Text style={styles.descContent}>{descr || "Info not provided..."}</Text>
+            <Text style={styles.descContent}>{item?.descr || descr || "Info not provided..."}</Text>
             {/* <Text style={styles.descContent}>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</Text> */}
           </ScrollView>
 
@@ -128,19 +212,41 @@ const ProductScreen = () => {
 
 
         <View style={styles.orderBtn}>
-          <TouchableOpacity style={styles.iconButton} onPress={() => handleCartAction(count)} activeOpacity={0.7}>
-            <Ionicons name={isInCart ? "bag" : "bag-outline"} size={29} color={isInCart ? theme.customButtonBg : theme.customButtonBg} />
-          </TouchableOpacity>
-          <View style={styles.buttonContainer}>
-            <CustomButton btnColor={theme.customButtonBg} textColor={theme.customButtonText} title={`Order for ₹${parseFloat(price) * count}`} onPress={null} />
-          </View>
+
+          {!available ? (
+            <Text style={{ color: 'red', fontSize: 16, marginBottom: 20 }}>Currently unavailable!</Text>
+          ) :
+            (
+              <>
+                < GestureDetector gesture={swipeUp}>
+                  <Animated.View style={[styles.iconButton, animatedBagStyle, swipeHintStyle]}>
+                    <TouchableOpacity
+                      // style={styles.iconButton}
+                      onPress={() => handleCartAction(count)}
+                      activeOpacity={0.7}
+                    >
+                      <Ionicons
+                        name={isInCart ? "bag" : "bag-outline"}
+                        size={29}
+                        color={theme.customButtonBg}
+                      />
+                    </TouchableOpacity>
+                  </Animated.View>
+                </GestureDetector>
+
+
+                <View style={styles.buttonContainer}>
+                  <CustomButton btnColor={theme.customButtonBg} textColor={theme.customButtonText} title={`Order for ₹${(parseFloat(price) * count).toFixed(2)}`} onPress={null} />
+                </View>
+              </>
+            )}
         </View>
       </View>
-    </View>
+    </View >
   );
 };
 
-const dynamicTheme = (theme) => ({
+const dynamicTheme = (theme, available) => ({
   container: { flex: 1, alignItems: "", padding: 0, backgroundColor: theme.background },
   bigContainer: { flex: 1, borderTopLeftRadius: '6%', borderTopRightRadius: '6%', backgroundColor: theme.background, paddingTop: 14 },
   headerIcons: { flexDirection: 'row', width: '23%', justifyContent: 'space-between', position: 'absolute', right: 20, top: 55, zIndex: 10 },
@@ -185,12 +291,12 @@ const dynamicTheme = (theme) => ({
     position: 'absolute',
     bottom: 20,
     flexDirection: 'row',
-    width: '100%', // Yeh ensure karega ki dono buttons achhe se dikhein
-    alignSelf: 'center', // Center mein maintain karega
-    justifyContent: 'space-between',
+    width: '100%',
+    alignSelf: 'center',
+    justifyContent: available ? 'space-between' : 'center',
     alignItems: 'center',
-    paddingLeft: 30, // Vertical padding thoda aur acha lagne ke liye
-    backgroundColor: 'transparent', // Red hata diya taki design clean lage
+    paddingLeft: available ? 30 : 0,
+    backgroundColor: 'transparent',
   },
   iconButton: {
     backgroundColor: theme.cartBagBtn,

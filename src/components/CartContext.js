@@ -112,6 +112,8 @@ export const CartProvider = ({ children }) => {
                         // validItems.push(itemData);
                         validItems.push({
                             ...itemData,
+                            descr: itemData.descr,
+                            available: itemData.available,
                             qty: itemData.qty || 1,  // 👈 Add qty directly into item object
                         });
                     } else {

@@ -8,38 +8,39 @@ import { useUser } from "../components/UserContext";
 import { useCart } from "../components/CartContext";
 import { transform } from "typescript";
 
-const ProductCard = ({ image, title, price, descr, quantity, qty, amount, size = 1, gapV = 20, gapH = 20 }) => {
+const ProductCard = ({ image, title, price, descr, quantity, qty, amount, available = true, size = 1, gapV = 20, gapH = 20 }) => {
   const navigation = useNavigation();
   const { theme } = useTheme();
   const styles = dynamicTheme(theme, size, gapH, gapV);
   const { addedToCart, removedFromCart, toggleFavoriteItem, isFavorite, cartItems, setCartItems, setFavItems, fetchFavorites } = useCart();
   const { refreshUser, user, userEmail } = useUser();
+  // const item = cartItems.find(cartItem => cartItem.title === title);
   const isInCart = cartItems.some(item => item.title === title);
 
   useEffect(() => {
-          if (user) {
-              fetchFavorites(userEmail);
-          } else {
-              setCartItems([]);
-              setFavItems([]);
-          }
-      }, [user]);
+    if (user) {
+      fetchFavorites(userEmail);
+    } else {
+      setCartItems([]);
+      setFavItems([]);
+    }
+  }, [user]);
 
   const handleCartAction = () => {
     if (isInCart) {
       removedFromCart(title);
     } else {
-      const product = { image, title, price, descr, quantity, qty: 1, amount: price };
+      const product = { image, title, price, descr, quantity, qty: 1, amount: price, available };
       addedToCart(product);
     }
     refreshUser();
   };
-  
+
 
   return (
     <TouchableOpacity
       style={styles.productCard}
-      onPress={() => navigation.navigate("ProductScreen", { image, title, price, descr, quantity, qty: 1, amount: price })}
+      onPress={() => navigation.navigate("ProductScreen", { image, title, price, descr, quantity, qty: 1, amount: price, available })}
       activeOpacity={0.5}
     >
       <Image source={image} style={styles.productImage} />
@@ -55,24 +56,29 @@ const ProductCard = ({ image, title, price, descr, quantity, qty, amount, size =
       </View>
 
       {/* ✅ Add to Cart Button */}
-      <TouchableOpacity
-        style={styles.addIconContainer}
-        onPress={() => {
-          handleCartAction();
-          refreshUser();
-        }}
-        activeOpacity={0.5}
-      >
-        <FontAwesome
-          name={isInCart ? "circle-minus" : "circle-plus"}
-          size={45}
-          // color={isInCart ? "grey" : "#029232"}
-          color={isInCart ? "grey" : theme.customButtonBg}
-          
+      {available ? (
+
+        <TouchableOpacity
+          style={styles.addIconContainer}
+          onPress={() => {
+            handleCartAction();
+            refreshUser();
+          }}
+          activeOpacity={0.5}
+        >
+          <FontAwesome
+            name={isInCart ? "circle-minus" : "circle-plus"}
+            size={45}
+            // color={isInCart ? "grey" : "#029232"}
+            color={isInCart ? "grey" : theme.customButtonBg}
+
           // color={isInCart ? "#C40233" : "#029232"}
           // color={isInCart ? "#C40233" : theme.customButtonBg}
-        />
-      </TouchableOpacity>
+          />
+        </TouchableOpacity>
+      ) :
+        <Text style={{ color: 'red', fontSize: 13 }}>Currently unavailable!</Text>
+      }
     </TouchableOpacity>
   );
 };

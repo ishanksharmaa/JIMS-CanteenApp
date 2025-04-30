@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { Text, View, Image, StyleSheet, FlatList, StatusBar, TouchableOpacity } from "react-native";
+import { Text, View, Image, StyleSheet, FlatList, StatusBar, TouchableOpacity, ScrollView } from "react-native";
 import SearchBar from "../components/SearchBar";
 import { useUser } from "../components/UserContext";
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -133,33 +133,35 @@ const HomeScreen = () => {
                 <SearchBar placeholder="Search food, menu..." onChange={setText} navigatePage="SearchPage" editable={false} />
             </TouchableOpacity>
 
+            <ScrollView showsVerticalScrollIndicator={false} showsHorizontalScrollIndicator={false}>
 
-            <View style={styles.categoryContainer}>
-                <Text style={styles.heading}>Categories</Text>
-                <FlatList style={{ marginHorizontal: -10, marginVertical: 0 }}
-                    data={categories}
-                    keyExtractor={(item) => item.id}
-                    horizontal={true} // Enable horizontal scrolling
-                    showsHorizontalScrollIndicator={false} // Hide scrollbar
-                    renderItem={({ item }) => (
-                        <View style={styles.categoryItem}>
-                            <Image source={item.image} style={styles.categoryImage} />
-                            <Text style={styles.categoryTitle}>{item.title}</Text>
-                        </View>
-                    )}
-                />
-            </View> {/* categoryContainer end */}
-            <View style={styles.productContainer}>
-                <Text style={styles.heading}>Recommended for you</Text>
-                <FlatList style={{ marginHorizontal: -20, paddingHorizontal: 10 }}
-                    data={productItems}
-                    keyExtractor={(item) => item.id}
-                    horizontal={true}
-                    // numColumns={2}
-                    showsHorizontalScrollIndicator={false}
-                    renderItem={({ item }) => <ProductCard image={{ uri: item.image }} title={item.name} price={item.price} descr={item.description} quantity={item.quantity} qty={item.qty} amount={item.amount} size={0.86} gapV={10} gapH={0} />}
-                />
-            </View>
+                <View style={styles.categoryContainer}>
+                    <Text style={styles.heading}>Categories</Text>
+                    <FlatList style={{ marginHorizontal: -10, marginVertical: 0 }}
+                        data={categories}
+                        keyExtractor={(item) => item.id}
+                        horizontal={true} // Enable horizontal scrolling
+                        showsHorizontalScrollIndicator={false} // Hide scrollbar
+                        renderItem={({ item }) => (
+                            <View style={styles.categoryItem}>
+                                <Image source={item.image} style={styles.categoryImage} />
+                                <Text style={styles.categoryTitle}>{item.title}</Text>
+                            </View>
+                        )}
+                    />
+                </View> {/* categoryContainer end */}
+                <View style={styles.productContainer}>
+                    <Text style={styles.heading}>Recommended for you</Text>
+                    <FlatList style={{ marginHorizontal: -20, paddingHorizontal: 9, flexGrow: 0 }}
+                        data={productItems}
+                        keyExtractor={(item) => item.id}
+                        horizontal={false}
+                        numColumns={2}
+                        showsHorizontalScrollIndicator={false}
+                        renderItem={({ item }) => <ProductCard image={{ uri: item.image }} title={item.name} price={item.price} descr={item.description} quantity={item.quantity} qty={item.qty} amount={item.amount} available={item.available} size={0.86} gapV={5} gapH={-3} />}
+                    />
+                </View>
+            </ScrollView>
         </View> // container end
     );
 };
@@ -242,7 +244,8 @@ const dynamicTheme = (theme) => ({
     productContainer: {
         backgroundColor: '',
         height: 'auto',
-        paddingBottom: 20,
+        paddingBottom: 210,
+        // paddingBottom: 235,
     },
     iconBg: { backgroundColor: theme.iconBg, borderRadius: 50, borderWidth: 0, padding: 10, },
 });

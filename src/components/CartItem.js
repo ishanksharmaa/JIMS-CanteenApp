@@ -5,13 +5,16 @@ import { useTheme } from "./ThemeContext";
 import { useCart } from "./CartContext";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import { useNavigation } from "@react-navigation/native";
 
-const CartItem = ({ image, title, price, quantity, qty }) => {
+
+const CartItem = ({ image, title, price, descr, quantity, qty }) => {
   const { theme } = useTheme();
   const styles = dynamicTheme(theme);
   const { removedFromCart, updateQuantity } = useCart();
   const [count, setCount] = useState(qty); // Default count 1
   const swipeableRef = useRef(null);
+  const navigation = useNavigation();
 
   const handleSwipeOpen = () => {
     setTimeout(() => {
@@ -45,7 +48,12 @@ const CartItem = ({ image, title, price, quantity, qty }) => {
       onSwipeableWillOpen={handleSwipeOpen}
     >
       <View style={styles.cartItem}>
-        <Image source={image} style={styles.image} />
+        <TouchableOpacity
+          onPress={() => navigation.navigate("ProductScreen", { image, title, price, descr, quantity, qty: 1, amount: price })}
+          activeOpacity={0.8}
+        >
+          <Image source={image} style={styles.image} />
+        </TouchableOpacity>
         <View>
           <Text style={styles.title}>{title}</Text>
           {/* <Text style={styles.price}>{'₹ ' + price}</Text> */}
@@ -107,6 +115,7 @@ const dynamicTheme = (theme) => ({
     fontSize: 16,
     fontWeight: "bold",
     color: theme.text,
+    textTransform: 'capitalize',
   },
   price: {
     fontSize: 14,

@@ -74,6 +74,7 @@ const CartScreen = () => {
                                     image={item.image}
                                     title={item.title}
                                     price={item.price}
+                                    descr={item.description}
                                     quantity={item.quantity}
                                     qty={item.qty}
                                 />

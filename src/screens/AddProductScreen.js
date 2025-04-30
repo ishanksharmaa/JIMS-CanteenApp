@@ -116,6 +116,7 @@ const AddProductScreen = ({ closeModal, product: initialProduct, mode }) => {
             quantity: product.quantity.toLowerCase(),
             image: product.image,
             category: categoryArray,
+            available: true,
             timestamp: firestore.FieldValue.serverTimestamp(),
         };
 
