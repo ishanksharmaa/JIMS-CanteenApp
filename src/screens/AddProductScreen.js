@@ -18,6 +18,7 @@ const AddProductScreen = ({ closeModal, product: initialProduct, mode }) => {
                 description: initialProduct.description || "",
                 quantity: initialProduct.quantity ? initialProduct.quantity.toString() : "",
                 image: initialProduct.image || "",
+                time: initialProduct.time ? initialProduct.time.toString() : "",
                 category: Array.isArray(initialProduct.category)
                     ? initialProduct.category.join(' ')
                     : initialProduct.category || ""
@@ -28,7 +29,8 @@ const AddProductScreen = ({ closeModal, product: initialProduct, mode }) => {
                 description: "",
                 quantity: "",
                 image: "",
-                category: ""
+                category: "",
+                time: ""
             }
     );
 
@@ -42,6 +44,7 @@ const AddProductScreen = ({ closeModal, product: initialProduct, mode }) => {
                 description: initialProduct.description || "",
                 quantity: initialProduct.quantity ? initialProduct.quantity.toString() : "",
                 image: initialProduct.image || "",
+                time: initialProduct.time ? initialProduct.time.toString() : "",
                 category: Array.isArray(initialProduct.category)
                     ? initialProduct.category.join(' ')
                     : initialProduct.category || ""
@@ -53,7 +56,8 @@ const AddProductScreen = ({ closeModal, product: initialProduct, mode }) => {
                 description: "",
                 quantity: "",
                 image: "",
-                category: ""
+                category: "",
+                time: ""
             });
         }
     }, [initialProduct]);
@@ -88,6 +92,7 @@ const AddProductScreen = ({ closeModal, product: initialProduct, mode }) => {
             product.price.trim() !== "" &&
             product.quantity.trim() !== "" &&
             product.category.length > 0
+            // && product.time.trim() !== ""
         );
     };
 
@@ -109,12 +114,15 @@ const AddProductScreen = ({ closeModal, product: initialProduct, mode }) => {
             .map(word => word.toLowerCase())
             .filter(word => word.length > 0);
 
+            const timeValue = product.time.trim() === "" ? "Ready" : product.time;
+
         const productData = {
             name: product.name.toLowerCase(),
             price: parseInt(product.price, 10),
             description: product.description,
             quantity: product.quantity.toLowerCase(),
             image: product.image,
+            time: timeValue,
             category: categoryArray,
             available: true,
             timestamp: firestore.FieldValue.serverTimestamp(),
@@ -141,6 +149,7 @@ const AddProductScreen = ({ closeModal, product: initialProduct, mode }) => {
                     description: "",
                     quantity: "",
                     image: "",
+                    time: "",
                     category: ""
                 });
             }
@@ -206,7 +215,15 @@ const AddProductScreen = ({ closeModal, product: initialProduct, mode }) => {
                             value={product.quantity}
                             placeholderTextColor={'grey'}
                             onChangeText={(text) => handleChange("quantity", text)}
-                            // keyboardType="numeric"
+                        // keyboardType="numeric"
+                        />
+                        <TextInput
+                            style={styles.smallInput}
+                            placeholder="Time"
+                            value={product.time}
+                            placeholderTextColor={'grey'}
+                            onChangeText={(text) => handleChange("time", text)}
+                        // keyboardType="numeric"
                         />
                     </View>
 
@@ -281,7 +298,8 @@ const dynamicTheme = (theme) => ({
         marginVertical: 10,
         fontSize: 16,
         color: theme.text,
-        width: "48%",
+        // width: "48%",
+        width: "30%",
         backgroundColor: theme.loginInput,
     },
     button: { padding: 12, borderRadius: 8, alignItems: "center", marginTop: 20 },

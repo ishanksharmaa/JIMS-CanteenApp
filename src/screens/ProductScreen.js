@@ -15,7 +15,7 @@ import { GestureDetector, Gesture } from 'react-native-gesture-handler';
 
 const ProductScreen = () => {
   const route = useRoute();
-  const { image, title, price, descr, quantity, qty, amount, available } = route.params;
+  const { image, title, price, descr, quantity, qty, amount, time, available } = route.params;
   const { theme } = useTheme();
   const { addedToCart, toggleFavoriteItem, isFavorite, cartItems, removedFromCart, user, updateQuantity } = useCart();
   const styles = dynamicTheme(theme, available);
@@ -26,6 +26,7 @@ const ProductScreen = () => {
   const [count, setCount] = useState(1); // Default count 1
 
   const scaleBag = useSharedValue(1);
+  const scaleFav = useSharedValue(1);
   const scaleText = useSharedValue(1);
   const bagOffset = useSharedValue(1);
 
@@ -33,6 +34,11 @@ const ProductScreen = () => {
   const animatedBagStyle = useAnimatedStyle(() => {
     return {
       transform: [{ scale: scaleBag.value }],
+    };
+  });
+  const animatedFavStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{ scale: scaleFav.value }],
     };
   });
   const animatedTextStyle = useAnimatedStyle(() => {
@@ -43,6 +49,12 @@ const ProductScreen = () => {
 
   const bounceBag = () => {
     scaleBag.value = withSequence(
+      withTiming(1.2, { duration: 100 }),
+      withSpring(1)
+    );
+  };
+  const bounceFav = () => {
+    scaleFav.value = withSequence(
       withTiming(1.2, { duration: 100 }),
       withSpring(1)
     );
@@ -134,9 +146,13 @@ const ProductScreen = () => {
         <TouchableOpacity style={styles.shareBtn} onPress={() => navigation.goBack()} activeOpacity={0.6} >
           <Ionicons name="share-outline" size={24} color={theme.text} />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.favBtn} onPress={() => toggleFavoriteItem(title)} activeOpacity={0.6} >
-          <Ionicons name={isFavorite(title) ? "heart" : "heart-outline"} size={24} color={user && isFavorite(title) ? theme.customButtonBg : theme.text} />
+
+        <TouchableOpacity style={styles.favBtn} onPress={() => { toggleFavoriteItem(title); bounceFav(); }} activeOpacity={0.6} >
+          <Animated.View style={animatedFavStyle}>
+            <Ionicons name={isFavorite(title) ? "heart" : "heart-outline"} size={24} color={user && isFavorite(title) ? theme.customButtonBg : theme.text} />
+          </Animated.View>
         </TouchableOpacity>
+
       </View>
       <Image source={image} style={styles.productImage} />
 
@@ -200,7 +216,8 @@ const ProductScreen = () => {
             <Text style={styles.infoTitle}>Ratings</Text>
           </View>
           <View style={styles.productInfoCard}>
-            <Ionicons name="time-outline" size={28} color={theme.text} />
+            {/* <Ionicons name="time-outline" size={28} color={theme.text} /> */}
+            <Text style={{ color: theme.text, paddingTop: 6 }}>🕒 {time}</Text>
             <Text style={styles.infoTitle}>Pickup Time</Text>
           </View>
           <View style={styles.productInfoCard}>
@@ -236,7 +253,7 @@ const ProductScreen = () => {
 
 
                 <View style={styles.buttonContainer}>
-                  <CustomButton btnColor={theme.customButtonBg} textColor={theme.customButtonText} title={`Order for ₹${(parseFloat(price) * count).toFixed(2)}`} onPress={null} />
+                  <CustomButton btnColor={theme.customButtonBg} textColor={theme.customButtonText} title={`Order for ₹${(parseFloat(price) * count).toFixed(0)}`} onPress={null} />
                 </View>
               </>
             )}

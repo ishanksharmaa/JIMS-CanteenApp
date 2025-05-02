@@ -60,6 +60,7 @@ import UserInfoScreen from "./src/screens/UserInfoScreen";
 import AppearanceSetting from "./src/screens/settings/AppearanceSetting";
 import { MemeCatProvider } from "./src/components/MemeCatContext";
 import { UserProvider } from './src/components/UserContext';
+// import SideNav from "./src/components/SideNav";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();

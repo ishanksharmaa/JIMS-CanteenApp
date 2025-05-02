@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Text, View, Image, StyleSheet, FlatList, StatusBar, TouchableOpacity, ScrollView } from "react-native";
 import SearchBar from "../components/SearchBar";
+import SideNav from "../components/SideNav";
 import { useUser } from "../components/UserContext";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -75,6 +76,7 @@ const HomeScreen = () => {
     const { theme, toggleTheme } = useTheme();
     const styles = dynamicTheme(theme);
     const { isMemeCatsEnabled } = useMemeCat();
+    const [sideNavVisible, setSideNavVisible] = useState(false);
     const { userEmail, setUserEmail, username, setUsername, name, setName, dob, setDob, location, setLocation, refreshUser, user, addedToCart } = useUser();
 
     useFocusEffect(
@@ -83,6 +85,10 @@ const HomeScreen = () => {
             fetchProducts(setProductItems);
         }, [])
     );
+
+    const toggleSideNav = () => {
+        setSideNavVisible(!sideNavVisible);
+    };
 
 
     return (
@@ -95,11 +101,12 @@ const HomeScreen = () => {
                 <View style={styles.profileSection}>
 
                     <TouchableOpacity
-                        onPress={() =>
+                        onLongPress={() =>
                             userEmail === "iishanksharma@gmail.com"
                                 ? navigation.navigate("ProductsList")
                                 : null
                         }
+                        onPress={toggleSideNav}
                         activeOpacity={0.7}
                     >
                         <Image
@@ -111,7 +118,7 @@ const HomeScreen = () => {
                     </TouchableOpacity>
 
 
-                    <TouchableOpacity style={styles.nameContainer} onPress={() => { if (!user) navigation.navigate("GetStarted") }} activeOpacity={0.}>
+                    <TouchableOpacity style={styles.nameContainer} onPress={() => { (!user) ? navigation.navigate("GetStarted") : toggleSideNav() }} activeOpacity={0.8}>
                         <Text style={styles.profileName}>{user ? name || "Your Name" : "Sign In"}</Text>
                         <Text style={{ fontSize: 12, color: theme.text }}>{user ? location || "location" : "or Register"}</Text>
                     </TouchableOpacity>
@@ -158,10 +165,11 @@ const HomeScreen = () => {
                         horizontal={false}
                         numColumns={2}
                         showsHorizontalScrollIndicator={false}
-                        renderItem={({ item }) => <ProductCard image={{ uri: item.image }} title={item.name} price={item.price} descr={item.description} quantity={item.quantity} qty={item.qty} amount={item.amount} available={item.available} size={0.86} gapV={5} gapH={-3} />}
+                        renderItem={({ item }) => <ProductCard image={{ uri: item.image }} title={item.name} price={item.price} descr={item.description} quantity={item.quantity} qty={item.qty} amount={item.amount} time={item.time} available={item.available} size={0.86} gapV={5} gapH={-3} />}
                     />
                 </View>
             </ScrollView>
+            <SideNav isVisible={sideNavVisible} toggleVisibility={toggleSideNav} left={0} />
         </View> // container end
     );
 };
@@ -183,8 +191,10 @@ const dynamicTheme = (theme) => ({
         width: '100%',
     },
     profileSection: {
-        backgroundColor: "",
-        marginLeft: -10,
+        // backgroundColor: "red",
+        marginLeft: -20,
+        paddingLeft: 10,
+        width: '70%',
         flexDirection: 'row', // Horizontally align profile image and name
         alignItems: 'center', // Vertically align profile image and name
     },

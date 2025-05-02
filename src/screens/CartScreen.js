@@ -93,7 +93,7 @@ const CartScreen = () => {
                         <MaterialIcons name="call-split" size={29} color={theme.customButtonBg} />
                     </TouchableOpacity>
                     <View style={styles.buttonContainer}>
-                        <CustomButton btnColor={theme.customButtonBg} textColor={theme.customButtonText} title={`Order for ${totalAmount}`} onPress={() => alert("Order placed! (Functionality coming soon)")} />
+                        <CustomButton btnColor={theme.customButtonBg} textColor={theme.customButtonText} title={`Order for ₹${totalAmount}`} onPress={() => alert("Order placed! (Functionality coming soon)")} />
                     </View>
                 </View>
             )}

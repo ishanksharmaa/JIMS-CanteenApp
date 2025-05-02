@@ -88,24 +88,24 @@ const SettingsScreen = () => {
                     <ProfileSection flexDirection='column' gap={10} scale={1.1} />
                 </View>
                 <Section title="General">
-                    <SettingItem icon={isDarkMode ? "notifications-outline" : "notifications"} label="Notifications" hasSwitch />
+                    <SettingItem icon={isDarkMode ? "notifications-outline" : "notifications"} label="Notifications" hasSwitch isFirst />
                     <SettingItem icon={isDarkMode ? "color-palette-outline" : "color-palette"} label="Appearance" isThemeSwitch onPress={() => navigation.navigate("Appearance")} />
-                    <SettingItem icon={isDarkMode ? "time-outline" : "time"} label="Order History" isLast />
+                    <SettingItem icon={isDarkMode ? "time-outline" : "time"} label="Order History" />
                 </Section>
 
                 <Section title="Account">
-                    <SettingItem icon={isDarkMode ? "person-circle-outline" : "person-circle"} label="Edit Profile" onPress={() => navigation.navigate("UserInfo", { isUserFresh: false })} />
-                    <SettingItem icon={isDarkMode ? "lock-closed-outline" : "lock-closed"} label="Privacy & Security" isLast />
+                    <SettingItem icon={isDarkMode ? "person-circle-outline" : "person-circle"} label="Edit Profile" onPress={() => navigation.navigate("UserInfo", { isUserFresh: false })} isFirst />
+                    <SettingItem icon={isDarkMode ? "lock-closed-outline" : "lock-closed"} label="Privacy & Security" />
                 </Section>
 
                 <Section title="Support">
-                    <SettingItem icon={isDarkMode ? "help-circle-outline" : "help-circle"} label="Help & Support" />
+                    <SettingItem icon={isDarkMode ? "help-circle-outline" : "help-circle"} label="Help & Support" isFirst />
                     <SettingItem icon={isDarkMode ? "star-outline" : "star"} label="Feedback" />
-                    <SettingItem icon={isDarkMode ? "information-circle-outline" : "information-circle"} label="About" isLast />
+                    <SettingItem icon={isDarkMode ? "information-circle-outline" : "information-circle"} label="About" />
                 </Section>
 
                 <Section title="Exit">
-                    <SettingItem icon={isDarkMode ? "exit-outline" : "exit"} label={user ? "LogOut" : "Login"} onPress={handleLogout} isLast />
+                    <SettingItem icon={isDarkMode ? "exit-outline" : "exit"} label={user ? "LogOut" : "Login"} onPress={handleLogout} isFirst />
                     {!user && (
                         <SettingItem icon={isDarkMode ? "add" : "add"} label="Create account" onPress={() => navigation.navigate("SignUp")} />
                     )}

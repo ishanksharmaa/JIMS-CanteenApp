@@ -19,7 +19,7 @@ export const Section = ({ title, children }) => {
     );
 };
 
-export const SettingItem = ({ icon, label, hasSwitch, isThemeSwitch, onPress, isLast, switchValue }) => {
+export const SettingItem = ({ icon, label, hasSwitch, isThemeSwitch, onPress, isFirst, switchValue, arrow=true, height=11 }) => {
     const { theme, changeTheme } = useTheme();
     const styles = dynamicTheme(theme);
 
@@ -29,9 +29,9 @@ export const SettingItem = ({ icon, label, hasSwitch, isThemeSwitch, onPress, is
             style={{
                 flexDirection: "row",
                 alignItems: "center",
-                padding: 11,
-                borderBottomColor: theme.mode === "dark" ? "#333" : "#ececec",
-                borderBottomWidth: isLast ? 0 : 1,
+                padding: height,
+                borderTopColor: theme.mode === "dark" ? "#333" : "#ececec",
+                borderTopWidth: isFirst ? 0 : 1,
             }}
             activeOpacity={0.7}
         >
@@ -47,7 +47,8 @@ export const SettingItem = ({ icon, label, hasSwitch, isThemeSwitch, onPress, is
                 style={{ transform: [{ scaleX: 1.3 }, { scaleY: 1.3 }] }}
             />
             ) : (
-                <Ionicons name="chevron-forward-outline" size={20} color="#8e8e93" />
+                arrow ?
+                <Ionicons name="chevron-forward-outline" size={20} color="#8e8e93" /> : ""
             )}
         </TouchableOpacity>
     );
