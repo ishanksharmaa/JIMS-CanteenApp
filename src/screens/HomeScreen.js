@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { Text, View, Image, StyleSheet, FlatList, StatusBar, TouchableOpacity, ScrollView } from "react-native";
+import React, { useState, useEffect, useCallback, useRef } from "react";
+import { Text, View, Image, StyleSheet, FlatList, StatusBar, TouchableOpacity, ScrollView, Animated, Pressable } from "react-native";
 import SearchBar from "../components/SearchBar";
 import SideNav from "../components/SideNav";
 import { useUser } from "../components/UserContext";
@@ -12,7 +12,7 @@ import { getAuth, onAuthStateChanged } from "@react-native-firebase/auth";
 import { collection, query, where, getDocs } from "firebase/firestore";
 
 
-import { TextInput } from "react-native-gesture-handler";
+import { TextInput, PanGestureHandler } from "react-native-gesture-handler";
 import { useNavigation, useFocusEffect, StackActions, CommonActions } from "@react-navigation/native";
 import MemeCat from "../components/MemeCat";
 import { useMemeCat } from "../components/MemeCatContext";
@@ -77,6 +77,8 @@ const HomeScreen = () => {
     const styles = dynamicTheme(theme);
     const { isMemeCatsEnabled } = useMemeCat();
     const [sideNavVisible, setSideNavVisible] = useState(false);
+    const scaleAnim = useRef(new Animated.Value(1)).current;
+    const translateXAnim = useRef(new Animated.Value(0)).current;
     const { userEmail, setUserEmail, username, setUsername, name, setName, dob, setDob, location, setLocation, refreshUser, user, addedToCart } = useUser();
 
     useFocusEffect(
@@ -90,96 +92,157 @@ const HomeScreen = () => {
         setSideNavVisible(!sideNavVisible);
     };
 
+    // const handleGesture = Animated.event(
+    //     [{ nativeEvent: { translationX: translateXAnim } }],
+    //     { useNativeDriver: true }
+    // );
+
+    const handleGesture = (event) => {
+        // No-op — don't update any animated value
+    };
+
+    const handleGestureEnd = (event) => {
+        const { translationX } = event.nativeEvent;
+        if (sideNavVisible && translationX < -50) {
+            setSideNavVisible(false);
+        }
+    };
+
+
+    useEffect(() => {
+        Animated.parallel([
+            Animated.timing(scaleAnim, {
+                toValue: sideNavVisible ? 0.75 : 1,
+                duration: 300,
+                useNativeDriver: true,
+            }),
+            Animated.timing(translateXAnim, {
+                toValue: sideNavVisible ? 310 : 0,
+                duration: 300,
+                useNativeDriver: true,
+            }),
+        ]).start();
+    }, [sideNavVisible]);
+
 
     return (
         <View style={styles.container}>
-            <MemeCat available={true} active={true} onTouch={() => console.log("Cat touched!")} isMemeCatsEnabled={isMemeCatsEnabled} />
+            <PanGestureHandler
+                onGestureEvent={handleGesture}
+                onEnded={handleGestureEnd}
+                enabled={sideNavVisible} // only detect when sidenav is open
+            >
+                <Animated.View style={{ flex: 1 }}>
+                        <Animated.View
+                            style={[
+                                styles.mainContent,
+                                {
+                                    transform: [
+                                        { scale: scaleAnim },
+                                        { translateX: translateXAnim },
+                                    ],
+                                    borderRadius: sideNavVisible ? 20 : 0,
+                                },
+                            ]}
+                        >
+                            <MemeCat available={true} active={true} onTouch={() => console.log("Cat touched!")} isMemeCatsEnabled={isMemeCatsEnabled} />
+                            <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
 
-            <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
-            <View style={styles.header}>
-                {/* Profile Section */}
-                <View style={styles.profileSection}>
+                            <View style={styles.header}>
+                                {/* Profile Section */}
+                                <View style={styles.profileSection}>
 
-                    <TouchableOpacity
-                        onLongPress={() =>
-                            userEmail === "iishanksharma@gmail.com"
-                                ? navigation.navigate("ProductsList")
-                                : null
-                        }
-                        onPress={toggleSideNav}
-                        activeOpacity={0.7}
-                    >
-                        <Image
-                            // source={require("../../assets/swaggy_cat.jpg")}
-                            // source={require("../../assets/app_logo.jpeg")}
-                            source={theme.logo}
-                            style={styles.profileImage}
-                        />
-                    </TouchableOpacity>
+                                    <TouchableOpacity
+                                        onLongPress={() =>
+                                            userEmail === "iishanksharma@gmail.com"
+                                                ? navigation.navigate("ProductsList")
+                                                : null
+                                        }
+                                        onPress={toggleSideNav}
+                                        activeOpacity={0.7}
+                                    >
+                                        <Image
+                                            // source={require("../../assets/swaggy_cat.jpg")}
+                                            // source={require("../../assets/app_logo.jpeg")}
+                                            source={theme.logo}
+                                            style={styles.profileImage}
+                                        />
+                                    </TouchableOpacity>
 
 
-                    <TouchableOpacity style={styles.nameContainer} onPress={() => { (!user) ? navigation.navigate("GetStarted") : toggleSideNav() }} activeOpacity={0.8}>
-                        <Text style={styles.profileName}>{user ? name || "Your Name" : "Sign In"}</Text>
-                        <Text style={{ fontSize: 12, color: theme.text }}>{user ? location || "location" : "or Register"}</Text>
-                    </TouchableOpacity>
-                </View>
+                                    <TouchableOpacity style={styles.nameContainer} onPress={() => { (!user) ? navigation.navigate("GetStarted") : toggleSideNav() }} activeOpacity={0.8}>
+                                        <Text style={styles.profileName}>{user ? name || "Your Name" : "Sign In"}</Text>
+                                        <Text style={{ fontSize: 12, color: theme.text }}>{user ? location || "location" : "or Register"}</Text>
+                                    </TouchableOpacity>
+                                </View>
 
-                {/* Header Icons */}
-                <View style={styles.headerIcons}>
-                    <TouchableOpacity onPress={() => navigation.navigate("Cart")} style={styles.iconBg}>
-                        <Ionicons name="cart-outline" size={23} color={theme.text} />
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.iconBg}>
-                        <Ionicons name="notifications-outline" size={23} color={theme.text} />
-                    </TouchableOpacity>
-                </View> {/* headerIcons end */}
-            </View> {/* header end */}
+                                {/* Header Icons */}
+                                <View style={styles.headerIcons}>
+                                    <TouchableOpacity onPress={() => navigation.navigate("Cart")} style={styles.iconBg}>
+                                        <Ionicons name="cart-outline" size={23} color={theme.text} />
+                                    </TouchableOpacity>
+                                    <TouchableOpacity style={styles.iconBg}>
+                                        <Ionicons name="notifications-outline" size={23} color={theme.text} />
+                                    </TouchableOpacity>
+                                </View> {/* headerIcons end */}
+                            </View> {/* header end */}
 
-            {/* SEARCH BAR HERE */}
-            <TouchableOpacity style={styles.searchContainer} >
-                <SearchBar placeholder="Search food, menu..." onChange={setText} navigatePage="SearchPage" editable={false} />
-            </TouchableOpacity>
+                            {/* SEARCH BAR HERE */}
+                            <TouchableOpacity style={styles.searchContainer} >
+                                <SearchBar placeholder="Search food, menu..." onChange={setText} navigatePage="SearchPage" editable={false} />
+                            </TouchableOpacity>
 
-            <ScrollView showsVerticalScrollIndicator={false} showsHorizontalScrollIndicator={false}>
+                            <ScrollView showsVerticalScrollIndicator={false} showsHorizontalScrollIndicator={false}>
 
-                <View style={styles.categoryContainer}>
-                    <Text style={styles.heading}>Categories</Text>
-                    <FlatList style={{ marginHorizontal: -10, marginVertical: 0 }}
-                        data={categories}
-                        keyExtractor={(item) => item.id}
-                        horizontal={true} // Enable horizontal scrolling
-                        showsHorizontalScrollIndicator={false} // Hide scrollbar
-                        renderItem={({ item }) => (
-                            <View style={styles.categoryItem}>
-                                <Image source={item.image} style={styles.categoryImage} />
-                                <Text style={styles.categoryTitle}>{item.title}</Text>
-                            </View>
-                        )}
-                    />
-                </View> {/* categoryContainer end */}
-                <View style={styles.productContainer}>
-                    <Text style={styles.heading}>Recommended for you</Text>
-                    <FlatList style={{ marginHorizontal: -20, paddingHorizontal: 9, flexGrow: 0 }}
-                        data={productItems}
-                        keyExtractor={(item) => item.id}
-                        horizontal={false}
-                        numColumns={2}
-                        showsHorizontalScrollIndicator={false}
-                        renderItem={({ item }) => <ProductCard image={{ uri: item.image }} title={item.name} price={item.price} descr={item.description} quantity={item.quantity} qty={item.qty} amount={item.amount} time={item.time} available={item.available} size={0.86} gapV={5} gapH={-3} />}
-                    />
-                </View>
-            </ScrollView>
-            <SideNav isVisible={sideNavVisible} toggleVisibility={toggleSideNav} left={0} />
+                                <View style={styles.categoryContainer}>
+                                    <Text style={styles.heading}>Categories</Text>
+                                    <FlatList style={{ marginHorizontal: -10, marginVertical: 0 }}
+                                        data={categories}
+                                        keyExtractor={(item) => item.id}
+                                        horizontal={true} // Enable horizontal scrolling
+                                        showsHorizontalScrollIndicator={false} // Hide scrollbar
+                                        renderItem={({ item }) => (
+                                            <View style={styles.categoryItem}>
+                                                <Image source={item.image} style={styles.categoryImage} />
+                                                <Text style={styles.categoryTitle}>{item.title}</Text>
+                                            </View>
+                                        )}
+                                    />
+                                </View> {/* categoryContainer end */}
+                                <View style={styles.productContainer}>
+                                    <Text style={styles.heading}>Recommended for you</Text>
+                                    <FlatList style={{ marginHorizontal: -20, paddingHorizontal: 9, flexGrow: 0 }}
+                                        data={productItems}
+                                        keyExtractor={(item) => item.id}
+                                        horizontal={false}
+                                        numColumns={2}
+                                        showsHorizontalScrollIndicator={false}
+                                        renderItem={({ item }) => <ProductCard image={{ uri: item.image }} title={item.name} price={item.price} descr={item.description} quantity={item.quantity} qty={item.qty} amount={item.amount} time={item.time} available={item.available} size={0.86} gapV={5} gapH={-3} />}
+                                    />
+                                </View>
+                            </ScrollView>
+                        </Animated.View>
+                    <SideNav isVisible={sideNavVisible} toggleVisibility={toggleSideNav} left={0} style={styles.fixedSideNav} />
+                </Animated.View>
+
+            </PanGestureHandler>
+
         </View> // container end
     );
 };
 
 const dynamicTheme = (theme) => ({
     container: {
-        backgroundColor: theme.background,
+        backgroundColor: theme.screenBg,
         flex: 1,
         justifyContent: 'flex-start',
-        padding: 20,
+        padding: 0,
+    },
+    mainContent: {
+        flex: 1,
+        backgroundColor: theme.background,
+        overflow: 'hidden',
+        padding: 20
     },
     header: {
         marginTop: 40,
@@ -193,7 +256,7 @@ const dynamicTheme = (theme) => ({
     profileSection: {
         // backgroundColor: "red",
         marginLeft: -20,
-        paddingLeft: 10,
+        paddingLeft: 12,
         width: '70%',
         flexDirection: 'row', // Horizontally align profile image and name
         alignItems: 'center', // Vertically align profile image and name
@@ -258,6 +321,17 @@ const dynamicTheme = (theme) => ({
         // paddingBottom: 235,
     },
     iconBg: { backgroundColor: theme.iconBg, borderRadius: 50, borderWidth: 0, padding: 10, },
+
+    fixedSideNav: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: 250, // Adjust the width of the side nav
+        height: '100%',
+        backgroundColor: theme.sideNavBackground,
+        zIndex: 1000, // Ensures it stays on top of other content
+        elevation: 1000, // For Android
+    },
 });
 
 export default HomeScreen;
