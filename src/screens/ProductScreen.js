@@ -149,7 +149,9 @@ const ProductScreen = () => {
 
         <TouchableOpacity style={styles.favBtn} onPress={() => { toggleFavoriteItem(title); bounceFav(); }} activeOpacity={0.6} >
           <Animated.View style={animatedFavStyle}>
-            <Ionicons name={isFavorite(title) ? "heart" : "heart-outline"} size={24} color={user && isFavorite(title) ? theme.customButtonBg : theme.text} />
+            {/* <Ionicons name={isFavorite(title) ? "heart" : "heart-outline"} size={24} color={user && isFavorite(title) ? theme.customButtonBg : theme.text} /> */}
+            {/* <Ionicons name={isFavorite(title) ? "heart" : "heart-outline"} size={24} color={user && isFavorite(title) ? theme.customButtonBg : "#C40233"} /> */}
+            <Ionicons name={isFavorite(title) ? "heart" : "heart-outline"} size={24} color={isFavorite(title) ? theme.customButtonBg : theme.text} />
           </Animated.View>
         </TouchableOpacity>
 

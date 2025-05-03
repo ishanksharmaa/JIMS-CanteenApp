@@ -56,8 +56,8 @@ const CartScreen = () => {
 
             {
                 !user ? (
-                    <Text style={{ textAlign: "center", marginTop: "70%", fontSize: 18, color: "gray" }}>
-                        Please <Text onPress={() => navigation.navigate("Login")} style={{ fontWeight: "500", color: theme.primaryColor }}>SignIn</Text> to access the cart!
+                    <Text style={{ textAlign: "center", marginTop: "70%", fontSize: 18, fontWeight: "600", color: theme.text }}>
+                        Please <Text onPress={() => navigation.navigate("Login")} style={{ fontWeight: "700", color: theme.primaryColor }}>SignIn</Text> to add items in the cart!
                     </Text>
 
                 ) : cartItems.length === 0 ? (

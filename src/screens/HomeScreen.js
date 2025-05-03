@@ -1,5 +1,12 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
-import { Text, View, Image, StyleSheet, FlatList, StatusBar, TouchableOpacity, ScrollView, Animated, Pressable } from "react-native";
+import { Text, View, Image, StyleSheet, FlatList, StatusBar, TouchableOpacity, ScrollView, Pressable } from "react-native";
+import Animated, {
+    useSharedValue,
+    useAnimatedStyle,
+    useAnimatedGestureHandler,
+    withTiming, runOnJS
+} from 'react-native-reanimated';
+
 import SearchBar from "../components/SearchBar";
 import SideNav from "../components/SideNav";
 import { useUser } from "../components/UserContext";
@@ -77,8 +84,11 @@ const HomeScreen = () => {
     const styles = dynamicTheme(theme);
     const { isMemeCatsEnabled } = useMemeCat();
     const [sideNavVisible, setSideNavVisible] = useState(false);
-    const scaleAnim = useRef(new Animated.Value(1)).current;
-    const translateXAnim = useRef(new Animated.Value(0)).current;
+    // const scaleAnim = useRef(new Animated.Value(1)).current;
+    // const translateXAnim = useRef(new Animated.Value(0)).current;
+    const translateX = useSharedValue(0); // For translateX animation
+    const translateXnav = useSharedValue(0); // For translateX sideNav animation
+    const scale = useSharedValue(1); // For scale animation
     const { userEmail, setUserEmail, username, setUsername, name, setName, dob, setDob, location, setLocation, refreshUser, user, addedToCart } = useUser();
 
     useFocusEffect(
@@ -88,141 +98,245 @@ const HomeScreen = () => {
         }, [])
     );
 
+    // const toggleSideNav = () => {
+    //     setSideNavVisible(!sideNavVisible);
+    // };
     const toggleSideNav = () => {
-        setSideNavVisible(!sideNavVisible);
+        if (translateX.value > 0) {
+            translateX.value = withTiming(0);
+            setSideNavVisible(false);
+        } else {
+            translateX.value = withTiming(310);
+            setSideNavVisible(true);
+        }
     };
+
 
     // const handleGesture = Animated.event(
     //     [{ nativeEvent: { translationX: translateXAnim } }],
     //     { useNativeDriver: true }
     // );
 
-    const handleGesture = (event) => {
-        // No-op — don't update any animated value
-    };
+    // const handleGesture = (event) => {
+    //     // No-op — don't update any animated value
+    // };
 
-    const handleGestureEnd = (event) => {
-        const { translationX } = event.nativeEvent;
-        if (sideNavVisible && translationX < -50) {
-            setSideNavVisible(false);
-        }
-    };
+    // const handleGestureEnd = (event) => {
+    //     const { translationX } = event.nativeEvent;
+    //     if (sideNavVisible && translationX < -50) {
+    //         setSideNavVisible(false);
+    //     }
+    // };
 
 
-    useEffect(() => {
-        Animated.parallel([
-            Animated.timing(scaleAnim, {
-                toValue: sideNavVisible ? 0.75 : 1,
-                duration: 300,
-                useNativeDriver: true,
-            }),
-            Animated.timing(translateXAnim, {
-                toValue: sideNavVisible ? 310 : 0,
-                duration: 300,
-                useNativeDriver: true,
-            }),
-        ]).start();
+    // const gestureHandler = useAnimatedGestureHandler({
+    //     onStart: (_, ctx) => {
+    //         ctx.startX = translateX.value;
+    //     },
+    //     onActive: (event, ctx) => {
+    //         const nextVal = ctx.startX + event.translationX;
+    //         translateX.value = Math.min(Math.max(nextVal, 0), 310);
+    //     },
+    //     onEnd: () => {
+    //         if (translateX.value < 150) {
+    //             translateX.value = withTiming(0);
+    //             runOnJS(setSideNavVisible)(false);
+    //         } else {
+    //             translateX.value = withTiming(270);
+    //             runOnJS(setSideNavVisible)(true);
+    //         }
+    //     },
+    // });
+    // const gestureHandlerNav = useAnimatedGestureHandler({
+    //     onStart: (_, ctx) => {
+    //       ctx.startX = translateXnav.value;
+    //     },
+    //     onActive: (event, ctx) => {
+    //       translateXnav.value = Math.min(Math.max(ctx.startX + event.translationX, 0), 270);
+    //     },
+    //     onEnd: (_) => {
+    //       // Animate to max open
+    //       translateXnav.value = withTiming(270, { duration: 300 });
+    //     },
+    //   });
+    const combinedGestureHandler = useAnimatedGestureHandler({
+        onStart: (_, ctx) => {
+            ctx.startX = translateX.value;
+            ctx.startXnav = translateXnav.value;
+        },
+        onActive: (event, ctx) => {
+            // Update both values independently
+            const nextVal = ctx.startX + event.translationX;
+            translateX.value = Math.min(Math.max(nextVal, 0), 270);
+    
+            const nextValNav = ctx.startXnav + event.translationX;
+            translateXnav.value = Math.min(Math.max(nextValNav, 0), 270);
+        },
+        onEnd: () => {
+            // Handle the end of gesture and snap both to the max values
+            if (translateX.value < 150) {
+                translateX.value = withTiming(0);
+                runOnJS(setSideNavVisible)(false);
+            } else {
+                translateX.value = withTiming(270);
+                runOnJS(setSideNavVisible)(true);
+            }
+    
+            if (translateXnav.value < 150) {
+                translateXnav.value = withTiming(0, { duration: 300 });
+            } else {
+                translateXnav.value = withTiming(270, { duration: 300 });
+            }
+        },
+    });
+      
+
+
+    // useEffect(() => {
+    //     Animated.parallel([
+    //         Animated.timing(scaleAnim, {
+    //             toValue: sideNavVisible ? 0.75 : 1,
+    //             duration: 300,
+    //             useNativeDriver: true,
+    //         }),
+    //         Animated.timing(translateXAnim, {
+    //             toValue: sideNavVisible ? 310 : 0,
+    //             duration: 300,
+    //             useNativeDriver: true,
+    //         }),
+    //     ]).start();
+    // }, [sideNavVisible]);
+    React.useEffect(() => {
+        translateX.value = withTiming(sideNavVisible ? 270 : 0, { duration: 300 });
+        translateXnav.value = withTiming(sideNavVisible ? 270 : 0, { duration: 300 });
+        scale.value = withTiming(sideNavVisible ? 0.75 : 1, { duration: 300 });
     }, [sideNavVisible]);
+
+    const animatedStyle = useAnimatedStyle(() => {
+        const clampedTranslateX = Math.min(Math.max(translateX.value, 0), 270);
+        return {
+            transform: [
+                { translateX: clampedTranslateX },
+                { scale: scale.value },
+            ],
+            borderRadius: clampedTranslateX > 0 ? 34 : 0,
+        };
+    });
+    const sideNavAnimatedStyle = useAnimatedStyle(() => {
+        const clampedX = Math.min(Math.max(translateXnav.value, 0), 270);
+        return {
+            transform: [
+                { translateX: -270 + clampedX }, // Moves from -310 to 0
+            ],
+        };
+    });
+    
+
 
 
     return (
         <View style={styles.container}>
             <PanGestureHandler
-                onGestureEvent={handleGesture}
-                onEnded={handleGestureEnd}
+                // onGestureEvent={gestureHandler}
+                onGestureEvent={combinedGestureHandler}
                 enabled={sideNavVisible} // only detect when sidenav is open
+                
+                // onEnded={handleGestureEnd}
             >
                 <Animated.View style={{ flex: 1 }}>
-                        <Animated.View
-                            style={[
-                                styles.mainContent,
-                                {
-                                    transform: [
-                                        { scale: scaleAnim },
-                                        { translateX: translateXAnim },
-                                    ],
-                                    borderRadius: sideNavVisible ? 20 : 0,
-                                },
-                            ]}
-                        >
-                            <MemeCat available={true} active={true} onTouch={() => console.log("Cat touched!")} isMemeCatsEnabled={isMemeCatsEnabled} />
-                            <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
+                    <Animated.View
+                        style={[
+                            styles.mainContent, animatedStyle
+                            // {
+                            //     transform: [
+                            //         { scale: scaleAnim },
+                            //         { translateX: translateXAnim },
+                            //     ],
+                            //     borderRadius: sideNavVisible ? 20 : 0,
+                            // },
+                        ]}
+                    >
+                        <MemeCat available={true} active={true} onTouch={() => console.log("Cat touched!")} isMemeCatsEnabled={isMemeCatsEnabled} />
+                        <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
 
-                            <View style={styles.header}>
-                                {/* Profile Section */}
-                                <View style={styles.profileSection}>
+                        <View style={styles.header}>
+                            {/* Profile Section */}
+                            <View style={styles.profileSection}>
 
-                                    <TouchableOpacity
-                                        onLongPress={() =>
-                                            userEmail === "iishanksharma@gmail.com"
-                                                ? navigation.navigate("ProductsList")
-                                                : null
-                                        }
-                                        onPress={toggleSideNav}
-                                        activeOpacity={0.7}
-                                    >
-                                        <Image
-                                            // source={require("../../assets/swaggy_cat.jpg")}
-                                            // source={require("../../assets/app_logo.jpeg")}
-                                            source={theme.logo}
-                                            style={styles.profileImage}
-                                        />
-                                    </TouchableOpacity>
-
-
-                                    <TouchableOpacity style={styles.nameContainer} onPress={() => { (!user) ? navigation.navigate("GetStarted") : toggleSideNav() }} activeOpacity={0.8}>
-                                        <Text style={styles.profileName}>{user ? name || "Your Name" : "Sign In"}</Text>
-                                        <Text style={{ fontSize: 12, color: theme.text }}>{user ? location || "location" : "or Register"}</Text>
-                                    </TouchableOpacity>
-                                </View>
-
-                                {/* Header Icons */}
-                                <View style={styles.headerIcons}>
-                                    <TouchableOpacity onPress={() => navigation.navigate("Cart")} style={styles.iconBg}>
-                                        <Ionicons name="cart-outline" size={23} color={theme.text} />
-                                    </TouchableOpacity>
-                                    <TouchableOpacity style={styles.iconBg}>
-                                        <Ionicons name="notifications-outline" size={23} color={theme.text} />
-                                    </TouchableOpacity>
-                                </View> {/* headerIcons end */}
-                            </View> {/* header end */}
-
-                            {/* SEARCH BAR HERE */}
-                            <TouchableOpacity style={styles.searchContainer} >
-                                <SearchBar placeholder="Search food, menu..." onChange={setText} navigatePage="SearchPage" editable={false} />
-                            </TouchableOpacity>
-
-                            <ScrollView showsVerticalScrollIndicator={false} showsHorizontalScrollIndicator={false}>
-
-                                <View style={styles.categoryContainer}>
-                                    <Text style={styles.heading}>Categories</Text>
-                                    <FlatList style={{ marginHorizontal: -10, marginVertical: 0 }}
-                                        data={categories}
-                                        keyExtractor={(item) => item.id}
-                                        horizontal={true} // Enable horizontal scrolling
-                                        showsHorizontalScrollIndicator={false} // Hide scrollbar
-                                        renderItem={({ item }) => (
-                                            <View style={styles.categoryItem}>
-                                                <Image source={item.image} style={styles.categoryImage} />
-                                                <Text style={styles.categoryTitle}>{item.title}</Text>
-                                            </View>
-                                        )}
+                                <TouchableOpacity
+                                    onLongPress={() =>
+                                        userEmail === "iishanksharma@gmail.com"
+                                            ? navigation.navigate("ProductsList")
+                                            : null
+                                    }
+                                    onPress={toggleSideNav}
+                                    activeOpacity={0.7}
+                                >
+                                    <Image
+                                        // source={require("../../assets/swaggy_cat.jpg")}
+                                        // source={require("../../assets/app_logo.jpeg")}
+                                        source={theme.logo}
+                                        style={styles.profileImage}
                                     />
-                                </View> {/* categoryContainer end */}
-                                <View style={styles.productContainer}>
-                                    <Text style={styles.heading}>Recommended for you</Text>
-                                    <FlatList style={{ marginHorizontal: -20, paddingHorizontal: 9, flexGrow: 0 }}
-                                        data={productItems}
-                                        keyExtractor={(item) => item.id}
-                                        horizontal={false}
-                                        numColumns={2}
-                                        showsHorizontalScrollIndicator={false}
-                                        renderItem={({ item }) => <ProductCard image={{ uri: item.image }} title={item.name} price={item.price} descr={item.description} quantity={item.quantity} qty={item.qty} amount={item.amount} time={item.time} available={item.available} size={0.86} gapV={5} gapH={-3} />}
-                                    />
-                                </View>
-                            </ScrollView>
-                        </Animated.View>
-                    <SideNav isVisible={sideNavVisible} toggleVisibility={toggleSideNav} left={0} style={styles.fixedSideNav} />
+                                </TouchableOpacity>
+
+
+                                <TouchableOpacity style={styles.nameContainer} onPress={() => { (!user) ? navigation.navigate("GetStarted") : toggleSideNav() }} activeOpacity={0.8}>
+                                    <Text style={styles.profileName}>{user ? name || "Your Name" : "Sign In"}</Text>
+                                    <Text style={{ fontSize: 12, color: theme.text }}>{user ? location || "location" : "or Register"}</Text>
+                                </TouchableOpacity>
+                            </View>
+
+                            {/* Header Icons */}
+                            <View style={styles.headerIcons}>
+                                <TouchableOpacity onPress={() => navigation.navigate("Cart")} style={styles.iconBg}>
+                                    <Ionicons name="cart-outline" size={23} color={theme.text} />
+                                </TouchableOpacity>
+                                <TouchableOpacity style={styles.iconBg}>
+                                    <Ionicons name="notifications-outline" size={23} color={theme.text} />
+                                </TouchableOpacity>
+                            </View> {/* headerIcons end */}
+                        </View> {/* header end */}
+
+                        {/* SEARCH BAR HERE */}
+                        <TouchableOpacity style={styles.searchContainer} >
+                            <SearchBar placeholder="Search food, menu..." onChange={setText} navigatePage="SearchPage" editable={false} />
+                        </TouchableOpacity>
+
+                        <ScrollView showsVerticalScrollIndicator={false} showsHorizontalScrollIndicator={false}>
+
+                            <View style={styles.categoryContainer}>
+                                <Text style={styles.heading}>Categories</Text>
+                                <FlatList style={{ marginHorizontal: -10, marginVertical: 0 }}
+                                    data={categories}
+                                    keyExtractor={(item) => item.id}
+                                    horizontal={true} // Enable horizontal scrolling
+                                    showsHorizontalScrollIndicator={false} // Hide scrollbar
+                                    renderItem={({ item }) => (
+                                        <View style={styles.categoryItem}>
+                                            <Image source={item.image} style={styles.categoryImage} />
+                                            <Text style={styles.categoryTitle}>{item.title}</Text>
+                                        </View>
+                                    )}
+                                />
+                            </View> {/* categoryContainer end */}
+                            <View style={styles.productContainer}>
+                                <Text style={styles.heading}>Recommended for you</Text>
+                                <FlatList style={{ marginHorizontal: -20, paddingHorizontal: 9, flexGrow: 0 }}
+                                    data={productItems}
+                                    keyExtractor={(item) => item.id}
+                                    horizontal={false}
+                                    numColumns={2}
+                                    showsHorizontalScrollIndicator={false}
+                                    renderItem={({ item }) => <ProductCard image={{ uri: item.image }} title={item.name} price={item.price} descr={item.description} quantity={item.quantity} qty={item.qty} amount={item.amount} time={item.time} available={item.available} size={0.86} gapV={5} gapH={-3} />}
+                                />
+                            </View>
+                        </ScrollView>
+                    </Animated.View>
+                    <Animated.View style={[styles.sideNavAnimated, sideNavAnimatedStyle]}>
+                        <SideNav isVisible={sideNavVisible} toggleVisibility={toggleSideNav} left={0} style={styles.fixedSideNav} />
+                    </Animated.View>
+                    {/* <SideNav isVisible={translateX.value > 0} toggleVisibility={toggleSideNav} left={0} style={styles.fixedSideNav} /> */}
                 </Animated.View>
 
             </PanGestureHandler>
@@ -332,6 +446,14 @@ const dynamicTheme = (theme) => ({
         zIndex: 1000, // Ensures it stays on top of other content
         elevation: 1000, // For Android
     },
+    sideNavAnimated: {
+        position: "absolute",
+        top: 0,
+        left: 0,
+        bottom: 0,
+        width: 270, // same as your toggle limit
+        zIndex: 10,
+      }
 });
 
 export default HomeScreen;

@@ -54,11 +54,14 @@ const AppearanceSetting = () => {
                         <View style={styles.colorPalatte}>
                             {[
                                 { color: theme.text, name: "default" },
-                                { color: "#ff7518", name: "fanta" },
+                                { color: "#ff7518", name: "santra" },
                                 // { color: "#02802D", name: "veg" },
                                 { color: "green", name: "veg" },
                                 { color: "#d2042d", name: "anar" },
-                                { color: "#FDDA0D", name: "lemon" }
+                                { color: "#FF69B4", name: "gulabi" },
+                                { color: "#F33A6A", name: "rose" },
+                                { color: "#FFC000", name: "mango" },
+                                { color: "#800080", name: "jamun" },
                             ].map(({ color, name }) => (
                                 <View key={color} style={styles.colorWrapper}>
                                     <TouchableOpacity

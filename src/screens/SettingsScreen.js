@@ -4,6 +4,7 @@ import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import { useTheme } from "../components/ThemeContext";
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { Section, SettingItem } from "../components/SettingsItem";
+import {SideNav} from "../components/SideNav";
 import { ProfileSection } from "./ProfileScreen";
 import { useUser } from "../components/UserContext";
 import FontAwesome6Icon from "react-native-vector-icons/FontAwesome6";
@@ -72,6 +73,8 @@ const SettingsScreen = () => {
 
     return (
         <View style={styles.container}>
+            {/* <SideNav isVisible={false} toggleVisibility={null} handleLogout={handleLogout} /> */}
+
             <View style={styles.header}>
                 <TouchableOpacity style={styles.backBtn} onPress={() => navigation.goBack()} activeOpacity={0.6} >
                     <Ionicons name={isDarkMode ? "chevron-back-outline" : "chevron-back"} size={24} color={theme.text} />

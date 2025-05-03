@@ -5,15 +5,17 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import firestore from "@react-native-firebase/firestore";
 import { useUser } from "../components/UserContext";
 import ProductCard from '../components/ProductCard';
+import { useNavigation, useFocusEffect } from "@react-navigation/native";
 
 const FavoriteScreen = () => {
   const { theme } = useTheme();
-  const { userEmail } = useUser();
+  const { userEmail, user } = useUser();
   const styles = dynamicTheme(theme);
 
   const [favoriteProducts, setFavoriteProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [uid, setUid] = useState(null);
+  const navigation = useNavigation();
 
   // Get user's UID from email
   useEffect(() => {
@@ -113,7 +115,14 @@ const FavoriteScreen = () => {
       {favoriteProducts.length === 0 ? (
         <View style={styles.emptyContainer}>
           <Ionicons name="heart" size={80} color="red" />
-          <Text style={styles.text}>No Favorites Yet</Text>
+          {user ? (
+            <Text style={styles.text}>No Favorites Yet</Text>
+          ) : (
+            // <Text style={styles.text}>Please Sign In to view favorites!</Text>
+            <Text style={[ styles.text, { textAlign: "center", marginTop: 12, fontSize: 18, fontWeight: "bold", color: theme.text }]}>
+              Please <Text onPress={() => navigation.navigate("Login")} style={{ fontWeight: "700", color: theme.primaryColor }}>SignIn</Text> to make items favorite!
+            </Text>
+          )}
         </View>
       ) : (
         <>
