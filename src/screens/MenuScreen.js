@@ -118,7 +118,7 @@ const MenuScreen = () => {
                     numColumns={2}
                     showsHorizontalScrollIndicator={false}
                     ListEmptyComponent={
-                        <Text style={{ textAlign: 'center' }}>
+                        <Text style={{ textAlign: 'center', color: theme.text }}>
                             {loading ? 'Loading...' : 'No products found'}
                         </Text>
                     }

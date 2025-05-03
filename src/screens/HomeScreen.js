@@ -4,7 +4,7 @@ import Animated, {
     useSharedValue,
     useAnimatedStyle,
     useAnimatedGestureHandler,
-    withTiming, runOnJS
+    withTiming, runOnJS, interpolate
 } from 'react-native-reanimated';
 
 import SearchBar from "../components/SearchBar";
@@ -91,6 +91,11 @@ const HomeScreen = () => {
     const scale = useSharedValue(1); // For scale animation
     const { userEmail, setUserEmail, username, setUsername, name, setName, dob, setDob, location, setLocation, refreshUser, user, addedToCart } = useUser();
 
+    const borderHome = 36;
+    const scaleHomeXY = 0.71;
+    const slideHomeX = 250;
+    const rotateHomeX = 10;
+
     useFocusEffect(
         useCallback(() => {
             refreshUser();
@@ -98,67 +103,24 @@ const HomeScreen = () => {
         }, [])
     );
 
-    // const toggleSideNav = () => {
-    //     setSideNavVisible(!sideNavVisible);
+
+    // const toggleSideNav = (slideHomeX) => {
+    //     if (translateX.value > 0) {
+    //         translateX.value = withTiming(0);
+    //         setSideNavVisible(false);
+    //     } else {
+    //         translateX.value = withTiming(slideHomeX);
+    //         setSideNavVisible(true);
+    //     }
     // };
     const toggleSideNav = () => {
-        if (translateX.value > 0) {
-            translateX.value = withTiming(0);
-            setSideNavVisible(false);
-        } else {
-            translateX.value = withTiming(310);
-            setSideNavVisible(true);
-        }
+        const open = !sideNavVisible;
+        setSideNavVisible(open);
+        translateX.value = withTiming(open ? slideHomeX : 0, { duration: 300 });
     };
 
 
-    // const handleGesture = Animated.event(
-    //     [{ nativeEvent: { translationX: translateXAnim } }],
-    //     { useNativeDriver: true }
-    // );
 
-    // const handleGesture = (event) => {
-    //     // No-op — don't update any animated value
-    // };
-
-    // const handleGestureEnd = (event) => {
-    //     const { translationX } = event.nativeEvent;
-    //     if (sideNavVisible && translationX < -50) {
-    //         setSideNavVisible(false);
-    //     }
-    // };
-
-
-    // const gestureHandler = useAnimatedGestureHandler({
-    //     onStart: (_, ctx) => {
-    //         ctx.startX = translateX.value;
-    //     },
-    //     onActive: (event, ctx) => {
-    //         const nextVal = ctx.startX + event.translationX;
-    //         translateX.value = Math.min(Math.max(nextVal, 0), 310);
-    //     },
-    //     onEnd: () => {
-    //         if (translateX.value < 150) {
-    //             translateX.value = withTiming(0);
-    //             runOnJS(setSideNavVisible)(false);
-    //         } else {
-    //             translateX.value = withTiming(270);
-    //             runOnJS(setSideNavVisible)(true);
-    //         }
-    //     },
-    // });
-    // const gestureHandlerNav = useAnimatedGestureHandler({
-    //     onStart: (_, ctx) => {
-    //       ctx.startX = translateXnav.value;
-    //     },
-    //     onActive: (event, ctx) => {
-    //       translateXnav.value = Math.min(Math.max(ctx.startX + event.translationX, 0), 270);
-    //     },
-    //     onEnd: (_) => {
-    //       // Animate to max open
-    //       translateXnav.value = withTiming(270, { duration: 300 });
-    //     },
-    //   });
     const combinedGestureHandler = useAnimatedGestureHandler({
         onStart: (_, ctx) => {
             ctx.startX = translateX.value;
@@ -167,10 +129,10 @@ const HomeScreen = () => {
         onActive: (event, ctx) => {
             // Update both values independently
             const nextVal = ctx.startX + event.translationX;
-            translateX.value = Math.min(Math.max(nextVal, 0), 270);
-    
+            translateX.value = Math.min(Math.max(nextVal, 0), slideHomeX);
+
             const nextValNav = ctx.startXnav + event.translationX;
-            translateXnav.value = Math.min(Math.max(nextValNav, 0), 270);
+            translateXnav.value = Math.min(Math.max(nextValNav, 0), slideHomeX);
         },
         onEnd: () => {
             // Handle the end of gesture and snap both to the max values
@@ -178,59 +140,92 @@ const HomeScreen = () => {
                 translateX.value = withTiming(0);
                 runOnJS(setSideNavVisible)(false);
             } else {
-                translateX.value = withTiming(270);
+                translateX.value = withTiming(slideHomeX);
                 runOnJS(setSideNavVisible)(true);
             }
-    
+
             if (translateXnav.value < 150) {
                 translateXnav.value = withTiming(0, { duration: 300 });
             } else {
-                translateXnav.value = withTiming(270, { duration: 300 });
+                translateXnav.value = withTiming(slideHomeX, { duration: 300 });
             }
         },
     });
-      
 
 
-    // useEffect(() => {
-    //     Animated.parallel([
-    //         Animated.timing(scaleAnim, {
-    //             toValue: sideNavVisible ? 0.75 : 1,
-    //             duration: 300,
-    //             useNativeDriver: true,
-    //         }),
-    //         Animated.timing(translateXAnim, {
-    //             toValue: sideNavVisible ? 310 : 0,
-    //             duration: 300,
-    //             useNativeDriver: true,
-    //         }),
-    //     ]).start();
+    // React.useEffect(() => {
+    //     translateX.value = withTiming(sideNavVisible ? slideHomeX : 0, { duration: 300 });
+    //     translateXnav.value = withTiming(sideNavVisible ? slideHomeX : 0, { duration: 300 });
+    //     scale.value = withTiming(sideNavVisible ? scaleHomeXY : 1, { duration: 300 });
     // }, [sideNavVisible]);
-    React.useEffect(() => {
-        translateX.value = withTiming(sideNavVisible ? 270 : 0, { duration: 300 });
-        translateXnav.value = withTiming(sideNavVisible ? 270 : 0, { duration: 300 });
-        scale.value = withTiming(sideNavVisible ? 0.75 : 1, { duration: 300 });
-    }, [sideNavVisible]);
 
+    // Merged animated styles for the main content
     const animatedStyle = useAnimatedStyle(() => {
-        const clampedTranslateX = Math.min(Math.max(translateX.value, 0), 270);
+        const clampedX = Math.min(Math.max(translateX.value, 0), slideHomeX);
+
+        // Interpolating scale based on the translateX value
+        const scaled = interpolate(clampedX, [0, slideHomeX], [1, scaleHomeXY]);
+
+        // Rotate Y based on translateX
+        const rotateY = interpolate(clampedX, [0, slideHomeX], [0, rotateHomeX]);
+
         return {
             transform: [
-                { translateX: clampedTranslateX },
-                { scale: scale.value },
+                { translateX: clampedX },
+                { scale: scaled },
+                { perspective: 1000 },
+                { rotateY: `${rotateY}deg` },
             ],
-            borderRadius: clampedTranslateX > 0 ? 34 : 0,
+            borderRadius: clampedX > 0 ? borderHome : 0,
         };
     });
+    const animatedStyle1 = useAnimatedStyle(() => {
+        const clampedX = Math.min(Math.max(translateX.value, 0), slideHomeX);
+        const scaled = interpolate(clampedX, [0, slideHomeX], [1, scaleHomeXY * 0.87]);
+        // const rotateY = interpolate(clampedX, [0, slideHomeX], [0, rotateHomeX * 0.9]);
+
+        return {
+            transform: [
+                { translateX: clampedX * 0.72 },
+                { scale: scaled },
+                // { perspective: 1000 },
+                // { rotateY: `${rotateY}deg` },
+            ],
+            borderRadius: clampedX > 0 ? borderHome * 0.9 : 0,
+        };
+    });
+
+    const animatedStyle2 = useAnimatedStyle(() => {
+        const clampedX = Math.min(Math.max(translateX.value, 0), slideHomeX);
+        const scaled = interpolate(clampedX, [0, slideHomeX], [1, scaleHomeXY * 0.93]);
+        // const rotateY = interpolate(clampedX, [0, slideHomeX], [0, rotateHomeX * 0.8]);
+
+        return {
+            transform: [
+                { translateX: clampedX * 0.82 },
+                { scale: scaled },
+                // { perspective: 1000 },
+                // { rotateY: `${rotateY}deg` },
+            ],
+            borderRadius: clampedX > 0 ? borderHome * 0.8 : 0,
+        };
+    });
+
+
+    // SideNav animated style remains separate
     const sideNavAnimatedStyle = useAnimatedStyle(() => {
-        const clampedX = Math.min(Math.max(translateXnav.value, 0), 270);
+        const clampedX = Math.min(Math.max(translateX.value, 0), slideHomeX);
         return {
             transform: [
-                { translateX: -270 + clampedX }, // Moves from -310 to 0
+                { translateX: -slideHomeX + clampedX }, // Moves from left to right
             ],
         };
     });
-    
+
+
+
+
+
 
 
 
@@ -240,10 +235,15 @@ const HomeScreen = () => {
                 // onGestureEvent={gestureHandler}
                 onGestureEvent={combinedGestureHandler}
                 enabled={sideNavVisible} // only detect when sidenav is open
-                
-                // onEnded={handleGestureEnd}
+
+            // onEnded={handleGestureEnd}
             >
                 <Animated.View style={{ flex: 1 }}>
+                    {/* <Animated.View style={[styles.backgroundScreen, { backgroundColor: 'red', transform: [{ translateX: -slideHomeX + translateX.value * 0.8 }] }, animatedStyle]} /> */}
+                    {/* <Animated.View style={[styles.backgroundScreen, { backgroundColor: 'green', transform: [{ translateX: -slideHomeX + translateX.value * 0.6 }] }, animatedStyle]} /> */}
+                    <Animated.View style={[styles.backgroundScreen, { backgroundColor: theme.background1 }, animatedStyle1]} />
+                    <Animated.View style={[styles.backgroundScreen, { backgroundColor: theme.background2 }, animatedStyle2]} />
+
                     <Animated.View
                         style={[
                             styles.mainContent, animatedStyle
@@ -259,49 +259,55 @@ const HomeScreen = () => {
                         <MemeCat available={true} active={true} onTouch={() => console.log("Cat touched!")} isMemeCatsEnabled={isMemeCatsEnabled} />
                         <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
 
-                        <View style={styles.header}>
-                            {/* Profile Section */}
-                            <View style={styles.profileSection}>
 
-                                <TouchableOpacity
-                                    onLongPress={() =>
-                                        userEmail === "iishanksharma@gmail.com"
-                                            ? navigation.navigate("ProductsList")
-                                            : null
-                                    }
-                                    onPress={toggleSideNav}
-                                    activeOpacity={0.7}
-                                >
-                                    <Image
-                                        // source={require("../../assets/swaggy_cat.jpg")}
-                                        // source={require("../../assets/app_logo.jpeg")}
-                                        source={theme.logo}
-                                        style={styles.profileImage}
-                                    />
-                                </TouchableOpacity>
+                        {/* <Animated.View style={[homeAnimatedStyle]}> */}
+                        <View style={{ paddingHorizontal: 16 }}>
+
+                            <View style={styles.header}>
+                                {/* Profile Section */}
+                                <View style={styles.profileSection}>
+
+                                    <TouchableOpacity
+                                        onLongPress={() =>
+                                            userEmail === "iishanksharma@gmail.com"
+                                                ? navigation.navigate("ProductsList")
+                                                : null
+                                        }
+                                        onPress={() => toggleSideNav(slideHomeX)}
+                                        activeOpacity={0.7}
+                                    >
+                                        <Image
+                                            // source={require("../../assets/swaggy_cat.jpg")}
+                                            // source={require("../../assets/app_logo.jpeg")}
+                                            source={theme.logo}
+                                            style={styles.profileImage}
+                                        />
+                                    </TouchableOpacity>
 
 
-                                <TouchableOpacity style={styles.nameContainer} onPress={() => { (!user) ? navigation.navigate("GetStarted") : toggleSideNav() }} activeOpacity={0.8}>
-                                    <Text style={styles.profileName}>{user ? name || "Your Name" : "Sign In"}</Text>
-                                    <Text style={{ fontSize: 12, color: theme.text }}>{user ? location || "location" : "or Register"}</Text>
-                                </TouchableOpacity>
-                            </View>
+                                    <TouchableOpacity style={styles.nameContainer} onPress={() => { (!user) ? navigation.navigate("GetStarted") : toggleSideNav(slideHomeX) }} activeOpacity={0.8}>
+                                        <Text style={styles.profileName}>{user ? name || "Your Name" : "Sign In"}</Text>
+                                        <Text style={{ fontSize: 12, color: theme.text }}>{user ? location || "location" : "or Register"}</Text>
+                                    </TouchableOpacity>
+                                </View>
 
-                            {/* Header Icons */}
-                            <View style={styles.headerIcons}>
-                                <TouchableOpacity onPress={() => navigation.navigate("Cart")} style={styles.iconBg}>
-                                    <Ionicons name="cart-outline" size={23} color={theme.text} />
-                                </TouchableOpacity>
-                                <TouchableOpacity style={styles.iconBg}>
-                                    <Ionicons name="notifications-outline" size={23} color={theme.text} />
-                                </TouchableOpacity>
-                            </View> {/* headerIcons end */}
-                        </View> {/* header end */}
+                                {/* Header Icons */}
+                                <View style={styles.headerIcons}>
+                                    <TouchableOpacity style={styles.iconBg}>
+                                        <Ionicons name="notifications-outline" size={23} color={theme.text} />
+                                    </TouchableOpacity>
+                                    <TouchableOpacity onPress={() => navigation.navigate("Cart")} style={styles.iconBg}>
+                                        <Ionicons name="cart-outline" size={23} color={theme.text} />
+                                    </TouchableOpacity>
+                                </View> {/* headerIcons end */}
+                            </View> {/* header end */}
 
-                        {/* SEARCH BAR HERE */}
-                        <TouchableOpacity style={styles.searchContainer} >
-                            <SearchBar placeholder="Search food, menu..." onChange={setText} navigatePage="SearchPage" editable={false} />
-                        </TouchableOpacity>
+                            {/* SEARCH BAR HERE */}
+                            <TouchableOpacity style={styles.searchContainer} >
+                                <SearchBar placeholder="Search food, menu..." onChange={setText} navigatePage="SearchPage" editable={false} />
+                            </TouchableOpacity>
+
+                        </View>
 
                         <ScrollView showsVerticalScrollIndicator={false} showsHorizontalScrollIndicator={false}>
 
@@ -322,19 +328,24 @@ const HomeScreen = () => {
                             </View> {/* categoryContainer end */}
                             <View style={styles.productContainer}>
                                 <Text style={styles.heading}>Recommended for you</Text>
-                                <FlatList style={{ marginHorizontal: -20, paddingHorizontal: 9, flexGrow: 0 }}
+                                <FlatList style={{
+                                    marginHorizontal: -10,
+                                    paddingHorizontal: 9, flexGrow: 0
+                                }}
                                     data={productItems}
                                     keyExtractor={(item) => item.id}
-                                    horizontal={false}
-                                    numColumns={2}
+                                    horizontal={true}
+                                    // numColumns={2}
                                     showsHorizontalScrollIndicator={false}
-                                    renderItem={({ item }) => <ProductCard image={{ uri: item.image }} title={item.name} price={item.price} descr={item.description} quantity={item.quantity} qty={item.qty} amount={item.amount} time={item.time} available={item.available} size={0.86} gapV={5} gapH={-3} />}
+                                    renderItem={({ item }) => <ProductCard image={{ uri: item.image }} title={item.name} price={item.price} descr={item.description} quantity={item.quantity} qty={item.qty} amount={item.amount} time={item.time} available={item.available} size={0.94} gapV={5} gapH={7} />}
                                 />
                             </View>
                         </ScrollView>
+
+                        {/* </Animated.View> */}
                     </Animated.View>
                     <Animated.View style={[styles.sideNavAnimated, sideNavAnimatedStyle]}>
-                        <SideNav isVisible={sideNavVisible} toggleVisibility={toggleSideNav} left={0} style={styles.fixedSideNav} />
+                        <SideNav isVisible={sideNavVisible} toggleVisibility={() => toggleSideNav(slideHomeX)} left={0} style={styles.fixedSideNav} />
                     </Animated.View>
                     {/* <SideNav isVisible={translateX.value > 0} toggleVisibility={toggleSideNav} left={0} style={styles.fixedSideNav} /> */}
                 </Animated.View>
@@ -352,11 +363,24 @@ const dynamicTheme = (theme) => ({
         justifyContent: 'flex-start',
         padding: 0,
     },
+    backgroundScreen: {
+        position: 'absolute', // Ensure the background screens are absolutely positioned behind the main content
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        // backgroundColor: 'rgba(0, 0, 0, 0.1)', // Adjust the background appearance
+        // backgroundColor: 'red', // Adjust the background appearance
+        zIndex: 1000, // Keeps the background behind the main content
+    },
     mainContent: {
         flex: 1,
         backgroundColor: theme.background,
+        position: 'relative',
+        // backgroundColor: 'red',
         overflow: 'hidden',
-        padding: 20
+        paddingVertical: 20,
+        zIndex: 1001,
     },
     header: {
         marginTop: 40,
@@ -366,11 +390,12 @@ const dynamicTheme = (theme) => ({
         marginBottom: 0,
         backgroundColor: "",
         width: '100%',
+        paddingLeft: 22.4,
     },
     profileSection: {
         // backgroundColor: "red",
         marginLeft: -20,
-        paddingLeft: 12,
+        // paddingLeft: 12,
         width: '70%',
         flexDirection: 'row', // Horizontally align profile image and name
         alignItems: 'center', // Vertically align profile image and name
@@ -390,13 +415,13 @@ const dynamicTheme = (theme) => ({
     },
     nameContainer: {},
     headerIcons: {
-        backgroundColor: '',
+        // backgroundColor: 'red',
         flexDirection: 'row', // Arrange icons horizontally in the header
         alignItems: 'center', // Vertically center the icons
         marginRight: 0,
         height: '100%',
-        width: '28%',
-        paddingHorizontal: 1,
+        width: '29%',
+        paddingRight: 3,
         justifyContent: 'space-between',
         // justifyContent: 'flex-end',
     },
@@ -423,6 +448,7 @@ const dynamicTheme = (theme) => ({
         backgroundColor: "",
         height: 'auto',
         marginTop: 0,
+        paddingLeft: 20
     },
     categoryItem: { alignItems: 'center', marginHorizontal: 10 },
     categoryImage: { width: 80, height: 80, borderRadius: 50 },
@@ -431,6 +457,7 @@ const dynamicTheme = (theme) => ({
     productContainer: {
         backgroundColor: '',
         height: 'auto',
+        paddingLeft: 20,
         paddingBottom: 210,
         // paddingBottom: 235,
     },
@@ -451,9 +478,9 @@ const dynamicTheme = (theme) => ({
         top: 0,
         left: 0,
         bottom: 0,
-        width: 270, // same as your toggle limit
+        width: 250, // same as your toggle limit
         zIndex: 10,
-      }
+    }
 });
 
 export default HomeScreen;

@@ -41,7 +41,7 @@ const ProductCard = ({ image, title, price, descr, quantity, qty, amount, time, 
     <TouchableOpacity
       style={styles.productCard}
       onPress={() => navigation.navigate("ProductScreen", { image, title, price, descr, quantity, qty: 1, amount: price, time, available })}
-      activeOpacity={0.5}
+      activeOpacity={0.94}
     >
       <Image source={image} style={styles.productImage} />
       <TouchableOpacity style={styles.favBtn} onPress={() => toggleFavoriteItem(title)} activeOpacity={0.6} >

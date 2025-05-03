@@ -17,8 +17,15 @@ const SideNav = ({ isVisible, toggleVisibility }) => {
     const { theme } = useTheme();
     const { refreshUser, user } = useUser();
     const navigation = useNavigation();
-    const styles = dynamicTheme(theme);
     const isDarkMode = theme.mode === 'dark';
+    const lineDividerWidth = 7;
+
+    const headerBg = "transparent";
+    const themeIconColor = 'transparent';
+    // const headerBg = theme.primaryColor;
+    // const themeIconColor = "#eee";
+    const styles = dynamicTheme(theme, headerBg, themeIconColor);
+
 
     useEffect(() => {
         Animated.timing(slideAnim, {
@@ -73,7 +80,7 @@ const SideNav = ({ isVisible, toggleVisibility }) => {
                     {/* <MaterialIcons name="close" size={27} color={'#eee'} /> */}
                 </TouchableOpacity>
                 <View style={styles.themeIcon}>
-                    <ThemeToggle iconColor={"#eee"} size={24} />
+                    <ThemeToggle iconColor={themeIconColor} size={100} />
                 </View>
                 {/* <Image source={require("../../assets/app_logo_black.png")} style={styles.bannerPic} /> */}
                 <Image source={theme.logo} style={styles.bannerPic} />
@@ -84,25 +91,25 @@ const SideNav = ({ isVisible, toggleVisibility }) => {
                 <SettingItem icon={isDarkMode ? "enter-outline" : "enter"} label="SignIn" arrow={false} height={13} onPress={() => navigation.navigate("Login")} isFirst show={user ? false : true} />
                 <SettingItem icon={isDarkMode ? "add-outline" : "add"} label="Create an account" arrow={false} height={14} marginBottom={12} onPress={() => navigation.navigate("SignUp")} isFirst show={user ? false : true} />
 
-                <View style={{ borderTopWidth: user ? 0 : 1.1, borderTopColor: theme.mode === 'dark' ? 'rgba(255, 255, 255, 0.093)' : 'rgba(0, 0, 0, 0.097)', marginHorizontal: 8 }} />
+                <View style={{ borderTopWidth: user ? 0 : 1.1, borderTopColor: theme.mode === 'dark' ? 'rgba(255, 255, 255, 0.093)' : 'rgba(0, 0, 0, 0.097)', marginHorizontal: lineDividerWidth }} />
                 <SettingItem icon={isDarkMode ? "color-palette-outline" : "color-palette"} label="Appearance" arrow={false} height={18} onPress={() => navigation.navigate("Appearance")} isFirst={user ? true : true} />
                 <SettingItem icon={isDarkMode ? "time-outline" : "time"} label="Order History" arrow={false} height={18} onPress={() => navigation.navigate("History")} isFirst />
                 <SettingItem icon={isDarkMode ? "cog-outline" : "cog"} label="Settings" arrow={false} height={20} onPress={() => navigation.navigate("Settings")} isFirst />
 
-                <View style={{ borderTopWidth: 1.1, borderTopColor: theme.mode === 'dark' ? 'rgba(255, 255, 255, 0.093)' : 'rgba(0, 0, 0, 0.097)', marginHorizontal: 8 }} />
+                <View style={{ borderTopWidth: 1.1, borderTopColor: theme.mode === 'dark' ? 'rgba(255, 255, 255, 0.093)' : 'rgba(0, 0, 0, 0.097)', marginHorizontal: lineDividerWidth }} />
                 <SettingItem icon={isDarkMode ? "mail-open-outline" : "mail-open"} label="Feedback" arrow={false} height={18} onPress={() => navigation.navigate("FAQ")} isFirst />
                 <SettingItem icon={isDarkMode ? "people-outline" : "people"} label="Contact Us" arrow={false} height={18} onPress={() => navigation.navigate("FAQ")} isFirst />
                 {/* <SettingItem icon={isDarkMode ? "help-circle-outline" : "help-circle"} label="About" arrow={false} height={18} onPress={() => navigation.navigate("UserInfo")} isFirst /> */}
                 <SettingItem icon={isDarkMode ? "information-circle-outline" : "information-circle"} label="About" arrow={false} height={18} onPress={() => navigation.navigate("UserInfo")} isFirst />
 
-                <View style={{ borderTopWidth: user ? 1.1 : 0, borderTopColor: theme.mode === 'dark' ? 'rgba(255, 255, 255, 0.093)' : 'rgba(0, 0, 0, 0.097)', marginHorizontal: 8 }} />
+                <View style={{ borderTopWidth: user ? 1.1 : 0, borderTopColor: theme.mode === 'dark' ? 'rgba(255, 255, 255, 0.093)' : 'rgba(0, 0, 0, 0.097)', marginHorizontal: lineDividerWidth }} />
                 <SettingItem icon={isDarkMode ? "exit-outline" : "exit"} label="LogOut" arrow={false} height={18} onPress={handleLogout} isFirst show={user ? true : false} />
             </View>
         </Animated.View>
     );
 };
 
-const dynamicTheme = (theme) => ({
+const dynamicTheme = (theme, headerBg, themeIconColor) => ({
     container: {
         position: 'absolute',
         // top: '17%',
@@ -111,10 +118,10 @@ const dynamicTheme = (theme) => ({
         left: 0,
         width: width / 1.5, // Half of screen width
         height: height,    // Full screen height
-        backgroundColor: theme.searchBg,
+        backgroundColor: theme.screenBg,
         // backgroundColor: theme.background,
         // backgroundColor: 'red',
-        zIndex: 9999,
+        zIndex: 999,
         paddingTop: 0,
     },
     header: {
@@ -128,8 +135,8 @@ const dynamicTheme = (theme) => ({
         marginBottom: 10,
         paddingHorizontal: 20,
         height: '20%',
-        backgroundColor: theme.mode === 'dark' ? theme.primaryColor : theme.customButtonBg,
-        backgroundColor: theme.primaryColor,
+        // backgroundColor: theme.mode === 'dark' ? theme.primaryColor : theme.customButtonBg,
+        backgroundColor: headerBg,
         // backgroundColor: 'transparent',
     },
     headerText: {
@@ -154,12 +161,14 @@ const dynamicTheme = (theme) => ({
     themeIcon: {
         position: 'absolute',
         top: 45,
-        right: 22,
+        left: 20,
+        zIndex: 500,
     },
     bannerPic: {
         height: '90%',
-        width: '65%',
-        alignSelf: 'center',
+        width: '63%',
+        alignSelf: 'start',
+        marginLeft: -20,
         marginTop: 16,
     },
 });
