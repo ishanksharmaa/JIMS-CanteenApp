@@ -3,12 +3,12 @@ import { View, Text, TouchableOpacity, Switch } from "react-native";
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useTheme } from "../components/ThemeContext";
 
-export const Section = ({ title, children }) => {
+export const Section = ({ title, children, marginBottom = 22 }) => {
     const { theme } = useTheme();
     const styles = dynamicTheme(theme);
 
     return (
-        <View style={{ marginBottom: 22 }}>
+        <View style={{ marginBottom: marginBottom }}>
             <Text style={{ color: "#8e8e93", fontSize: 14, paddingHorizontal: 16, marginBottom: 8 }}>
                 {title}
             </Text>

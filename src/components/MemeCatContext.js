@@ -6,6 +6,7 @@ const MemeCatContext = createContext();
 export const MemeCatProvider = ({ children }) => {
     const [isMemeCatsEnabled, setIsMemeCatsEnabled] = useState(false);
     const [isHeaderEnabled, setIsHeaderEnabled] = useState(true);
+    const [isNavHeaderEnabled, setIsNavHeaderEnabled] = useState(true);
 
     // Load settings states from AsyncStorage when app starts
     useEffect(() => {
@@ -17,7 +18,12 @@ export const MemeCatProvider = ({ children }) => {
 
             const savedHeader = await AsyncStorage.getItem("headerEnabled");
             if (savedHeader !== null) {
+                
                 setIsHeaderEnabled(JSON.parse(savedHeader));
+            }
+            const savedNavHeader = await AsyncStorage.getItem("navHeaderEnabled");
+            if (savedHeader !== null) {
+                setIsNavHeaderEnabled(JSON.parse(savedNavHeader));
             }
         };
 
@@ -37,10 +43,16 @@ export const MemeCatProvider = ({ children }) => {
         setIsHeaderEnabled(newValue);
         await AsyncStorage.setItem("headerEnabled", JSON.stringify(newValue));
     };
+    
+    const toggleNavHeader = async () => {
+        const newValue = !isNavHeaderEnabled;
+        setIsNavHeaderEnabled(newValue);
+        await AsyncStorage.setItem("navHeaderEnabled", JSON.stringify(newValue));
+    };
 
 
     return (
-        <MemeCatContext.Provider value={{ isMemeCatsEnabled, toggleMemeCat, isHeaderEnabled, toggleHeader }}>
+        <MemeCatContext.Provider value={{ isMemeCatsEnabled, toggleMemeCat, isHeaderEnabled, toggleHeader, isNavHeaderEnabled, toggleNavHeader }}>
             {children}
         </MemeCatContext.Provider>
     );

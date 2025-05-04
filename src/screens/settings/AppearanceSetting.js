@@ -21,7 +21,7 @@ const AppearanceSetting = () => {
     const { theme, changeTheme, setPrimaryColor } = useTheme();
     const styles = dynamicTheme(theme);
     const navigation = useNavigation();
-    const { isMemeCatsEnabled, toggleMemeCat, isHeaderEnabled, toggleHeader } = useMemeCat();
+    const { isMemeCatsEnabled, toggleMemeCat, isHeaderEnabled, toggleHeader, isNavHeaderEnabled, toggleNavHeader } = useMemeCat();
     const [color, setColor] = useState(theme.primaryColor);
 
     const [isColorPickerVisible, setIsColorPickerVisible] = useState(false); // To control the visibility of the color picker
@@ -78,17 +78,21 @@ const AppearanceSetting = () => {
 
                 {/* Primary Color Section */}
                 <View style={styles.primaryColorSection}>
-                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingRight: 16 }}>
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingRight: 0, backgroundColor: 'transparent', alignItems: 'center', marginBottom: 7 }}>
                         <Text style={styles.subHeader}>Primary Color</Text>
-                        <TouchableOpacity activeOpacity={0.8} onPress={() => setIsColorPickerVisible(true)}>
-                            <Ionicons name="color-filter-outline" size={23} color={"#007AFF"} />
+                        <TouchableOpacity activeOpacity={0.8} onPress={() => setPrimaryColor(theme.text)} style={{ backgroundColor: 'transparent', padding: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                            <Text style={{ color: "#007AFF", fontSize: 14, fontWeight: "500", paddingHorizontal: -50 }} >Reset</Text>
                         </TouchableOpacity>
                     </View>
 
                     <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} >
+                        <TouchableOpacity style={{ height: 75, width: 75, backgroundColor: theme.background1, borderRadius: "50%", alignItems: 'center', justifyContent: 'center', marginHorizontal: 10 }} onPress={() => setIsColorPickerVisible(true)} activeOpacity={0.8} >
+                            <Ionicons name={"color-filter-outline"} size={32} color={theme.primaryColor} />
+                            <Text style={{ color: theme.text, fontSize: 14, fontWeight: 500, position: 'absolute', bottom: -30 }}>Picker</Text>
+                        </TouchableOpacity>
                         <View style={styles.colorPalatte}>
                             {[
-                                { color: theme.text, name: "default" },
+                                // { color: theme.text, name: "default" },
                                 { color: "#e65c00", name: "santra" },
                                 // { color: "#ff7518", name: "santra" },
                                 { color: "#02802D", name: "veg" },
@@ -214,26 +218,37 @@ const AppearanceSetting = () => {
 
                 {/* Animation Section */}
                 <View style={styles.animationSection}>
-                    <Section title="Animation">
+                    <Section title="Toggle Styles">
                         <SettingItem
                             icon="logo-octocat"
                             label="Meme Cats"
                             hasSwitch
                             onPress={toggleMemeCat}
                             switchValue={isMemeCatsEnabled}
+                            height={17}
                             isFirst
-                        />
-                    </Section>
-                    <Section title="Home background">
+                            />
                         <SettingItem
-                            icon="logo-octocat"
+                            icon="phone-portrait"
                             label="Show top header background on Home"
                             hasSwitch
                             onPress={toggleHeader}
                             switchValue={isHeaderEnabled}
-                            isFirst
+                            height={17}
+                            />
+                        <SettingItem
+                            icon="color-fill"
+                            label="Side-Nav top header color"
+                            hasSwitch
+                            onPress={toggleNavHeader}
+                            switchValue={isNavHeaderEnabled}
+                            height={17}
                         />
                     </Section>
+                    {/* <Section title="Home background" marginBottom={16}>
+                    </Section>
+                    <Section title="SideNav background" marginBottom={16}>
+                    </Section> */}
                 </View>
 
             </ScrollView>
@@ -252,17 +267,18 @@ const dynamicTheme = (theme) => ({
         width: 160,
         height: 200,
         borderRadius: 12,
-        borderWidth: 0,
         opacity: 0.75,
-        borderColor: "#007AFF",
+        borderWidth: 0,
+        borderColor: theme.primaryColor,
+        borderColor: theme.text,
         alignItems: "center",
         justifyContent: "center",
         paddingBottom: 10,
         overflow: 'hidden',
     },
     themeName: { color: theme.text, fontWeight: "bold", textAlign: 'center', paddingTop: 10 },
-    primaryColorSection: { marginBottom: 36, backgroundColor: '' },
-    subHeader: { fontSize: 18, fontWeight: "bold", color: theme.text, marginBottom: 20, marginLeft: 10 },
+    primaryColorSection: { marginBottom: 10, backgroundColor: '' },
+    subHeader: { fontSize: 18, fontWeight: "bold", color: theme.text, paddingVertical: 10, marginLeft: 10 },
     header: { marginHorizontal: 8, marginVertical: '12%', flexDirection: "row", alignItems: "center", justifyContent: 'center' },
     title: { fontSize: 20, color: theme.text, fontWeight: 'bold' },
     backBtn: { padding: 7, borderRadius: 20, backgroundColor: theme.backBtnBg, position: 'absolute', left: 0 },

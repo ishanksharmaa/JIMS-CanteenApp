@@ -6,6 +6,8 @@ import ThemeToggle from "../components/ThemeToggle";
 import { useNavigation } from "@react-navigation/native";
 import { useTheme } from './ThemeContext';
 import { useUser } from './UserContext';
+import { useMemeCat } from "../components/MemeCatContext";
+
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import auth from '@react-native-firebase/auth';
 
@@ -15,6 +17,7 @@ const { width, height } = Dimensions.get('window'); // Full screen width & heigh
 const SideNav = ({ isVisible, toggleVisibility }) => {
     const [slideAnim] = useState(new Animated.Value(-width / 1.5));
     const { theme } = useTheme();
+    const { isMemeCatsEnabled, isNavHeaderEnabled } = useMemeCat();
     const { refreshUser, user } = useUser();
     const navigation = useNavigation();
     const isDarkMode = theme.mode === 'dark';
@@ -24,7 +27,7 @@ const SideNav = ({ isVisible, toggleVisibility }) => {
     const themeIconColor = 'transparent';
     const headerBg = theme.primaryColor;
     // const themeIconColor = "#eee";
-    const styles = dynamicTheme(theme, headerBg, themeIconColor);
+    const styles = dynamicTheme(theme, headerBg, themeIconColor, isNavHeaderEnabled);
 
 
     useEffect(() => {
@@ -93,6 +96,7 @@ const SideNav = ({ isVisible, toggleVisibility }) => {
 
                 <View style={{ borderTopWidth: user ? 0 : 1.1, borderTopColor: theme.mode === 'dark' ? 'rgba(255, 255, 255, 0.093)' : 'rgba(0, 0, 0, 0.097)', marginHorizontal: lineDividerWidth }} />
                 <SettingItem icon={isDarkMode ? "color-palette-outline" : "color-palette"} label="Appearance" arrow={false} height={18} onPress={() => navigation.navigate("Appearance")} isFirst={user ? true : true} />
+                <SettingItem icon={isDarkMode ? "create-outline" : "create"} label="Edit Profile" arrow={false} height={18} onPress={() => navigation.navigate("UserInfo")} isFirst />
                 <SettingItem icon={isDarkMode ? "time-outline" : "time"} label="Order History" arrow={false} height={18} onPress={() => navigation.navigate("History")} isFirst />
                 <SettingItem icon={isDarkMode ? "cog-outline" : "cog"} label="Settings" arrow={false} height={20} onPress={() => navigation.navigate("Settings")} isFirst />
 
@@ -109,7 +113,7 @@ const SideNav = ({ isVisible, toggleVisibility }) => {
     );
 };
 
-const dynamicTheme = (theme, headerBg, themeIconColor) => ({
+const dynamicTheme = (theme, headerBg, themeIconColor, isNavHeaderEnabled) => ({
     container: {
         position: 'absolute',
         // top: '17%',
@@ -134,7 +138,7 @@ const dynamicTheme = (theme, headerBg, themeIconColor) => ({
         paddingHorizontal: 20,
         height: '20%',
         width: "91%",
-        backgroundColor: headerBg,
+        backgroundColor: isNavHeaderEnabled ? headerBg : 'transparent',
         borderBottomRightRadius: 50,
         borderTopRightRadius: 100,
         borderBottomRightRadius: 100,

@@ -20,6 +20,7 @@ import {
 import { useTheme } from "../components/ThemeContext";
 import { useImage } from '../components/ImageContext';
 import { launchImageLibrary } from "react-native-image-picker";
+import ImagePicker from 'react-native-image-crop-picker';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useRoute } from '@react-navigation/native';
 // import DateTimePicker from '@react-native-community/datetimepicker';
@@ -198,10 +199,30 @@ const UserInfoScreen = ({ navigation }) => {
             if (!response.didCancel && !response.error) {
                 setImage(response.assets[0].uri);
                 setProfileImage(response.assets[0].uri);
-                // setProfileImage(uri); // Also store in context
             }
         });
     };
+
+    // const pickImage = () => {
+    //     launchImageLibrary({ mediaType: "photo", quality: 1 }, (response) => {
+    //         if (!response.didCancel && !response.error) {
+    //             const originalUri = response.assets[0].uri;
+    //             navigation.navigate('ImageCrop', { imageUri: originalUri });
+    //         }
+    //     });
+    // };
+
+    // Add this to your useEffect to handle the cropped image return
+    // useEffect(() => {
+    //     const unsubscribe = navigation.addListener('focus', () => {
+    //         if (route.params?.croppedImage) {
+    //             const croppedUri = route.params.croppedImage;
+    //             setImage(croppedUri);
+    //             setProfileImage(croppedUri);
+    //         }
+    //     });
+    //     return unsubscribe;
+    // }, [navigation, route.params]);
 
 
     return (
