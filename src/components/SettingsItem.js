@@ -8,7 +8,7 @@ export const Section = ({ title, children }) => {
     const styles = dynamicTheme(theme);
 
     return (
-        <View style={{ marginBottom: 24 }}>
+        <View style={{ marginBottom: 22 }}>
             <Text style={{ color: "#8e8e93", fontSize: 14, paddingHorizontal: 16, marginBottom: 8 }}>
                 {title}
             </Text>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, Switch, TouchableOpacity, ScrollView, ImageBackground, BackHandler } from "react-native";
+import { View, Text, Switch, TouchableOpacity, ScrollView, ImageBackground, BackHandler, Modal } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useTheme } from "../../components/ThemeContext";
 import Ionicons from "react-native-vector-icons/Ionicons";
@@ -22,17 +22,30 @@ const AppearanceSetting = () => {
     const styles = dynamicTheme(theme);
     const navigation = useNavigation();
     const { isMemeCatsEnabled, toggleMemeCat, isHeaderEnabled, toggleHeader } = useMemeCat();
-    const [color, setColor] = useState('#ff0000');
+    const [color, setColor] = useState(theme.primaryColor);
+
+    const [isColorPickerVisible, setIsColorPickerVisible] = useState(false); // To control the visibility of the color picker
+    const [tempColor, setTempColor] = useState(color); // Temporary color to preview before saving
 
 
     const handleColorChange = (newColor) => {
-        setColor(newColor); // Update local color state
-        setPrimaryColor(newColor); // Update global primaryColor in theme context or AsyncStorage
+        setTempColor(newColor); // Update temp color for preview
     };
 
-    useEffect(() => {
-        handleColorChange(color); // Call on component load to set the initial color
-    }, [color]);
+    const saveColor = () => {
+        setPrimaryColor(tempColor); // Save the selected color globally
+        setColor(tempColor); // Update local state for color
+        setIsColorPickerVisible(false); // Close the color picker
+    };
+
+    const closeColorPicker = () => {
+        setIsColorPickerVisible(false); // Close the color picker without saving
+        setTempColor(color); // Reset temp color to the original one
+    };
+
+    // useEffect(() => {
+    //     setColor(theme.primaryColor); // Sync color state with theme's primary color whenever theme changes
+    // }, [theme.primaryColor]);
 
 
     return (
@@ -46,7 +59,7 @@ const AppearanceSetting = () => {
                 <Text style={styles.title}>Appearance</Text>
             </View>
 
-            <ScrollView>
+            <ScrollView showsVerticalScrollIndicator={false}>
 
                 {/* Theme Section */}
                 <View style={styles.themeSection}>
@@ -65,8 +78,14 @@ const AppearanceSetting = () => {
 
                 {/* Primary Color Section */}
                 <View style={styles.primaryColorSection}>
-                    <Text style={styles.subHeader}>Primary Color</Text>
-                    <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingRight: 16 }}>
+                        <Text style={styles.subHeader}>Primary Color</Text>
+                        <TouchableOpacity activeOpacity={0.8} onPress={()=> setIsColorPickerVisible(true)}>
+                            <Ionicons name="color-fill-outline" size={23} color={"#007AFF"} />
+                        </TouchableOpacity>
+                    </View>
+
+                    <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} >
                         <View style={styles.colorPalatte}>
                             {[
                                 { color: theme.text, name: "default" },
@@ -106,7 +125,9 @@ const AppearanceSetting = () => {
                             ))}
                         </View>
                     </ScrollView>
-                    <Section title="Color Picker">
+
+
+                    {/* <Section title="Color Picker">
                         <View
                             style={{
                                 // width: 50,
@@ -119,13 +140,58 @@ const AppearanceSetting = () => {
                         />
                         <WheelColorPicker
                             initialColor={color}
-                            onColorChangeComplete={setColor}
+                            onColorChangeComplete={handleColorChange}
                             // onColorChange={setColor}
                             style={{ flex: 1 }}
                         />
 
 
-                    </Section>
+                    </Section> */}
+
+                    {/* Color Picker Modal */}
+                    <Modal
+                        visible={isColorPickerVisible}
+                        animationType="fade"
+                        transparent={true}
+                        onRequestClose={closeColorPicker}
+                    >
+                        <View style={{
+                            flex: 1,
+                            justifyContent: "center",
+                            alignItems: "center",
+                            marginBottom: "70%",
+                            backgroundColor: "rgba(0, 0, 0, 0.8)",
+                        }}>
+                            <View style={{
+                                width: '80%',
+                                backgroundColor: theme.background,
+                                padding: 20,
+                                borderRadius: 12,
+                                alignItems: "center",
+                            }}>
+                                <WheelColorPicker
+                                    initialColor={tempColor}
+                                    onColorChangeComplete={handleColorChange}
+                                    style={{ width: "100%", height: 200 }}
+                                />
+
+                                <View style={{
+                                    flexDirection: 'row',
+                                    justifyContent: 'space-between',
+                                    marginTop: 20,
+                                    width: "100%"
+                                }}>
+                                    <TouchableOpacity onPress={closeColorPicker}>
+                                        <Text style={{ color: theme.text, fontSize: 16 }}>Close</Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity onPress={saveColor}>
+                                        <Text style={{ color: theme.text, fontSize: 16, fontWeight: 'bold' }}>Save</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+                        </View>
+                    </Modal>    
+
                 </View>
 
                 {/* Animation Section */}
