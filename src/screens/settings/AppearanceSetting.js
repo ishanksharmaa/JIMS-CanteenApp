@@ -80,8 +80,8 @@ const AppearanceSetting = () => {
                 <View style={styles.primaryColorSection}>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingRight: 16 }}>
                         <Text style={styles.subHeader}>Primary Color</Text>
-                        <TouchableOpacity activeOpacity={0.8} onPress={()=> setIsColorPickerVisible(true)}>
-                            <Ionicons name="color-fill-outline" size={23} color={"#007AFF"} />
+                        <TouchableOpacity activeOpacity={0.8} onPress={() => setIsColorPickerVisible(true)}>
+                            <Ionicons name="color-filter-outline" size={23} color={"#007AFF"} />
                         </TouchableOpacity>
                     </View>
 
@@ -157,40 +157,58 @@ const AppearanceSetting = () => {
                     >
                         <View style={{
                             flex: 1,
-                            justifyContent: "center",
-                            alignItems: "center",
-                            marginBottom: "70%",
-                            backgroundColor: "rgba(0, 0, 0, 0.8)",
+                            backgroundColor: 'rgba(0,0,0,0.6)',
+                            justifyContent: 'center',
+                            alignItems: 'center'
                         }}>
                             <View style={{
-                                width: '80%',
-                                backgroundColor: theme.background,
+                                width: '85%',
+                                height: "60%",
+                                backgroundColor: 'red',
+                                backgroundColor: theme.background1,
                                 padding: 20,
-                                borderRadius: 12,
-                                alignItems: "center",
+                                borderRadius: 16,
+                                elevation: 5,
+                                shadowColor: '#000',
+                                shadowOpacity: 0.2,
+                                shadowOffset: { width: 0, height: 2 },
                             }}>
+                                {/* Close icon top-right */}
+                                <TouchableOpacity
+                                    style={{ position: 'absolute', top: 10, right: 10, zIndex: 1 }}
+                                    onPress={closeColorPicker}
+                                    hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                                >
+                                    <Ionicons name="close" size={24} color={theme.text} />
+                                </TouchableOpacity>
+
+                                {/* Color Picker */}
                                 <WheelColorPicker
-                                    initialColor={tempColor}
-                                    onColorChangeComplete={handleColorChange}
+                                    initialColor={color}
+                                    // onColorChangeComplete={handleColorChange}
+                                    onColorChange={handleColorChange}
                                     style={{ width: "100%", height: 200 }}
                                 />
 
-                                <View style={{
-                                    flexDirection: 'row',
-                                    justifyContent: 'space-between',
-                                    marginTop: 20,
-                                    width: "100%"
-                                }}>
-                                    <TouchableOpacity onPress={closeColorPicker}>
-                                        <Text style={{ color: theme.text, fontSize: 16 }}>Close</Text>
-                                    </TouchableOpacity>
-                                    <TouchableOpacity onPress={saveColor}>
-                                        <Text style={{ color: theme.text, fontSize: 16, fontWeight: 'bold' }}>Save</Text>
-                                    </TouchableOpacity>
-                                </View>
+                                {/* Apply Button */}
+                                <TouchableOpacity
+                                    onPress={saveColor}
+                                    style={{
+                                        marginTop: 30,
+                                        backgroundColor: tempColor,
+                                        paddingVertical: 12,
+                                        borderRadius: 50,
+                                        width: "80%",
+                                        alignItems: 'center',
+                                        alignSelf: 'center',
+                                    }}
+                                >
+                                    <Text style={{ color: '#fff', fontWeight: 'bold', fontSize: 16 }}>Apply this color</Text>
+                                </TouchableOpacity>
                             </View>
                         </View>
-                    </Modal>    
+                    </Modal>
+
 
                 </View>
 
