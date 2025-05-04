@@ -261,7 +261,7 @@ const HomeScreen = () => {
 
 
                         {/* <Animated.View style={[homeAnimatedStyle]}> */}
-                        <View style={{ paddingHorizontal: 16 }}>
+                        <View style={{ paddingHorizontal: 16, paddingBottom: 13, backgroundColor:'#bbb' }}>
 
                             <View style={styles.header}>
                                 {/* Profile Section */}
@@ -379,7 +379,7 @@ const dynamicTheme = (theme) => ({
         position: 'relative',
         // backgroundColor: 'red',
         overflow: 'hidden',
-        paddingVertical: 20,
+        paddingBottom: 20,
         zIndex: 1001,
     },
     header: {
@@ -387,10 +387,11 @@ const dynamicTheme = (theme) => ({
         flexDirection: 'row', // Ensures Profile and Icons are in the same row
         alignItems: 'center', // Vertically centers the content within the row
         justifyContent: 'space-between', // Space between profile and icons
-        marginBottom: 0,
+        marginBottom: 4,
         backgroundColor: "",
         width: '100%',
         paddingLeft: 22.4,
+        paddingTop: 14,
     },
     profileSection: {
         // backgroundColor: "red",
@@ -434,7 +435,7 @@ const dynamicTheme = (theme) => ({
         justifyContent: 'center',
         paddingHorizontal: '8%',
         borderRadius: 16,
-        marginTop: 30,
+        marginTop: 0,
     },
     heading: {
         backgroundColor: "",
