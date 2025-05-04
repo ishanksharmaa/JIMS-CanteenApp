@@ -73,27 +73,7 @@ const ProductScreen = () => {
   }, [item]);  // Runs only when item changes
 
 
-  const swipeUp = Gesture.Pan()
-    .onEnd((e) => {
-      if (e.translationY < -40) {
-        runOnJS(navigation.navigate)("Cart");
-      }
-    });
-
-  // const checkCart = () => {
-  //   bagOffset.value = withSequence(
-  //     withTiming(-12, { duration: 150 }),
-  //     withTiming(0, { duration: 150 })
-  //   );
-  // };
-
-  const swipeHintStyle = useAnimatedStyle(() => {
-    return {
-      transform: [{ translateY: bagOffset.value }],
-    };
-  });
-
-  useEffect(() => {
+  const bagAnimationAuto = () => {
     if (isInCart) {
       bagOffset.value = withRepeat(
         withSequence(
@@ -108,12 +88,48 @@ const ProductScreen = () => {
     else {
       bagOffset.value = 0; // reset on unmount
     }
+  }
+
+  const swipeUp = Gesture.Pan()
+    .onBegin(() => {
+      // Cancel auto animation when user starts dragging
+      bagOffset.value = 0;
+    })
+    .onUpdate((e) => {
+      // Only allow dragging UP (negative Y) & limit to -21px  
+      if (e.translationY < 0) {
+        bagOffset.value = Math.max(e.translationY, -80);
+      }
+    })
+    .onEnd((e) => {
+      // If dragged up enough (-15px threshold), go to Cart  
+      if (e.translationY < -60) {
+        runOnJS(navigation.navigate)("Cart");
+      }
+
+      // Return to 0 position then restart auto animation
+      bagOffset.value = withSpring(0, {}, (finished) => {
+        if (finished) runOnJS(bagAnimationAuto)();
+      });
+    });
+
+
+  const swipeHintStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{ translateY: bagOffset.value }],
+    };
+  });
+
+
+
+
+  useEffect(() => {
+    bagAnimationAuto();
 
     return () => {
       bagOffset.value = 0; // reset on unmount
     };
   }, [isInCart]);
-
 
 
 
