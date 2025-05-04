@@ -118,7 +118,7 @@ const UserInfoScreen = ({ navigation }) => {
         // }
 
         try {
-            console.log("Logged-in Email:", email); // Debugging
+            console.log("Logged-in Email:", email); //Debugging
 
             if (email) {
                 // const email = user.email;
