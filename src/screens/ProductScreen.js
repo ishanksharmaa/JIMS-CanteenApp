@@ -86,7 +86,7 @@ const ProductScreen = () => {
       );
     }
     else {
-      bagOffset.value = 0; // reset on unmount
+      bagOffset.value = 0; //reset on unmount
     }
   }
 
