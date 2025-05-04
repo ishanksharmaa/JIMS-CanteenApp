@@ -148,7 +148,7 @@ const AppearanceSetting = () => {
 
                     </Section> */}
 
-                    {/* Color Picker Modal */}
+                    {/* Color Picker Modal*/}
                     <Modal
                         visible={isColorPickerVisible}
                         animationType="fade"
