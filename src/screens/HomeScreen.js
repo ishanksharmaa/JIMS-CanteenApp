@@ -20,7 +20,7 @@ import { collection, query, where, getDocs } from "firebase/firestore";
 
 
 import { TextInput, PanGestureHandler } from "react-native-gesture-handler";
-import { useNavigation, useFocusEffect, StackActions, CommonActions } from "@react-navigation/native";
+import { useNavigation, useFocusEffect, useRoute, StackActions, CommonActions } from "@react-navigation/native";
 import MemeCat from "../components/MemeCat";
 import { useMemeCat } from "../components/MemeCatContext";
 
@@ -59,33 +59,19 @@ const categories = [
     { id: '6', title: 'Quick Bites', image: { uri: 'https://images.pexels.com/photos/1435904/pexels-photo-1435904.jpeg' } },
     { id: '7', title: 'Sushi', image: { uri: 'https://images.pexels.com/photos/3026803/pexels-photo-3026803.jpeg' } },
     { id: '8', title: 'Pan Cakes', image: { uri: 'https://images.pexels.com/photos/376464/pexels-photo-376464.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2' } },
-    // { id: '8', title: 'Steak', image: { uri: 'https://images.pexels.com/photos/616354/pexels-photo-616354.jpeg' } },
     { id: '9', title: 'Tacos', image: { uri: 'https://images.pexels.com/photos/70497/pexels-photo-70497.jpeg' } },
     { id: '10', title: 'Noodles', image: { uri: 'https://images.pexels.com/photos/1435904/pexels-photo-1435904.jpeg' } },
 ];
 
-// const showToast = (productName, msg) => {
-//     Toast.show({
-//         type: 'success',
-//         text1: productName,
-//         text2: msg,
-//         position: 'top',
-//         visibilityTime: 4000,
-//         autoHide: true,
-//         topOffset: 50,
-//     });
-// };
-
 const HomeScreen = () => {
+
     const [text, setText] = useState('');
     const [productItems, setProductItems] = useState([]);
     const navigation = useNavigation();
     const { theme, toggleTheme } = useTheme();
     const styles = dynamicTheme(theme);
-    const { isMemeCatsEnabled } = useMemeCat();
+    const { isMemeCatsEnabled, isHeaderEnabled } = useMemeCat();
     const [sideNavVisible, setSideNavVisible] = useState(false);
-    // const scaleAnim = useRef(new Animated.Value(1)).current;
-    // const translateXAnim = useRef(new Animated.Value(0)).current;
     const translateX = useSharedValue(0); // For translateX animation
     const translateXnav = useSharedValue(0); // For translateX sideNav animation
     const scale = useSharedValue(1); // For scale animation
@@ -103,16 +89,6 @@ const HomeScreen = () => {
         }, [])
     );
 
-
-    // const toggleSideNav = (slideHomeX) => {
-    //     if (translateX.value > 0) {
-    //         translateX.value = withTiming(0);
-    //         setSideNavVisible(false);
-    //     } else {
-    //         translateX.value = withTiming(slideHomeX);
-    //         setSideNavVisible(true);
-    //     }
-    // };
     const toggleSideNav = () => {
         const open = !sideNavVisible;
         setSideNavVisible(open);
@@ -152,14 +128,6 @@ const HomeScreen = () => {
         },
     });
 
-
-    // React.useEffect(() => {
-    //     translateX.value = withTiming(sideNavVisible ? slideHomeX : 0, { duration: 300 });
-    //     translateXnav.value = withTiming(sideNavVisible ? slideHomeX : 0, { duration: 300 });
-    //     scale.value = withTiming(sideNavVisible ? scaleHomeXY : 1, { duration: 300 });
-    // }, [sideNavVisible]);
-
-    // Merged animated styles for the main content
     const animatedStyle = useAnimatedStyle(() => {
         const clampedX = Math.min(Math.max(translateX.value, 0), slideHomeX);
 
@@ -223,45 +191,30 @@ const HomeScreen = () => {
     });
 
 
-
-
-
-
-
-
     return (
         <View style={styles.container}>
             <PanGestureHandler
-                // onGestureEvent={gestureHandler}
                 onGestureEvent={combinedGestureHandler}
                 enabled={sideNavVisible} // only detect when sidenav is open
-
-            // onEnded={handleGestureEnd}
+                // onEnded={handleGestureEnd}
             >
                 <Animated.View style={{ flex: 1 }}>
-                    {/* <Animated.View style={[styles.backgroundScreen, { backgroundColor: 'red', transform: [{ translateX: -slideHomeX + translateX.value * 0.8 }] }, animatedStyle]} /> */}
-                    {/* <Animated.View style={[styles.backgroundScreen, { backgroundColor: 'green', transform: [{ translateX: -slideHomeX + translateX.value * 0.6 }] }, animatedStyle]} /> */}
                     <Animated.View style={[styles.backgroundScreen, { backgroundColor: theme.background1 }, animatedStyle1]} />
                     <Animated.View style={[styles.backgroundScreen, { backgroundColor: theme.background2 }, animatedStyle2]} />
 
                     <Animated.View
                         style={[
                             styles.mainContent, animatedStyle
-                            // {
-                            //     transform: [
-                            //         { scale: scaleAnim },
-                            //         { translateX: translateXAnim },
-                            //     ],
-                            //     borderRadius: sideNavVisible ? 20 : 0,
-                            // },
                         ]}
                     >
                         <MemeCat available={true} active={true} onTouch={() => console.log("Cat touched!")} isMemeCatsEnabled={isMemeCatsEnabled} />
                         <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
 
-
-                        {/* <Animated.View style={[homeAnimatedStyle]}> */}
-                        <View style={{ paddingHorizontal: 16, paddingBottom: 13, backgroundColor:'#bbb' }}>
+                        <View style={{
+                            paddingHorizontal: 16, paddingBottom: 13, backgroundColor: isHeaderEnabled ? theme.headerBg : "transparent",
+                            borderBottomLeftRadius: 33,
+                            borderBottomRightRadius: 33,
+                        }}>
 
                             <View style={styles.header}>
                                 {/* Profile Section */}
@@ -304,7 +257,7 @@ const HomeScreen = () => {
 
                             {/* SEARCH BAR HERE */}
                             <TouchableOpacity style={styles.searchContainer} >
-                                <SearchBar placeholder="Search food, menu..." onChange={setText} navigatePage="SearchPage" editable={false} />
+                                <SearchBar placeholder="Search food, menu..." onChange={setText} navigatePage="SearchPage" editable={false} bg={isHeaderEnabled ? (theme.mode === "dark" ? "#222" : "#e9e9e9") : null} />
                             </TouchableOpacity>
 
                         </View>
@@ -312,7 +265,7 @@ const HomeScreen = () => {
                         <ScrollView showsVerticalScrollIndicator={false} showsHorizontalScrollIndicator={false}>
 
                             <View style={styles.categoryContainer}>
-                                <Text style={styles.heading}>Categories</Text>
+                                <Text style={styles.heading}>{ isHeaderEnabled ? "header enabled": "header disabled"}</Text>
                                 <FlatList style={{ marginHorizontal: -10, marginVertical: 0 }}
                                     data={categories}
                                     keyExtractor={(item) => item.id}
@@ -342,12 +295,10 @@ const HomeScreen = () => {
                             </View>
                         </ScrollView>
 
-                        {/* </Animated.View> */}
                     </Animated.View>
                     <Animated.View style={[styles.sideNavAnimated, sideNavAnimatedStyle]}>
                         <SideNav isVisible={sideNavVisible} toggleVisibility={() => toggleSideNav(slideHomeX)} left={0} style={styles.fixedSideNav} />
                     </Animated.View>
-                    {/* <SideNav isVisible={translateX.value > 0} toggleVisibility={toggleSideNav} left={0} style={styles.fixedSideNav} /> */}
                 </Animated.View>
 
             </PanGestureHandler>
@@ -387,11 +338,11 @@ const dynamicTheme = (theme) => ({
         flexDirection: 'row', // Ensures Profile and Icons are in the same row
         alignItems: 'center', // Vertically centers the content within the row
         justifyContent: 'space-between', // Space between profile and icons
-        marginBottom: 4,
-        backgroundColor: "",
+        // backgroundColor: "",
         width: '100%',
         paddingLeft: 22.4,
         paddingTop: 14,
+        marginBottom: 4,
     },
     profileSection: {
         // backgroundColor: "red",
@@ -407,6 +358,8 @@ const dynamicTheme = (theme) => ({
         borderRadius: 50, // Make it a circle
         borderColor: theme.text,
         borderWidth: 0.5,
+        backgroundColor: 'transparent',
+        backgroundColor: theme.iconBg,
         marginRight: 10, // Space between image and text
     },
     profileName: {

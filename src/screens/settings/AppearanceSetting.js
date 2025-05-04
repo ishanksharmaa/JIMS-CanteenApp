@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, Switch, TouchableOpacity, ScrollView, ImageBackground } from "react-native";
+import { View, Text, Switch, TouchableOpacity, ScrollView, ImageBackground, BackHandler } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useTheme } from "../../components/ThemeContext";
 import Ionicons from "react-native-vector-icons/Ionicons";
@@ -17,7 +17,8 @@ const AppearanceSetting = () => {
     const { theme, changeTheme, setPrimaryColor } = useTheme();
     const styles = dynamicTheme(theme);
     const navigation = useNavigation();
-    const {isMemeCatsEnabled, toggleMemeCat} = useMemeCat();
+    const { isMemeCatsEnabled, toggleMemeCat, isHeaderEnabled, toggleHeader } = useMemeCat();
+
 
     return (
         <View style={styles.container}>
@@ -54,14 +55,24 @@ const AppearanceSetting = () => {
                         <View style={styles.colorPalatte}>
                             {[
                                 { color: theme.text, name: "default" },
-                                { color: "#ff7518", name: "santra" },
-                                // { color: "#02802D", name: "veg" },
-                                { color: "green", name: "veg" },
+                                { color: "#e65c00", name: "santra" },
+                                // { color: "#ff7518", name: "santra" },
+                                { color: "#02802D", name: "veg" },
+                                // { color: "green", name: "veg" },
                                 { color: "#d2042d", name: "anar" },
                                 { color: "#FF69B4", name: "gulabi" },
                                 { color: "#F33A6A", name: "rose" },
                                 { color: "#FFC000", name: "mango" },
                                 { color: "#800080", name: "jamun" },
+                                { color: "#e74c3c", name: "cherry" },
+
+                                { color: "#2980b9", name: "ocean" },
+                                { color: "#f39c12", name: "sunflower" },
+                                { color: "#34495e", name: "slate" },
+                                { color: "#8e44ad", name: "lavender" },
+                                { color: "#16a085", name: "turquoise" },
+
+
                             ].map(({ color, name }) => (
                                 <View key={color} style={styles.colorWrapper}>
                                     <TouchableOpacity
@@ -85,13 +96,23 @@ const AppearanceSetting = () => {
                 {/* Animation Section */}
                 <View style={styles.animationSection}>
                     <Section title="Animation">
-                        <SettingItem 
-                            icon="logo-octocat" 
-                            label="Meme Cats" 
-                            hasSwitch 
-                            onPress={toggleMemeCat} 
+                        <SettingItem
+                            icon="logo-octocat"
+                            label="Meme Cats"
+                            hasSwitch
+                            onPress={toggleMemeCat}
                             switchValue={isMemeCatsEnabled}
-                            isLast 
+                            isFirst
+                        />
+                    </Section>
+                    <Section title="Header">
+                        <SettingItem
+                            icon="logo-octocat"
+                            label="Show top header background on Home"
+                            hasSwitch
+                            onPress={toggleHeader}
+                            switchValue={isHeaderEnabled}
+                            isFirst
                         />
                     </Section>
                 </View>
@@ -107,7 +128,7 @@ const AppearanceSetting = () => {
 // Dynamic Theme Styles
 const dynamicTheme = (theme) => ({
     container: { flex: 1, backgroundColor: theme.background, padding: 16 },
-    themeSection: { flexDirection: "row", justifyContent: "center", marginBottom: 36, backgroundColor:'' },
+    themeSection: { flexDirection: "row", justifyContent: "center", marginBottom: 36, backgroundColor: '' },
     themeCard: {
         width: 160,
         height: 200,
@@ -121,7 +142,7 @@ const dynamicTheme = (theme) => ({
         overflow: 'hidden',
     },
     themeName: { color: theme.text, fontWeight: "bold", textAlign: 'center', paddingTop: 10 },
-    primaryColorSection: { marginBottom: 36, backgroundColor:'' },
+    primaryColorSection: { marginBottom: 36, backgroundColor: '' },
     subHeader: { fontSize: 18, fontWeight: "bold", color: theme.text, marginBottom: 20, marginLeft: 10 },
     header: { marginHorizontal: 8, marginVertical: '12%', flexDirection: "row", alignItems: "center", justifyContent: 'center' },
     title: { fontSize: 20, color: theme.text, fontWeight: 'bold' },
@@ -129,7 +150,7 @@ const dynamicTheme = (theme) => ({
     colorPalatte: { flexDirection: 'row' },
     coloring: { width: 75, height: 75, borderColor: theme.text, borderRadius: 50, marginHorizontal: 10 },
     colorText: { fontSize: 14, color: theme.text, textAlign: 'center', paddingTop: 10, textTransform: 'capitalize' },
-    animationSection: {backgroundColor: ''},
+    animationSection: { backgroundColor: '' },
     image: {
         width: "100%",
         height: "105%",

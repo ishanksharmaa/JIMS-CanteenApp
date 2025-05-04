@@ -5,17 +5,25 @@ const MemeCatContext = createContext();
 
 export const MemeCatProvider = ({ children }) => {
     const [isMemeCatsEnabled, setIsMemeCatsEnabled] = useState(false);
+    const [isHeaderEnabled, setIsHeaderEnabled] = useState(true);
 
-    // Load MemeCats state from AsyncStorage when app starts
+    // Load settings states from AsyncStorage when app starts
     useEffect(() => {
-        const loadMemeCatState = async () => {
-            const savedState = await AsyncStorage.getItem("memeCatsEnabled");
-            if (savedState !== null) {
-                setIsMemeCatsEnabled(JSON.parse(savedState));
+        const loadSettings = async () => {
+            const savedMemeCat = await AsyncStorage.getItem("memeCatsEnabled");
+            if (savedMemeCat !== null) {
+                setIsMemeCatsEnabled(JSON.parse(savedMemeCat));
+            }
+
+            const savedHeader = await AsyncStorage.getItem("headerEnabled");
+            if (savedHeader !== null) {
+                setIsHeaderEnabled(JSON.parse(savedHeader));
             }
         };
-        loadMemeCatState();
+
+        loadSettings();
     }, []);
+
 
     // Toggle function
     const toggleMemeCat = async () => {
@@ -24,8 +32,15 @@ export const MemeCatProvider = ({ children }) => {
         await AsyncStorage.setItem("memeCatsEnabled", JSON.stringify(newValue));
     };
 
+    const toggleHeader = async () => {
+        const newValue = !isHeaderEnabled;
+        setIsHeaderEnabled(newValue);
+        await AsyncStorage.setItem("headerEnabled", JSON.stringify(newValue));
+    };
+
+
     return (
-        <MemeCatContext.Provider value={{ isMemeCatsEnabled, toggleMemeCat }}>
+        <MemeCatContext.Provider value={{ isMemeCatsEnabled, toggleMemeCat, isHeaderEnabled, toggleHeader }}>
             {children}
         </MemeCatContext.Provider>
     );

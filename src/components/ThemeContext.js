@@ -10,7 +10,7 @@ export const ThemeProvider = ({ children }) => {
         mode: "light",
         primaryColor: "#007AFF",
         customButtonBg: "#111",
-        customButtonText: "#eee"
+        customButtonText: "#eee",
     });
 
     // Load Theme from AsyncStorage
@@ -43,7 +43,7 @@ export const ThemeProvider = ({ children }) => {
                 customButtonText: isDefaultColor
                     ? (mode === "dark" ? "#999" : "#eee")
                     : (prevTheme.customButtonBg === "#FDDA0D" ? "#333" : "#eee"),
-                    // : prevTheme.customButtonBg,
+                // : prevTheme.customButtonBg,
             };
 
             AsyncStorage.setItem("theme", JSON.stringify(updatedTheme)); // Save theme
@@ -67,6 +67,7 @@ export const ThemeProvider = ({ children }) => {
             return updatedTheme;
         });
     };
+
 
     return (
         <ThemeContext.Provider value={{ theme, changeTheme, setPrimaryColor }}>

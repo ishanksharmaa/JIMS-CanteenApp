@@ -12,7 +12,6 @@ export const lightTheme = {
     cardTitle: "#333",
     cardPrice: "#666",
     border: "#ddd",
-    searchBg: "#ddd",
     searchText: "#222",
     tabBarBg: "#ddd",
     tabBarIcon: "#aaa",
@@ -38,11 +37,16 @@ export const lightTheme = {
     customGoogleButtonBg: "#FFFFFF80",
     customGoogleButtonText: "#333",
     settingsCard: "#ffffff90",
-    iconBg: "#ddd",
     searchBtnColor: "#333",
+    iconBg: "#e6e6e6",
+    searchBg: "#ddd",
+    headerBg: "#ddd",
+    closeNavIcon: "#555",
 };
 
 export const darkTheme = {
+    closeNavIcon: "#bbb",
+    headerBg: "transparent",
     mode: 'dark',
     logo: require("../assets/app_logo_white.png"),
     statusBarIcons: "light-content",

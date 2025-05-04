@@ -20,9 +20,9 @@ const SideNav = ({ isVisible, toggleVisibility }) => {
     const isDarkMode = theme.mode === 'dark';
     const lineDividerWidth = 7;
 
-    const headerBg = "transparent";
+    // const headerBg = "transparent";
     const themeIconColor = 'transparent';
-    // const headerBg = theme.primaryColor;
+    const headerBg = theme.primaryColor;
     // const themeIconColor = "#eee";
     const styles = dynamicTheme(theme, headerBg, themeIconColor);
 
@@ -77,7 +77,7 @@ const SideNav = ({ isVisible, toggleVisibility }) => {
         <Animated.View style={[styles.container, { left: slideAnim }]}>
             <View style={styles.header}>
                 <TouchableOpacity onPress={toggleVisibility} style={styles.closeIcon}>
-                    {/* <MaterialIcons name="close" size={27} color={'#eee'} /> */}
+                    <MaterialIcons name="close" size={26} color={theme.closeNavIcon} />
                 </TouchableOpacity>
                 <View style={styles.themeIcon}>
                     <ThemeToggle iconColor={themeIconColor} size={100} />
@@ -125,19 +125,21 @@ const dynamicTheme = (theme, headerBg, themeIconColor) => ({
         paddingTop: 0,
     },
     header: {
-        borderBottomRightRadius: "24%",
         flexDirection: 'column',
         alignItems: 'start',
         justifyContent: 'center',
         gap: 15,
         paddingLeft: 11,
-        // paddingTop: 50,
         marginBottom: 10,
         paddingHorizontal: 20,
         height: '20%',
-        // backgroundColor: theme.mode === 'dark' ? theme.primaryColor : theme.customButtonBg,
+        width: "91%",
         backgroundColor: headerBg,
-        // backgroundColor: 'transparent',
+        borderBottomRightRadius: 50,
+        borderTopRightRadius: 100,
+        borderBottomRightRadius: 100,
+        // backgroundColor: theme.mode === 'dark' ? theme.primaryColor : theme.customButtonBg,
+        // marginTop: 40,
     },
     headerText: {
         // color: theme.text,
@@ -149,14 +151,14 @@ const dynamicTheme = (theme, headerBg, themeIconColor) => ({
         alignSelf: 'center',
     },
     menu: {
-        paddingHorizontal: 9,
+        paddingHorizontal: 14,
         paddingVertical: 3,
         // backgroundColor: 'green'
     },
     closeIcon: {
         position: 'absolute',
         top: 50,
-        left: 22,
+        right: -140,
     },
     themeIcon: {
         position: 'absolute',
@@ -168,8 +170,8 @@ const dynamicTheme = (theme, headerBg, themeIconColor) => ({
         height: '90%',
         width: '63%',
         alignSelf: 'start',
-        marginLeft: -20,
-        marginTop: 16,
+        marginLeft: -12,
+        marginTop: 14,
     },
 });
 

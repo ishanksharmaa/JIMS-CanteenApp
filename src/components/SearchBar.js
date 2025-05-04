@@ -3,9 +3,9 @@ import { View, TextInput, StyleSheet, TouchableOpacity } from "react-native";
 import { useTheme } from "../components/ThemeContext";
 import { useNavigation } from "@react-navigation/native";
 
-const SearchBar = ({ placeholder = "Search here...", onChange, navigatePage, editable, inputRef }) => {
+const SearchBar = ({ placeholder = "Search here...", onChange, navigatePage, editable, inputRef, bg }) => {
     const { theme } = useTheme();
-    const styles = dynamicTheme(theme);
+    const styles = dynamicTheme(theme, bg);
     const navigation = useNavigation();
 
     return (
@@ -22,7 +22,7 @@ const SearchBar = ({ placeholder = "Search here...", onChange, navigatePage, edi
     );
 };
 
-const dynamicTheme = (theme) => StyleSheet.create({
+const dynamicTheme = (theme, bg) => StyleSheet.create({
     // searchContainer: {
     //     margin: 10,
     //     backgroundColor: theme.cardBg,
@@ -31,7 +31,7 @@ const dynamicTheme = (theme) => StyleSheet.create({
     //     paddingVertical: 5,
     // },
     searchBar: {
-        backgroundColor: theme.searchBg,
+        backgroundColor: bg || theme.searchBg,
         color: theme.searchText,
         height: 55,
         width: '96%',
