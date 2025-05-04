@@ -18,6 +18,7 @@ import {
 } from "react-native";
 // import { Ionicons } from "@expo/vector-icons";
 import { useTheme } from "../components/ThemeContext";
+import { useImage } from '../components/ImageContext';
 import { launchImageLibrary } from "react-native-image-picker";
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useRoute } from '@react-navigation/native';
@@ -31,6 +32,7 @@ const UserInfoScreen = ({ navigation }) => {
     const { isUserFresh } = route.params || {};
     const { userEmail, user } = useUser();
     const { theme } = useTheme();
+    const { setProfileImage } = useImage();
     const [isKeyboardVisible, setKeyboardVisible] = useState(false);
     const styles = dynamicTheme(theme, isKeyboardVisible);
     const [isInputFocused, setIsInputFocused] = useState(false);
@@ -128,14 +130,24 @@ const UserInfoScreen = ({ navigation }) => {
                 if (!snapshot.empty) {
                     const userDoc = snapshot.docs[0];
                     const userIdToUpdate = userDoc.id;
+                    // const currentData = userDoc.data();
+
+                    // Use image from state if available, otherwise keep existing
+                    const profilePicToSave = image || userDoc.data().profilePic;
+                    // const profilePicToSave = image || currentData.profilePic;
 
                     await updateDoc(doc(db, "Users", userIdToUpdate), {
                         username,
                         name,
                         dob,
                         location,
-                        profilePic: image,
+                        profilePic: profilePicToSave,
                     });
+
+                    // Update context with the saved image
+                    if (profilePicToSave) {
+                        setProfileImage(profilePicToSave);
+                    }
 
                     if (!isUserFresh) {
                         alert("Profile updated!");
@@ -185,6 +197,8 @@ const UserInfoScreen = ({ navigation }) => {
         launchImageLibrary({ mediaType: "photo", quality: 1 }, (response) => {
             if (!response.didCancel && !response.error) {
                 setImage(response.assets[0].uri);
+                setProfileImage(response.assets[0].uri);
+                // setProfileImage(uri); // Also store in context
             }
         });
     };

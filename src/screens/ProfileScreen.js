@@ -5,6 +5,7 @@ import ProductCard from '../components/ProductCard';
 import { useTheme } from "../components/ThemeContext";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import { useUser } from '../components/UserContext';
+import { useImage } from '../components/ImageContext';
 import { transform } from 'typescript';
 
 const combos = [
@@ -18,6 +19,7 @@ const combos = [
 export const ProfileSection = ({ flexDirection, gap, scale }) => {
     const { userEmail, username, name, dob, location, image } = useUser();
     const { theme } = useTheme();
+    const { profileImage } = useImage();
     const styles = dynamicTheme(theme, flexDirection, gap, scale);
 
     useFocusEffect(
@@ -30,10 +32,11 @@ export const ProfileSection = ({ flexDirection, gap, scale }) => {
         <View style={styles.profileSection}>
             <Image
                 // source={image && image.startsWith('http') ? { uri: image } : require('../../assets/swaggy_cat.jpg')}
-                source={image ? { uri: image } : require('../../assets/app_logo.jpeg')}
+                // source={image ? { uri: image } : require('../../assets/app_logo.jpeg')}
+                source={profileImage ? { uri: profileImage } : require('../../assets/app_logo.jpeg')}
                 style={styles.profileImage} resizeMode="cover"
             />
-            <View style={{alignItems:'center', backgroundColor: 'transparent'}}>
+            <View style={{ alignItems: 'center', backgroundColor: 'transparent' }}>
                 <Text style={styles.profileName}>{name || "Your name"}</Text>
                 <Text style={styles.username}>@{username.toLowerCase() || "username"}</Text>
                 {/* <Text style={styles.username}>@{dob}</Text> */}
@@ -107,7 +110,7 @@ const dynamicTheme = (theme, flexDirection, gap, scale) => ({
     title: { fontSize: 21, fontWeight: 'bold', alignSelf: 'center', color: theme.text, marginHorizontal: 18 },
     headerIcons: { flexDirection: 'row', width: '18%', backgroundColor: '', justifyContent: 'space-between', position: 'absolute', right: 10 },
     profileSection: { transform: [{ scale: scale }], flexDirection: flexDirection, alignItems: 'center', justifyContent: 'center', alignSelf: 'center', marginBottom: 20, gap: gap, backgroundColor: 'transparent', alignSelf: 'center' },
-    profileImage: { width: 75, height: 75, borderRadius: 40, marginRight: 15 },
+    profileImage: { width: 95, height: 95, borderRadius: 50, marginRight: 15, },
     profileName: { fontSize: 17, fontWeight: 'bold', color: theme.text },
     username: { fontSize: 13, color: 'gray' },
     roomText: { fontSize: 13, color: 'gray' },

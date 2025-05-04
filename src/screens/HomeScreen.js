@@ -10,6 +10,7 @@ import Animated, {
 import SearchBar from "../components/SearchBar";
 import SideNav from "../components/SideNav";
 import { useUser } from "../components/UserContext";
+import { useImage } from '../components/ImageContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Firebase Import
@@ -69,8 +70,9 @@ const HomeScreen = () => {
     const [productItems, setProductItems] = useState([]);
     const navigation = useNavigation();
     const { theme, toggleTheme } = useTheme();
-    const styles = dynamicTheme(theme);
+    const { profileImage } = useImage();
     const { isMemeCatsEnabled, isHeaderEnabled } = useMemeCat();
+    const styles = dynamicTheme(theme, isHeaderEnabled);
     const [sideNavVisible, setSideNavVisible] = useState(false);
     const translateX = useSharedValue(0); // For translateX animation
     const translateXnav = useSharedValue(0); // For translateX sideNav animation
@@ -232,7 +234,7 @@ const HomeScreen = () => {
                                         <Image
                                             // source={require("../../assets/swaggy_cat.jpg")}
                                             // source={require("../../assets/app_logo.jpeg")}
-                                            source={theme.logo}
+                                            source={ profileImage ? {uri: profileImage} : theme.logo}
                                             style={styles.profileImage}
                                         />
                                     </TouchableOpacity>
@@ -307,7 +309,7 @@ const HomeScreen = () => {
     );
 };
 
-const dynamicTheme = (theme) => ({
+const dynamicTheme = (theme, isHeaderEnabled) => ({
     container: {
         backgroundColor: theme.screenBg,
         flex: 1,
@@ -359,7 +361,7 @@ const dynamicTheme = (theme) => ({
         borderColor: theme.text,
         borderWidth: 0.5,
         backgroundColor: 'transparent',
-        backgroundColor: theme.iconBg,
+        backgroundColor: isHeaderEnabled ? theme.iconBg : 'transparent',
         marginRight: 10, // Space between image and text
     },
     profileName: {

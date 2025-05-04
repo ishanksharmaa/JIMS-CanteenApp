@@ -34,6 +34,7 @@ import Toast from "react-native-toast-message";
 import CustomToast from "./src/components/CustomToast";
 import { CartProvider } from "./src/components/CartContext"; // ✅ CartContext Import
 import { ThemeProvider, useTheme } from "./src/components/ThemeContext";
+import { ImageProvider } from "./src/components/ImageContext";
 
 // Firebase Import
 // import { FirebaseApp } from '@react-native-firebase/app';
@@ -185,11 +186,13 @@ const App = () => {
   return (
     <MemeCatProvider>
       <ThemeProvider>
-        <UserProvider>
-          <CartProvider>
-            <AppContent />  {/* ✅ Wrapping here so `useTheme()` works properly */}
-          </CartProvider>
-        </UserProvider>
+        <ImageProvider>
+          <UserProvider>
+            <CartProvider>
+              <AppContent />  {/* ✅ Wrapping here so `useTheme()` works properly */}
+            </CartProvider>
+          </UserProvider>
+        </ImageProvider>
       </ThemeProvider>
     </MemeCatProvider>
   );

@@ -9,6 +9,7 @@ import { ProfileSection } from "./ProfileScreen";
 import { useUser } from "../components/UserContext";
 import FontAwesome6Icon from "react-native-vector-icons/FontAwesome6";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+// import { useImage } from "../components/ImageContext";
 
 
 // Firebase Auth used as an Instance (MO CHANGES!!)
@@ -18,6 +19,7 @@ import auth from '@react-native-firebase/auth';
 const SettingsScreen = () => {
     const { user, userEmail, name, username, dob, location, refreshUser } = useUser();
     const { theme } = useTheme();
+    // const { profileImage } = useImage();
     const styles = dynamicTheme(theme);
     const navigation = useNavigation();
     const isDarkMode = theme.mode === "dark";
