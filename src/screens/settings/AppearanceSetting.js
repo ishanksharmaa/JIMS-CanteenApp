@@ -7,6 +7,10 @@ import { useNavigation } from "@react-navigation/native";
 import MemeCat from "../../components/MemeCat";
 import { useMemeCat } from "../../components/MemeCatContext";
 import { Section, SettingItem } from "../../components/SettingsItem";
+// import { ColorPicker } from 'react-native-color-picker';
+import Slider from '@react-native-community/slider';
+import WheelColorPicker from 'react-native-wheel-color-picker';
+
 
 const themes = [
     { name: "Light Theme", color: "#eee", mode: "light", image: require("../../../assets/rasgulla.jpg") },
@@ -18,6 +22,17 @@ const AppearanceSetting = () => {
     const styles = dynamicTheme(theme);
     const navigation = useNavigation();
     const { isMemeCatsEnabled, toggleMemeCat, isHeaderEnabled, toggleHeader } = useMemeCat();
+    const [color, setColor] = useState('#ff0000');
+
+
+    const handleColorChange = (newColor) => {
+        setColor(newColor); // Update local color state
+        setPrimaryColor(newColor); // Update global primaryColor in theme context or AsyncStorage
+    };
+
+    useEffect(() => {
+        handleColorChange(color); // Call on component load to set the initial color
+    }, [color]);
 
 
     return (
@@ -91,6 +106,26 @@ const AppearanceSetting = () => {
                             ))}
                         </View>
                     </ScrollView>
+                    <Section title="Color Picker">
+                        <View
+                            style={{
+                                // width: 50,
+                                width: "100%",
+                                height: 50,
+                                backgroundColor: color, // Only use color without opacity
+                                marginTop: 20,
+                                borderRadius: 8,
+                            }}
+                        />
+                        <WheelColorPicker
+                            initialColor={color}
+                            onColorChangeComplete={setColor}
+                            // onColorChange={setColor}
+                            style={{ flex: 1 }}
+                        />
+
+
+                    </Section>
                 </View>
 
                 {/* Animation Section */}
@@ -105,7 +140,7 @@ const AppearanceSetting = () => {
                             isFirst
                         />
                     </Section>
-                    <Section title="Header">
+                    <Section title="Home background">
                         <SettingItem
                             icon="logo-octocat"
                             label="Show top header background on Home"
@@ -147,7 +182,7 @@ const dynamicTheme = (theme) => ({
     header: { marginHorizontal: 8, marginVertical: '12%', flexDirection: "row", alignItems: "center", justifyContent: 'center' },
     title: { fontSize: 20, color: theme.text, fontWeight: 'bold' },
     backBtn: { padding: 7, borderRadius: 20, backgroundColor: theme.backBtnBg, position: 'absolute', left: 0 },
-    colorPalatte: { flexDirection: 'row' },
+    colorPalatte: { flexDirection: 'row', marginBottom: 30, },
     coloring: { width: 75, height: 75, borderColor: theme.text, borderRadius: 50, marginHorizontal: 10 },
     colorText: { fontSize: 14, color: theme.text, textAlign: 'center', paddingTop: 10, textTransform: 'capitalize' },
     animationSection: { backgroundColor: '' },
