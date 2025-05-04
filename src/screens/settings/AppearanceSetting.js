@@ -29,7 +29,7 @@ const AppearanceSetting = () => {
 
 
     const handleColorChange = (newColor) => {
-        setTempColor(newColor); // Update temp color for preview
+        setTempColor(newColor); //Update temp color for preview
     };
 
     const saveColor = () => {
@@ -129,7 +129,7 @@ const AppearanceSetting = () => {
                             ))}
                         </View>
                     </ScrollView>
-                    
+
 
                     {/* Color Picker Modal*/}
                     <Modal
