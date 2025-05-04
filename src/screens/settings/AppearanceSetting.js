@@ -129,28 +129,7 @@ const AppearanceSetting = () => {
                             ))}
                         </View>
                     </ScrollView>
-
-
-                    {/* <Section title="Color Picker">
-                        <View
-                            style={{
-                                // width: 50,
-                                width: "100%",
-                                height: 50,
-                                backgroundColor: color, // Only use color without opacity
-                                marginTop: 20,
-                                borderRadius: 8,
-                            }}
-                        />
-                        <WheelColorPicker
-                            initialColor={color}
-                            onColorChangeComplete={handleColorChange}
-                            // onColorChange={setColor}
-                            style={{ flex: 1 }}
-                        />
-
-
-                    </Section> */}
+                    
 
                     {/* Color Picker Modal*/}
                     <Modal
