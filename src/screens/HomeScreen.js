@@ -265,7 +265,7 @@ const HomeScreen = () => {
                         <ScrollView showsVerticalScrollIndicator={false} showsHorizontalScrollIndicator={false}>
 
                             <View style={styles.categoryContainer}>
-                                <Text style={styles.heading}>{ isHeaderEnabled ? "header enabled": "header disabled"}</Text>
+                                <Text style={styles.heading}>Categories</Text>
                                 <FlatList style={{ marginHorizontal: -10, marginVertical: 0 }}
                                     data={categories}
                                     keyExtractor={(item) => item.id}
