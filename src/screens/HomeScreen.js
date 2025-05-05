@@ -226,7 +226,7 @@ const HomeScreen = () => {
         <View style={styles.container}>
             <PanGestureHandler
                 onGestureEvent={combinedGestureHandler}
-                enabled={sideNavVisible} // only detect when sidenav is open
+                enabled={sideNavVisible} //only detect when sidenav is open
             // onEnded={handleGestureEnd}
             >
                 <Animated.View style={{ flex: 1 }}>
