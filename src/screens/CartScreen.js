@@ -77,6 +77,8 @@ const CartScreen = () => {
                                     descr={item.description}
                                     quantity={item.quantity}
                                     qty={item.qty}
+                                    time={item.time}
+                                    available={item.available}
                                 />
                             )}
                             contentContainerStyle={{ paddingBottom: 50 }}

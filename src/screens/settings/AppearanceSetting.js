@@ -129,7 +129,7 @@ const AppearanceSetting = () => {
                             ))}
                         </View>
                     </ScrollView>
-                    
+
 
                     {/* Color Picker Modal*/}
                     <Modal
@@ -199,28 +199,28 @@ const AppearanceSetting = () => {
                 <View style={styles.animationSection}>
                     <Section title="Toggle Styles">
                         <SettingItem
-                            icon="logo-octocat"
-                            label="Meme Cats"
-                            hasSwitch
-                            onPress={toggleMemeCat}
-                            switchValue={isMemeCatsEnabled}
-                            height={17}
-                            isFirst
-                            />
-                        <SettingItem
                             icon="phone-portrait"
                             label="Show top header background on Home"
                             hasSwitch
                             onPress={toggleHeader}
                             switchValue={isHeaderEnabled}
                             height={17}
-                            />
+                            isFirst
+                        />
                         <SettingItem
                             icon="color-fill"
                             label="Side-Nav top header color"
                             hasSwitch
                             onPress={toggleNavHeader}
                             switchValue={isNavHeaderEnabled}
+                            height={17}
+                        />
+                        <SettingItem
+                            icon="logo-octocat"
+                            label="Meme Cats"
+                            hasSwitch
+                            onPress={toggleMemeCat}
+                            switchValue={isMemeCatsEnabled}
                             height={17}
                         />
                     </Section>

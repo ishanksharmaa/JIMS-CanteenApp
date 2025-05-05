@@ -8,7 +8,7 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { useNavigation } from "@react-navigation/native";
 
 
-const CartItem = ({ image, title, price, descr, quantity, qty }) => {
+const CartItem = ({ image, title, price, descr, quantity, qty, time, available }) => {
   const { theme } = useTheme();
   const styles = dynamicTheme(theme);
   const { removedFromCart, updateQuantity } = useCart();
@@ -49,7 +49,7 @@ const CartItem = ({ image, title, price, descr, quantity, qty }) => {
     >
       <View style={styles.cartItem}>
         <TouchableOpacity
-          onPress={() => navigation.navigate("ProductScreen", { image, title, price, descr, quantity, qty: 1, amount: price })}
+          onPress={() => navigation.navigate("ProductScreen", { image, title, price, descr, quantity, qty: 1, amount: price, time , available })}
           activeOpacity={0.8}
         >
           <Image source={image} style={styles.image} />

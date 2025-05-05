@@ -17,18 +17,36 @@ const ProductScreen = () => {
   const route = useRoute();
   const { image, title, price, descr, quantity, qty, amount, time, available } = route.params;
   const { theme } = useTheme();
-  const { addedToCart, toggleFavoriteItem, isFavorite, cartItems, removedFromCart, user, updateQuantity } = useCart();
+  const { addedToCart, toggleFavoriteItem, isFavorite, cartItems, removedFromCart, user, updateQuantity, fetchProductByTitle, singleProduct, setSingleProduct } = useCart();
   const styles = dynamicTheme(theme, available);
   const navigation = useNavigation();
   const { refreshUser } = useUser();
   const isInCart = cartItems.some(item => item.title === title);
   const item = cartItems.find(cartItem => cartItem.title === title);
   const [count, setCount] = useState(1); // Default count 1
+  const [productData, setProductData] = useState(null);
 
   const scaleBag = useSharedValue(1);
   const scaleFav = useSharedValue(1);
   const scaleText = useSharedValue(1);
   const bagOffset = useSharedValue(1);
+
+  useEffect(() => {
+    const loadProductData = async () => {
+      try {
+        setLoading(true);
+        const data = await fetchProductByTitle(title);
+        setProductData(data);
+      } catch (err) {
+        setError(err.message);
+        console.error("Failed to load product:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadProductData();
+  }, [title]);
 
 
   const animatedBagStyle = useAnimatedStyle(() => {
@@ -150,6 +168,14 @@ const ProductScreen = () => {
     refreshUser();
   };
 
+  const displayImage = productData?.image || image;
+  const displayTitle = productData?.title || title;
+  const displayPrice = productData?.price || price;
+  const displayDescr = productData?.descr || descr;
+  const displayQuantity = productData?.quantity || quantity;
+  const displayTime = productData?.time || time;
+  const displayAvailable = productData?.available || available;
+
 
   return (
     <View style={styles.container}>
@@ -172,13 +198,13 @@ const ProductScreen = () => {
         </TouchableOpacity>
 
       </View>
-      <Image source={image} style={styles.productImage} />
+      <Image source={displayImage} style={styles.productImage} />
 
       <View style={styles.bigContainer}>
 
-        <Text style={styles.productTitle}>{title}</Text>
-        <Text style={styles.productPrice}>{'₹' + price}</Text>
-        <Text style={styles.productQuantity}>{'Qty: ' + quantity}</Text>
+        <Text style={styles.productTitle}>{displayTitle}</Text>
+        <Text style={styles.productPrice}>{'₹' + displayPrice}</Text>
+        <Text style={styles.productQuantity}>{'Qty: ' + displayQuantity}</Text>
 
         <View style={styles.countHandler}>
           <TouchableOpacity activeOpacity={1}
@@ -221,7 +247,7 @@ const ProductScreen = () => {
         <View style={styles.descContainer}>
           <Text style={styles.descTitle}>description: { }</Text>
           <ScrollView>
-            <Text style={styles.descContent}>{item?.descr || descr || "Info not provided..."}</Text>
+            <Text style={styles.descContent}>{item?.descr || displayDescr || "Info not provided..."}</Text>
             {/* <Text style={styles.descContent}>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</Text> */}
           </ScrollView>
 
@@ -235,12 +261,18 @@ const ProductScreen = () => {
           </View>
           <View style={styles.productInfoCard}>
             {/* <Ionicons name="time-outline" size={28} color={theme.text} /> */}
-            <Text style={{ color: theme.text, paddingTop: 6 }}>🕒 {time}</Text>
+            <Text style={{ color: theme.text, paddingTop: 6 }}>🕒 {displayTime}</Text>
             <Text style={styles.infoTitle}>Pickup Time</Text>
           </View>
           <View style={styles.productInfoCard}>
-            <Ionicons name="checkmark-circle-outline" size={28} color={theme.text} />
-            <Text style={styles.infoTitle}>Availability</Text>
+            {displayAvailable ? (
+              <Ionicons name="checkmark-circle-outline" size={28} color={"green"} />
+            ) : (
+              <Ionicons name="close-circle-outline" size={28} color={"red"} />
+              // <Ionicons name="close" size={28} color={"red"} />
+            )
+            }
+            <Text style={styles.infoTitle}>{displayAvailable ? "Available" : "Unavailable"}</Text>
           </View>
 
         </View>
@@ -248,7 +280,7 @@ const ProductScreen = () => {
 
         <View style={styles.orderBtn}>
 
-          {!available ? (
+          {!displayAvailable ? (
             <Text style={{ color: 'red', fontSize: 16, marginBottom: 20 }}>Currently unavailable!</Text>
           ) :
             (

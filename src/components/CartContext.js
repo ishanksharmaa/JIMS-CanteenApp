@@ -2,6 +2,7 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import { getFirestore, collection, getDocs, setDoc, doc, query, where, deleteDoc, updateDoc } from "firebase/firestore";
 import auth from "@react-native-firebase/auth";
 import Toast from 'react-native-toast-message';
+import firestore from '@react-native-firebase/firestore';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useUser } from "./UserContext";
 
@@ -17,6 +18,8 @@ export const CartProvider = ({ children }) => {
     const [quantities, setQuantities] = useState({});
     const isFavorite = (title) => favorites.includes(title);
     const isInCart = (title) => cartItems.some(item => item.title === title);
+    const [productItems, setProductItems] = useState([]);
+    const [singleProduct, setSingleProduct] = useState([]);
 
 
     useEffect(() => {
@@ -80,6 +83,45 @@ export const CartProvider = ({ children }) => {
             console.error("🚫 Error updating totalAmount in Firestore:", error);
         }
     };
+
+    const fetchProducts = async (setProductItems) => {
+        try {
+
+            const productPromise = firestore().collection("Products").get(); // Fetching products
+            let productItems = [];
+
+            const productSnapshot = await productPromise; // Awaiting the product data
+            productSnapshot.forEach(doc => {
+                productItems.push({ id: doc.id, ...doc.data() });
+            });
+
+            setProductItems(productItems);
+        } catch (error) {
+            console.error("Error fetching data:", error);
+        }
+    };
+
+    const fetchProductByTitle = async (title) => {
+        try {
+            const snapshot = await firestore()
+                .collection("Products")
+                .where("name", "==", title)
+                .get();
+
+            if (!snapshot.empty) {
+                const doc = snapshot.docs[0];
+                return {
+                    id: doc.id,
+                    ...doc.data()
+                };
+            }
+            return null;
+        } catch (error) {
+            console.error("Error fetching product:", error);
+            throw error;
+        }
+    };
+
 
 
     const fetchCart = async (email) => {
@@ -402,6 +444,12 @@ export const CartProvider = ({ children }) => {
             isFavorite,
             favorites,
             fetchFavorites,
+            productItems,
+            setProductItems,
+            fetchProducts,
+            singleProduct,
+            setSingleProduct,
+            fetchProductByTitle,
         }}>
             {children}
         </CartContext.Provider>

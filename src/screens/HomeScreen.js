@@ -3,7 +3,7 @@ import { Text, View, Image, StyleSheet, FlatList, StatusBar, TouchableOpacity, S
 import Animated, {
     useSharedValue,
     useAnimatedStyle,
-    useAnimatedGestureHandler,
+    useAnimatedGestureHandler, withSpring,
     withTiming, runOnJS, interpolate
 } from 'react-native-reanimated';
 
@@ -20,7 +20,7 @@ import { getAuth, onAuthStateChanged } from "@react-native-firebase/auth";
 import { collection, query, where, getDocs } from "firebase/firestore";
 
 
-import { TextInput, PanGestureHandler } from "react-native-gesture-handler";
+import { TextInput, PanGestureHandler, Gesture, GestureDetector } from "react-native-gesture-handler";
 import { useNavigation, useFocusEffect, useRoute, StackActions, CommonActions } from "@react-navigation/native";
 import MemeCat from "../components/MemeCat";
 import { useMemeCat } from "../components/MemeCatContext";
@@ -32,24 +32,25 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
 // COMPONENTS
 import { useTheme } from "../components/ThemeContext";
+import { useCart } from "../components/CartContext";
 import ProductCard from '../components/ProductCard';
 
-const fetchProducts = async (setProductItems) => {
-    try {
+// const fetchProducts = async (setProductItems) => {
+//     try {
 
-        const productPromise = firestore().collection("Products").get(); // Fetching products
-        let productItems = [];
+//         const productPromise = firestore().collection("Products").get(); // Fetching products
+//         let productItems = [];
 
-        const productSnapshot = await productPromise; // Awaiting the product data
-        productSnapshot.forEach(doc => {
-            productItems.push({ id: doc.id, ...doc.data() });
-        });
+//         const productSnapshot = await productPromise; // Awaiting the product data
+//         productSnapshot.forEach(doc => {
+//             productItems.push({ id: doc.id, ...doc.data() });
+//         });
 
-        setProductItems(productItems);
-    } catch (error) {
-        console.error("Error fetching data:", error);
-    }
-};
+//         setProductItems(productItems);
+//     } catch (error) {
+//         console.error("Error fetching data:", error);
+//     }
+// };
 
 const categories = [
     { id: '1', title: 'Fast Food', image: { uri: 'https://images.pexels.com/photos/1639564/pexels-photo-1639564.jpeg' } },
@@ -67,9 +68,10 @@ const categories = [
 const HomeScreen = () => {
 
     const [text, setText] = useState('');
-    const [productItems, setProductItems] = useState([]);
+    // const [productItems, setProductItems] = useState([]);
     const navigation = useNavigation();
     const { theme, toggleTheme } = useTheme();
+    const { fetchProducts, productItems, setProductItems } = useCart();
     const { profileImage } = useImage();
     const { isMemeCatsEnabled, isHeaderEnabled } = useMemeCat();
     const styles = dynamicTheme(theme, isHeaderEnabled);
@@ -84,6 +86,8 @@ const HomeScreen = () => {
     const slideHomeX = 250;
     const rotateHomeX = 10;
 
+    // const swipeProgress = useSharedValue(0);
+
     useFocusEffect(
         useCallback(() => {
             refreshUser();
@@ -97,6 +101,31 @@ const HomeScreen = () => {
         translateX.value = withTiming(open ? slideHomeX : 0, { duration: 300 });
     };
 
+    // // Two-finger swipe right gesture
+    // const twoFingerSwipe = Gesture.Pan()
+    //     .minPointers(2) // Only works with 2 fingers
+    //     .activeOffsetX(20) // Minimum horizontal movement
+    //     .onStart(() => {
+    //         swipeProgress.value = 0; // Reset animation
+    //     })
+    //     .onUpdate((e) => {
+    //         if (e.translationX > 0) { // Only right swipe
+    //             swipeProgress.value = e.translationX;
+    //         }
+    //     })
+    //     .onEnd((e) => {
+    //         if (e.translationX > 100) { // Swipe threshold
+    //             runOnJS(setSideNavVisible)(true);
+    //         }
+    //         swipeProgress.value = withSpring(0); // Reset animation
+    //     })
+    //     .manualActivation(true) // Manually control when the gesture activates
+    //     // .simultaneousWithExternalGesture(/* Add other gestures if needed */); // Optional: Allow other gestures to work simultaneously
+
+    // // Optional: Animate sideNav opening
+    // const animatedSideNav = useAnimatedStyle(() => ({
+    //     transform: [{ translateX: swipeProgress.value }],
+    // }));
 
 
     const combinedGestureHandler = useAnimatedGestureHandler({
@@ -198,11 +227,13 @@ const HomeScreen = () => {
             <PanGestureHandler
                 onGestureEvent={combinedGestureHandler}
                 enabled={sideNavVisible} // only detect when sidenav is open
-                // onEnded={handleGestureEnd}
+            // onEnded={handleGestureEnd}
             >
                 <Animated.View style={{ flex: 1 }}>
                     <Animated.View style={[styles.backgroundScreen, { backgroundColor: theme.background1 }, animatedStyle1]} />
                     <Animated.View style={[styles.backgroundScreen, { backgroundColor: theme.background2 }, animatedStyle2]} />
+
+                    {/* <GestureDetector gesture={twoFingerSwipe}> */}
 
                     <Animated.View
                         style={[
@@ -234,7 +265,7 @@ const HomeScreen = () => {
                                         <Image
                                             // source={require("../../assets/swaggy_cat.jpg")}
                                             // source={require("../../assets/app_logo.jpeg")}
-                                            source={ profileImage ? {uri: profileImage} : theme.logo}
+                                            source={profileImage ? { uri: profileImage } : theme.logo}
                                             style={styles.profileImage}
                                         />
                                     </TouchableOpacity>
@@ -280,7 +311,7 @@ const HomeScreen = () => {
                                         </View>
                                     )}
                                 />
-                            </View> {/* categoryContainer end */}
+                            </View>
                             <View style={styles.productContainer}>
                                 <Text style={styles.heading}>Recommended for you</Text>
                                 <FlatList style={{
@@ -298,6 +329,7 @@ const HomeScreen = () => {
                         </ScrollView>
 
                     </Animated.View>
+                    {/* </GestureDetector> */}
                     <Animated.View style={[styles.sideNavAnimated, sideNavAnimatedStyle]}>
                         <SideNav isVisible={sideNavVisible} toggleVisibility={() => toggleSideNav(slideHomeX)} left={0} style={styles.fixedSideNav} />
                     </Animated.View>

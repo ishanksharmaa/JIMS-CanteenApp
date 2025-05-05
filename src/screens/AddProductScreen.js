@@ -140,7 +140,7 @@ const AddProductScreen = ({ closeModal, product: initialProduct, mode }) => {
         Keyboard.dismiss();
 
         const productsRef = firestore().collection("Products");
-        const docId = product.name.trim().toLowerCase().replace(/\s+/g, '-');
+        const docId = product.name.trim().toLowerCase().replace(/\s+/g, '_').replace(/[^a-z0-9-]/g, ''); // Remove special characters;
 
         const categoryArray = product.category
             .trim()
@@ -164,7 +164,14 @@ const AddProductScreen = ({ closeModal, product: initialProduct, mode }) => {
 
         try {
             if (mode === 'edit' && initialProduct?.id) {
-                await productsRef.doc(initialProduct.id).update(productData);
+                if (initialProduct.name.toLowerCase() !== product.name.toLowerCase()) {
+                    // Name changed - we need to create new doc and delete old one
+                    await productsRef.doc(docId).set(productData);
+                    await productsRef.doc(initialProduct.id).delete();
+                } else {
+                    // no name changed - just update
+                    await productsRef.doc(initialProduct.id).update(productData);
+                }
                 onAddtoCart("refresh", `${product.name} Updated`, "Product Updated!");
             } else {
                 const existingDoc = await productsRef.doc(docId).get();
@@ -216,7 +223,16 @@ const AddProductScreen = ({ closeModal, product: initialProduct, mode }) => {
                         placeholder="Name*"
                         value={product.name}
                         placeholderTextColor={'grey'}
-                        onChangeText={(text) => handleChange("name", text)}
+                        onChangeText={(text) => {
+                            // Step 1: Sanitize the input
+                            const sanitizedText = text
+                                .replace(/\s{2,}/g, ' ')       // Replace multiple spaces with single space
+                                .replace(/[^a-zA-Z0-9() -]/g, ''); // Remove special chars except ()-
+
+                            // Step 2: Update state via handleChange
+                            handleChange("name", sanitizedText);
+                        }}
+                        maxLength={50}
                     />
                     <TextInput
                         style={styles.input}
