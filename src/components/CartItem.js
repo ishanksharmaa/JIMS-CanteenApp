@@ -57,7 +57,7 @@ const CartItem = ({ image, title, price, descr, quantity, qty, time, available }
         <View>
           <Text style={styles.title}>{title}</Text>
           {/* <Text style={styles.price}>{'₹ ' + price}</Text> */}
-          <Text style={styles.totalAmount}>{`Total: ${price} X ${count} = ₹ ` + price * count}</Text>
+          <Text style={styles.totalAmount}>{`Total: ₹${price} X ${count} = ₹ ` + price * count}</Text>
         </View>
 
         <View style={styles.countHandler}>

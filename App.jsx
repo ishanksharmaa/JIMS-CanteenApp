@@ -58,8 +58,9 @@ import ProductsListScreen from "./src/screens/ProductsListScreen";
 import ProfileScreen from "./src/screens/ProfileScreen";
 import SettingsScreen from "./src/screens/SettingsScreen";
 import UserInfoScreen from "./src/screens/UserInfoScreen";
-import ImageCropScreen from "./src/screens/ImageCropScreen";
 import AppearanceSetting from "./src/screens/settings/AppearanceSetting";
+import AboutScreen from "./src/screens/settings/AboutScreen";
+import ImageCropScreen from "./src/screens/ImageCropScreen";
 import { MemeCatProvider } from "./src/components/MemeCatContext";
 import { UserProvider } from './src/components/UserContext';
 // import SideNav from "./src/components/SideNav";
@@ -173,8 +174,9 @@ const AppContent = () => {
           <Stack.Screen name="ProductScreen" component={ProductScreen} />
           <Stack.Screen name="Settings" component={SettingsScreen} />
           <Stack.Screen name="UserInfo" component={UserInfoScreen} />
-          <Stack.Screen name="ImageCrop" component={ImageCropScreen} />
           <Stack.Screen name="Appearance" component={AppearanceSetting} />
+          <Stack.Screen name="About" component={AboutScreen} />
+          <Stack.Screen name="ImageCrop" component={ImageCropScreen} />
           <Stack.Screen name="AddProductScreen" component={AddProductScreen} />
           <Stack.Screen name="ProductsList" component={ProductsListScreen} />
         </Stack.Navigator>

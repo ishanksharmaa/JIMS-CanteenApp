@@ -261,42 +261,44 @@ export const CartProvider = ({ children }) => {
 
     const updateQuantity = async (itemTitle, newQuantity) => {
         if (!isInCart) {
-            return
+            return;
         }
+        else {
 
-        try {
-            const db = getFirestore();
-            const userRef = collection(db, "Users");
-            const q = query(userRef, where("email", "==", userEmail));
-            const snapshot = await getDocs(q);
+            try {
+                const db = getFirestore();
+                const userRef = collection(db, "Users");
+                const q = query(userRef, where("email", "==", userEmail));
+                const snapshot = await getDocs(q);
 
-            if (!snapshot.empty) {
-                const userDoc = snapshot.docs[0];
-                const userId = userDoc.id;
+                if (!snapshot.empty) {
+                    const userDoc = snapshot.docs[0];
+                    const userId = userDoc.id;
 
-                const item = cartItems.find(item => item.title === itemTitle);
+                    const item = cartItems.find(item => item.title === itemTitle);
 
-                const itemRef = doc(db, "Users", userId, "Cart", itemTitle);
-                await updateDoc(itemRef, {
-                    qty: newQuantity,
-                    amount: newQuantity * item.price,
-                });
+                    const itemRef = doc(db, "Users", userId, "Cart", itemTitle);
+                    await updateDoc(itemRef, {
+                        qty: newQuantity,
+                        amount: newQuantity * item.price,
+                    });
 
-                // Update local cartItems state too
-                setCartItems(prev => {
-                    const updated = prev.map(item =>
-                        item.title === itemTitle
-                            ? { ...item, qty: newQuantity, amount: newQuantity * item.price }
-                            : item
-                    );
-                    sumAmount(updated);
-                    return updated;
-                });
+                    // Update local cartItems state too
+                    setCartItems(prev => {
+                        const updated = prev.map(item =>
+                            item.title === itemTitle
+                                ? { ...item, qty: newQuantity, amount: newQuantity * item.price }
+                                : item
+                        );
+                        sumAmount(updated);
+                        return updated;
+                    });
 
-                console.log(`🔄 Updated ${itemTitle} qty to ${newQuantity}`);
+                    console.log(`🔄 Updated ${itemTitle} qty to ${newQuantity}`);
+                }
+            } catch (err) {
+                console.error("🚫 Error updating qty:", err);
             }
-        } catch (err) {
-            console.error("🚫 Error updating qty:", err);
         }
     };
 
@@ -390,7 +392,7 @@ export const CartProvider = ({ children }) => {
                         title: title,
                     }]);
 
-                    onAddtoCart("heart", title, "Added to favorites", false, 1000);
+                    // onAddtoCart("heart", title, "Added to favorites", false, 1000);
                     console.log("✅ Product added to Firestore fav");
                 } else {
                     alert("Product not found in database");
@@ -417,7 +419,7 @@ export const CartProvider = ({ children }) => {
                 await deleteDoc(favRef);
 
                 setFavItems(prev => prev.filter(item => item.title !== title));
-                onAddtoCart("heart-dislike", title, "Removed from favorites", true, 1000);
+                // onAddtoCart("heart-dislike", title, "Removed from favorites", true, 1000);
                 console.log(`🧹 Removed ${title} from fav`);
             }
         } catch (error) {

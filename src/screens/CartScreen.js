@@ -1,4 +1,4 @@
-import React, { useContext, useCallback } from "react";
+import React, { useContext, useCallback, useState } from "react";
 import { Text, View, FlatList, TouchableOpacity } from "react-native";
 import CartItem from "../components/CartItem";
 import { useTheme } from "../components/ThemeContext";
@@ -8,6 +8,7 @@ import CustomButton from "../components/CustomButton";
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { useUser } from "../components/UserContext";
 import { useCart } from "../components/CartContext";
+import SplitBill from "../components/SplitBill";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { useEffect } from "react";
@@ -31,6 +32,7 @@ const CartScreen = () => {
     const navigation = useNavigation();
     const { refreshUser, user } = useUser();
     const { cartItems, fetchCart, totalAmount } = useCart();
+    const [splitBillVisible, setSplitBillVisible] = useState(false);
 
     useEffect(() => {
         fetchCart();
@@ -91,7 +93,7 @@ const CartScreen = () => {
 
             {user && (
                 <View style={styles.orderBtn}>
-                    <TouchableOpacity style={styles.iconButton} activeOpacity={0.7}>
+                    <TouchableOpacity style={styles.iconButton} activeOpacity={0.7} onPress={() => setSplitBillVisible(true)} >
                         <MaterialIcons name="call-split" size={29} color={theme.customButtonBg} />
                     </TouchableOpacity>
                     <View style={styles.buttonContainer}>
@@ -99,6 +101,8 @@ const CartScreen = () => {
                     </View>
                 </View>
             )}
+
+            <SplitBill visible={splitBillVisible} onClose={() => setSplitBillVisible(false)} totalAmount={totalAmount} />
 
         </View>
     );

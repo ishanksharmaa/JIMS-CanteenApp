@@ -157,9 +157,9 @@ const dynamicTheme = (theme) => ({
         backgroundColor: theme.background,
     },
     searchContainer: {
-        marginTop: 34,
         marginHorizontal: 17,
-        marginBottom: 50,
+        marginTop: 20,
+        marginBottom: 30,
     },
     searchBar: {
         backgroundColor: theme.searchBg,
@@ -181,8 +181,9 @@ const dynamicTheme = (theme) => ({
     searchBtn: {
         width: '30%',
         position: 'absolute',
-        top: "17.5%",
+        top: "16%",
         right: 14,
+        opacity: 0.72,
     },
     header: {
         fontSize: 28,

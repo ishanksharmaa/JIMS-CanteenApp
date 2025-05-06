@@ -4,7 +4,7 @@ import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import { useTheme } from "../components/ThemeContext";
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { Section, SettingItem } from "../components/SettingsItem";
-import {SideNav} from "../components/SideNav";
+import { SideNav } from "../components/SideNav";
 import { ProfileSection } from "./ProfileScreen";
 import { useUser } from "../components/UserContext";
 import FontAwesome6Icon from "react-native-vector-icons/FontAwesome6";
@@ -106,7 +106,7 @@ const SettingsScreen = () => {
                 <Section title="Support">
                     <SettingItem icon={isDarkMode ? "help-circle-outline" : "help-circle"} label="Help & Support" isFirst />
                     <SettingItem icon={isDarkMode ? "star-outline" : "star"} label="Feedback" />
-                    <SettingItem icon={isDarkMode ? "information-circle-outline" : "information-circle"} label="About" />
+                    <SettingItem icon={isDarkMode ? "information-circle-outline" : "information-circle"} label="About" onPress={() => navigation.navigate("About")} />
                 </Section>
 
                 <Section title="Exit">

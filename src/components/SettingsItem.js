@@ -37,7 +37,7 @@ export const SettingItem = ({ icon, label, hasSwitch, isThemeSwitch, onPress, is
                 borderTopColor: theme.mode === "dark" ? "#333" : "#ececec",
                 borderTopWidth: isFirst ? 0 : 1,
             }}
-            activeOpacity={0.4}
+            activeOpacity={0.8}
         >
             <Ionicons name={icon} size={24} color={theme.primaryColor} style={{ marginRight: 16 }} /> {/* #007AFF */}
             <Text style={{ flex: 1, fontSize: 16, color: theme.text }}>{label}</Text>
