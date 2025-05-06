@@ -74,7 +74,7 @@ const SplitBill = ({ visible, onClose, totalAmount }) => {
         </Modal>
     );
 };
-
+// theme
 const dynamicTheme = (theme) => ({
     overlay: {
         flex: 1,
