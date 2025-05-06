@@ -8,7 +8,7 @@ import { useUser } from "../components/UserContext";
 import { useCart } from "../components/CartContext";
 import { transform } from "typescript";
 
-const ProductCard = ({ image, title, price, descr, quantity, qty, amount, time, available = true, size = 1, gapV = 20, gapH = 20 }) => {
+const CategoryCard = ({ image, title, price, descr, quantity, qty, amount, time, available = true, size = 1, gapV = 20, gapH = 20 }) => {
   const navigation = useNavigation();
   const { theme } = useTheme();
   const styles = dynamicTheme(theme, size, gapH, gapV);
@@ -156,4 +156,4 @@ const dynamicTheme = (theme, size, gapH, gapV) => ({
   addIconContainer: { position: "absolute", bottom: 16, right: 16 },
 });
 
-export default ProductCard;
+export default CategoryCard;

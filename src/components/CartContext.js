@@ -304,6 +304,10 @@ export const CartProvider = ({ children }) => {
 
 
     const toggleFavoriteItem = async (title) => {
+        if(!user){
+            onAddtoCart("alert-circle", "Login required!", "or SignUp to continue", true, 2000)
+            return;
+        }
         try {
             if (isFavorite(title)) {
                 await removedFromFav(title);

@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, FlatList, Text, StyleSheet, Keyboard, TouchableWithoutFeedback, TouchableOpacity } from 'react-native';
+import { View, FlatList, Text, StyleSheet, Keyboard, TouchableWithoutFeedback, TouchableOpacity, Dimensions } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import { useTheme } from '../components/ThemeContext';
 import ProductCard from '../components/ProductCard';
+import CategoryCard from '../components/CategoryCard';
 // import SearchBar from '../components/SearchBar';
 import CustomButton from "../components/CustomButton";
 import { TextInput } from 'react-native-gesture-handler';
@@ -15,6 +16,9 @@ const MenuScreen = () => {
     const { theme } = useTheme();
     const styles = dynamicTheme(theme);
     const searchInputRef = useRef(null);
+
+    const screenWidth = Dimensions.get('window').width;
+    const itemWidth = screenWidth / 3;
 
 
     // Debounce effect for search
@@ -110,13 +114,14 @@ const MenuScreen = () => {
                     radius={50}
                     opacity={1}
                 /> */}
-                <TouchableOpacity style={styles.searchBtn} activeOpacity={0.8} onPress={()=> fetchProducts(searchText)}>
+                <TouchableOpacity style={styles.searchBtn} activeOpacity={0.8} onPress={() => fetchProducts(searchText)}>
                     {/* <Ionicons name="search" size={26} color={theme.customButtonBg} /> */}
                     <Ionicons name="search" size={26} color={"grey"} />
                 </TouchableOpacity>
             </View>
 
-            <View style={{ height: '72.2%', marginHorizontal: 9, backgroundColor: 'transparent', marginLeft: 7, }}>
+
+            {/* <View style={{ height: '72.2%', marginHorizontal: 9, backgroundColor: 'transparent', marginLeft: 7, }}>
                 <FlatList
                     data={filteredProducts}
                     keyExtractor={(item) => item.id}
@@ -145,6 +150,39 @@ const MenuScreen = () => {
                         </View>
                     )}
                 />
+            </View> */}
+
+            {/* <View style={{ height: '72.2%', marginHorizontal: 9, backgroundColor: 'transparent', marginLeft: 7, }}> */}
+            <View style={{ height: '72.2%', marginHorizontal: 0, backgroundColor: 'transparent', marginLeft: -30 }}>
+                <FlatList
+                    data={filteredProducts}
+                    keyExtractor={(item) => item.id}
+                    horizontal={false}
+                    numColumns={3}
+                    showsHorizontalScrollIndicator={false}
+                    ListEmptyComponent={
+                        <Text style={{ textAlign: 'center', color: theme.text }}>
+                            {loading ? 'Loading...' : 'No products found'}
+                        </Text>
+                    }
+                    renderItem={({ item }) => (
+                        // <View style={{ flex: 1, padding: 0, backgroundColor: 'transparent', marginHorizontal: 0 }}>
+                        <View style={{ width: itemWidth, padding: 0, backgroundColor: 'transparent', marginHorizontal: 10 }}>
+                            <ProductCard
+                                image={{ uri: item.image }}
+                                title={item.name}
+                                price={item.price}
+                                descr={item.description}
+                                quantity={item.quantity}
+                                qty={item.qty || 1}
+                                amount={item.amount || item.price}
+                                time={item.time}
+                                available={item.available}
+                                size={0.7} gapV={-30} gapH={0}
+                            />
+                        </View>
+                    )}
+                />
             </View>
         </View>
     );
@@ -153,13 +191,13 @@ const MenuScreen = () => {
 const dynamicTheme = (theme) => ({
     container: {
         flex: 1,
-        padding: 0,
+        paddingBottom: "12%",
         backgroundColor: theme.background,
     },
     searchContainer: {
         marginHorizontal: 17,
         marginTop: 20,
-        marginBottom: 30,
+        marginBottom: 20,
     },
     searchBar: {
         backgroundColor: theme.searchBg,

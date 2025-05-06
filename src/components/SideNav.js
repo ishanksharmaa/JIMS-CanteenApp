@@ -18,6 +18,7 @@ const SideNav = ({ isVisible, toggleVisibility }) => {
     const [slideAnim] = useState(new Animated.Value(-width / 1.5));
     const { theme } = useTheme();
     const { isMemeCatsEnabled, isNavHeaderEnabled } = useMemeCat();
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
     const { refreshUser, user } = useUser();
     const navigation = useNavigation();
     const isDarkMode = theme.mode === 'dark';

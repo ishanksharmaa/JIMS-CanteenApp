@@ -17,7 +17,7 @@ const ProductScreen = () => {
   const route = useRoute();
   const { image, title, price, descr, quantity, qty, amount, time, available } = route.params;
   const { theme } = useTheme();
-  const { addedToCart, toggleFavoriteItem, isFavorite, cartItems, removedFromCart, user, updateQuantity, fetchProductByTitle, singleProduct, setSingleProduct } = useCart();
+  const { addedToCart, toggleFavoriteItem, isFavorite, cartItems, removedFromCart, user, updateQuantity, onAddtoCart, fetchProductByTitle, singleProduct, setSingleProduct } = useCart();
   const styles = dynamicTheme(theme, available);
   const navigation = useNavigation();
   const { refreshUser } = useUser();
@@ -154,6 +154,9 @@ const ProductScreen = () => {
 
 
   const handleCartAction = (count) => {
+    if (!user) {
+      onAddtoCart("alert-circle", "Login required!", "or SignUp to continue", true, 2000);
+    }
     if (isInCart) {
       removedFromCart(title);
       bounceBag();
@@ -166,6 +169,13 @@ const ProductScreen = () => {
       // checkCart();
     }
     refreshUser();
+  };
+
+  const handlePayment = ()=>{
+    if(!user){
+      onAddtoCart("alert-circle", "Login required!", "or SignUp to continue", true, 2000);
+      return;
+    }
   };
 
   const displayImage = productData?.image || image;
@@ -191,8 +201,6 @@ const ProductScreen = () => {
 
         <TouchableOpacity style={styles.favBtn} onPress={() => { toggleFavoriteItem(title); bounceFav(); }} activeOpacity={0.6} >
           <Animated.View style={animatedFavStyle}>
-            {/* <Ionicons name={isFavorite(title) ? "heart" : "heart-outline"} size={24} color={user && isFavorite(title) ? theme.customButtonBg : theme.text} /> */}
-            {/* <Ionicons name={isFavorite(title) ? "heart" : "heart-outline"} size={24} color={user && isFavorite(title) ? theme.customButtonBg : "#C40233"} /> */}
             <Ionicons name={isFavorite(title) ? "heart" : "heart-outline"} size={24} color={isFavorite(title) ? theme.customButtonBg : theme.text} />
           </Animated.View>
         </TouchableOpacity>
@@ -303,7 +311,7 @@ const ProductScreen = () => {
 
 
                 <View style={styles.buttonContainer}>
-                  <CustomButton btnColor={theme.customButtonBg} textColor={theme.customButtonText} title={`Order for ₹${(parseFloat(price) * count).toFixed(0)}`} onPress={null} />
+                  <CustomButton btnColor={theme.customButtonBg} textColor={theme.customButtonText} title={`Order for ₹${(parseFloat(price) * count).toFixed(0)}`} onPress={handlePayment} />
                 </View>
               </>
             )}

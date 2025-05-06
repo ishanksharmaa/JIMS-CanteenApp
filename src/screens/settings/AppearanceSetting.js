@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { View, Text, Switch, TouchableOpacity, ScrollView, ImageBackground, BackHandler, Modal } from "react-native";
+import React, { useState, useEffect, useRef } from "react";
+import { View, Text, TextInput, Switch, TouchableOpacity, ScrollView, ImageBackground, BackHandler, Modal } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useTheme } from "../../components/ThemeContext";
 import Ionicons from "react-native-vector-icons/Ionicons";
@@ -18,18 +18,21 @@ const themes = [
 ];
 
 const AppearanceSetting = () => {
+    // let typingTimeout = useRef(null);
     const { theme, changeTheme, setPrimaryColor } = useTheme();
     const styles = dynamicTheme(theme);
     const navigation = useNavigation();
     const { isMemeCatsEnabled, toggleMemeCat, isHeaderEnabled, toggleHeader, isNavHeaderEnabled, toggleNavHeader } = useMemeCat();
-    const [color, setColor] = useState(theme.primaryColor);
-
     const [isColorPickerVisible, setIsColorPickerVisible] = useState(false); // To control the visibility of the color picker
+    const [color, setColor] = useState(theme.primaryColor);
     const [tempColor, setTempColor] = useState(color); // Temporary color to preview before saving
+    // const [isTyping, setIsTyping] = useState(false);
 
 
-    const handleColorChange = (newColor) => {
-        setTempColor(newColor); // Update temp color for preview
+
+    const handleColorChange = (hex) => {
+        const formattedHex = hex.startsWith('#') ? hex : `#${hex}`;
+        setTempColor(formattedHex);
     };
 
     const saveColor = () => {
@@ -146,8 +149,7 @@ const AppearanceSetting = () => {
                         }}>
                             <View style={{
                                 width: '85%',
-                                height: "60%",
-                                backgroundColor: 'red',
+                                height: "70%",
                                 backgroundColor: theme.background1,
                                 padding: 20,
                                 borderRadius: 16,
@@ -156,7 +158,7 @@ const AppearanceSetting = () => {
                                 shadowOpacity: 0.2,
                                 shadowOffset: { width: 0, height: 2 },
                             }}>
-                                {/* Close icon top-right */}
+                                {/* Close icon */}
                                 <TouchableOpacity
                                     style={{ position: 'absolute', top: 10, right: 10, zIndex: 1 }}
                                     onPress={closeColorPicker}
@@ -165,12 +167,35 @@ const AppearanceSetting = () => {
                                     <Ionicons name="close" size={24} color={theme.text} />
                                 </TouchableOpacity>
 
-                                {/* Color Picker */}
+                                {/* Hex Input */}
+                                {/* <TextInput
+                                    value={tempColor}
+                                    onChangeText={(hex) => {
+                                        setTempColor(hex);
+                                        if (/^#?[0-9A-Fa-f]{6}$/.test(hex)) {
+                                            handleColorChange(hex);
+                                        }
+                                    }}
+                                    placeholder="#HEX"
+                                    placeholderTextColor="grey"
+                                    style={{
+                                        marginTop: 20,
+                                        borderRadius: 10,
+                                        padding: 12,
+                                        backgroundColor: theme.loginBg,
+                                        color: theme.text,
+                                        textAlign: 'center',
+                                        fontSize: 16
+                                    }}
+                                /> */}
+
+                                {/* Wheel Color Picker */}
                                 <WheelColorPicker
-                                    initialColor={color}
-                                    // onColorChangeComplete={handleColorChange}
+                                    color={tempColor}
+                                    // color={!isTyping ? tempColor : undefined}
                                     onColorChange={handleColorChange}
                                     style={{ width: "100%", height: 200 }}
+                                    thumbStyle={{ borderColor: '#fff', borderWidth: 2 }}
                                 />
 
                                 {/* Apply Button */}
@@ -186,7 +211,7 @@ const AppearanceSetting = () => {
                                         alignSelf: 'center',
                                     }}
                                 >
-                                    <Text style={{ color: '#fff', fontWeight: 'bold', fontSize: 16 }}>Apply this color</Text>
+                                    <Text style={{ color: '#fff', fontWeight: 'bold', fontSize: 16 }}>Apply {tempColor.toUpperCase()}</Text>
                                 </TouchableOpacity>
                             </View>
                         </View>

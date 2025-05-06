@@ -32,20 +32,20 @@ const SplitBill = ({ visible, onClose, totalAmount }) => {
         <Modal visible={visible} transparent animationType="slide">
             <View style={styles.overlay}>
                 <View style={styles.modalContainer}>
+
                     <Text style={styles.heading}>Split Amount</Text>
                     <TouchableOpacity style={styles.closeBtn} onPress={onClose} >
                         <Ionicons name="close" size={26} color={theme.text} />
                     </TouchableOpacity>
-                    {/* <TextInput
-                        style={styles.input}
-                        keyboardType="numeric"
-                        placeholder="Total Amount"
-                        placeholderTextColor={"grey"}
-                        value={amount}
-                        onChangeText={setAmount}
-                    /> */}
-                    <View style={[styles.input, { flexDirection: 'row', alignItems: 'center' }]}>
-                        <Text style={{ color: theme.primaryColor, marginRight: 8 }}>Amount ₹:</Text>
+
+                    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', backgroundColor: '', marginBottom: 10 }}>
+                        {/* <Text style={styles.resultText}>Per Person: ₹ {result}</Text> */}
+                        <Text style={[styles.resultText, { color: theme.customButtonBg, fontWeight: 600 }]}>₹ {result}</Text>
+                        <Text style={styles.resultText}> @each</Text>
+                    </View>
+
+                    <View style={[styles.input, { flexDirection: 'row', alignItems: 'center', marginBottom: 16 }]}>
+                        <Text style={{ color: "grey", fontWeight: 700, marginRight: 8 }}>Amount ₹:</Text>
                         <TextInput
                             style={{ flex: 1, color: theme.text }}
                             keyboardType="numeric"
@@ -56,7 +56,7 @@ const SplitBill = ({ visible, onClose, totalAmount }) => {
                         />
                     </View>
                     <View style={[styles.input, { flexDirection: 'row', alignItems: 'center' }]}>
-                        <Text style={{ color: theme.primaryColor, marginRight: 8 }}>Among People:</Text>
+                        <Text style={{ color: "grey", fontWeight: 700, marginRight: 8 }}>Among:</Text>
                         <TextInput
                             style={{ flex: 1, color: theme.text }}
                             keyboardType="numeric"
@@ -66,9 +66,9 @@ const SplitBill = ({ visible, onClose, totalAmount }) => {
                             onChangeText={setPeople}
                         />
                     </View>
-                    <Text style={styles.resultText}>Per Person: ₹ {result}</Text>
-                    <CustomButton btnColor={theme.customButtonBg} textColor='#eee' title="Calculate" onPress={calculateSplit} />
-                    {/* <Button title="Close" onPress={onClose} color="red" /> */}
+                    <View style={{ marginTop: 33 }}>
+                        <CustomButton btnColor={theme.customButtonBg} textColor='#eee' title="Calculate" onPress={calculateSplit} />
+                    </View>
                 </View>
             </View>
         </Modal>
@@ -88,6 +88,8 @@ const dynamicTheme = (theme) => ({
         borderRadius: 20,
         padding: 20,
         elevation: 10,
+        position: 'absolute',
+        top: 100,
     },
     closeBtn: {
         position: 'absolute',
@@ -97,14 +99,13 @@ const dynamicTheme = (theme) => ({
     heading: {
         fontSize: 18,
         fontWeight: 'bold',
-        marginBottom: 26,
+        marginBottom: 14,
         textAlign: 'center',
         color: theme.text,
     },
     input: {
         borderBottomWidth: 0,
         borderRadius: 10,
-        marginTop: 16,
         paddingVertical: 10,
         paddingHorizontal: 14,
         fontSize: 16,
@@ -113,7 +114,7 @@ const dynamicTheme = (theme) => ({
     },
     resultText: {
         fontSize: 18,
-        marginTop: 15,
+        marginTop: 0,
         marginBottom: 20,
         textAlign: 'center',
         color: theme.text,

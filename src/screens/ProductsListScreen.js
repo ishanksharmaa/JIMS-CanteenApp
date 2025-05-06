@@ -242,9 +242,12 @@ const ProductsListScreen = () => {
                                 )}
 
                                 <View style={{ flex: 1 }}>
-                                    <Text style={{ color: theme.text, fontWeight: "bold", fontSize: 16, textTransform: 'capitalize' }}>
-                                        {item.name}
-                                    </Text>
+                                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', }}>
+                                        <Text style={{ color: theme.text, fontWeight: "bold", fontSize: 16, textTransform: 'capitalize' }}>
+                                            {item.name}
+                                        </Text>
+                                        <Text style={{ color: theme.text }}>🕒 {item.time}</Text>
+                                    </View>
 
                                     {/* Price & Quantity side by side */}
                                     <View
