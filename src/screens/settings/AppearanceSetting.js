@@ -25,7 +25,7 @@ const AppearanceSetting = () => {
     const [color, setColor] = useState(theme.primaryColor);
 
     const [isColorPickerVisible, setIsColorPickerVisible] = useState(false); // To control the visibility of the color picker
-    const [tempColor, setTempColor] = useState(color); // Temporary color to preview before saving
+    const [tempColor, setTempColor] = useState(color); //Temporary color to preview before saving
 
 
     const handleColorChange = (newColor) => {
