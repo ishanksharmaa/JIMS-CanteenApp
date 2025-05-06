@@ -31,7 +31,7 @@ const MenuScreen = () => {
             if (searchInputRef.current) {
                 searchInputRef.current.focus();
             }
-        }, 100); // slight delay so layout finishes
+        }, 100); //slight delay so layout finishes 
 
         return () => clearTimeout(timer);
     }, []);
