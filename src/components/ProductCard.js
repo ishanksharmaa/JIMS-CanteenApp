@@ -12,52 +12,86 @@ const ProductCard = ({ image, title, price, descr, quantity, qty, amount, time, 
   const navigation = useNavigation();
   const { theme } = useTheme();
   const styles = dynamicTheme(theme, size, gapH, gapV);
-  const { addedToCart, removedFromCart, toggleFavoriteItem, isFavorite, cartItems, setCartItems, setFavItems, fetchFavorites } = useCart();
+  const { addedToCart, removedFromCart, toggleFavoriteItem, isFavorite, cartItems, setCartItems, setFavItems, fetchFavorites, fetchProductByTitle } = useCart();
   const { refreshUser, user, userEmail } = useUser();
   // const item = cartItems.find(cartItem => cartItem.title === title);
   const isInCart = cartItems.some(item => item.title === title);
+  const [productData, setProductData] = useState(null);
 
   useEffect(() => {
     if (user) {
       fetchFavorites(userEmail);
+      // fetchProductByTitle(title);
     } else {
       setCartItems([]);
       setFavItems([]);
     }
   }, [user]);
 
+
+  useEffect(() => {
+    const loadProductData = async () => {
+      try {
+        setLoading(true);
+        const data = await fetchProductByTitle(title);
+        setProductData(data);
+      } catch (err) {
+        setError(err.message);
+        console.error("Failed to load product:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadProductData();
+  }, [title]);
+
   const handleCartAction = () => {
+    if(!user){
+      navigation.navigate("Login");
+      return;
+    }
     if (isInCart) {
       removedFromCart(title);
     } else {
-      const product = { image, title, price, descr, quantity, qty: 1, amount: price, time, available };
+      const product = { image: image.uri ? {uri: image.uri} : image, title, price, descr, quantity, qty: qty || 1, amount: amount || price, time, available: available !== false };
       addedToCart(product);
     }
     refreshUser();
   };
 
 
+  const displayImage = productData?.image || image;
+  const displayTitle = productData?.title || title;
+  const displayPrice = productData?.price || price;
+  const displayDescr = productData?.descr || descr;
+  const displayQuantity = productData?.quantity || quantity;
+  const displayTime = productData?.time || time;
+  const displayAvailable = productData?.available || available;
+
+
+
   return (
     <TouchableOpacity
       style={styles.productCard}
-      onPress={() => navigation.navigate("ProductScreen", { image, title, price, descr, quantity, qty: 1, amount: price, time, available })}
+      onPress={() => navigation.navigate("ProductScreen", { image, title, price, descr, quantity, qty: qty || 1, amount: price, time, available })}
       activeOpacity={0.94}
     >
-      <Image source={image} style={styles.productImage} />
-      <TouchableOpacity style={styles.favBtn} onPress={() => toggleFavoriteItem(title)} activeOpacity={0.6} >
+      <Image source={displayImage} style={styles.productImage} />
+      <TouchableOpacity style={styles.favBtn} onPress={() => toggleFavoriteItem(displayTitle)} activeOpacity={0.6} >
         {/* <Ionicons name={isFavorite(title) ? "heart" : "heart-outline"} size={22} color={isFavorite(title) ? theme.customButtonBg : theme.text} /> */}
         {/* <Ionicons name={isFavorite(title) ? "heart" : "heart-outline"} size={22} color={isFavorite(title) ? theme.text : theme.text} /> */}
-        <Ionicons name={user && isFavorite(title) ? "heart" : "heart-outline"} size={22} color={user && isFavorite(title) ? "#DC143C" : theme.text} />
+        <Ionicons name={user && isFavorite(displayTitle) ? "heart" : "heart-outline"} size={22} color={user && isFavorite(displayTitle) ? "#DC143C" : theme.text} />
       </TouchableOpacity>
       <View style={styles.textContainer}>
-        <Text style={styles.productTitle}>{title}</Text>
-        <Text style={styles.productPrice}>{'₹' + price}</Text>
+        <Text style={styles.productTitle}>{displayTitle}</Text>
+        <Text style={styles.productPrice}>{'₹' + displayPrice}</Text>
         {/* <Text style={styles.productQuantity}>{'Qty: ' + quantity}</Text> */}
-        <Text style={styles.productTime}>{'🕒 ' + time}</Text>
+        <Text style={styles.productTime}>{'🕒 ' + displayTime}</Text>
       </View>
 
       {/* ✅ Add to Cart Button */}
-      {available ? (
+      {displayAvailable ? (
 
         <TouchableOpacity
           style={styles.addIconContainer}

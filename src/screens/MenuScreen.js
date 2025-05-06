@@ -6,6 +6,7 @@ import ProductCard from '../components/ProductCard';
 // import SearchBar from '../components/SearchBar';
 import CustomButton from "../components/CustomButton";
 import { TextInput } from 'react-native-gesture-handler';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const MenuScreen = () => {
     const [searchText, setSearchText] = useState('');
@@ -87,6 +88,7 @@ const MenuScreen = () => {
 
     return (
         <View style={styles.container}>
+            <Text style={styles.header}>Menu</Text>
             <View style={styles.searchContainer}>
                 <TextInput
                     style={styles.searchBar}
@@ -98,7 +100,7 @@ const MenuScreen = () => {
             </View>
 
             <View style={styles.searchBtn}>
-                <CustomButton
+                {/* <CustomButton
                     title="Search"
                     // btnColor={theme.searchBtnColor}
                     btnColor={theme.customButtonBg}
@@ -107,7 +109,11 @@ const MenuScreen = () => {
                     size={0.7}
                     radius={50}
                     opacity={1}
-                />
+                /> */}
+                <TouchableOpacity style={styles.searchBtn} activeOpacity={0.8} onPress={()=> fetchProducts(searchText)}>
+                    {/* <Ionicons name="search" size={26} color={theme.customButtonBg} /> */}
+                    <Ionicons name="search" size={26} color={"grey"} />
+                </TouchableOpacity>
             </View>
 
             <View style={{ height: '72.2%', marginHorizontal: 9, backgroundColor: 'transparent', marginLeft: 7, }}>
@@ -130,8 +136,10 @@ const MenuScreen = () => {
                                 price={item.price}
                                 descr={item.description}
                                 quantity={item.quantity}
-                                qty={item.qty}
-                                amount={item.amount}
+                                qty={item.qty || 1}
+                                amount={item.amount || item.price}
+                                time={item.time}
+                                available={item.available}
                                 size={0.86} gapV={0} gapH={0}
                             />
                         </View>
@@ -162,7 +170,7 @@ const dynamicTheme = (theme) => ({
         justifyContent: 'center',
         paddingHorizontal: '8%',
         borderRadius: 16,
-        marginTop: 30,
+        marginTop: 0,
     },
     notFoundText: {
         textAlign: 'center',
@@ -173,8 +181,17 @@ const dynamicTheme = (theme) => ({
     searchBtn: {
         width: '30%',
         position: 'absolute',
-        top: 62,
-        right: 10,
+        top: "17.5%",
+        right: 14,
+    },
+    header: {
+        fontSize: 28,
+        fontWeight: "bold",
+        color: theme.text,
+        margin: 16,
+        marginTop: 70,
+        marginBottom: 0,
+        alignSelf: 'center',
     },
 });
 
