@@ -473,7 +473,6 @@ export const CartProvider = ({ children }) => {
                 ...cartDoc.data(),
                 orderedAt: new Date().toISOString(),
                 // orderId: orderId,
-                // billAmount: totalAmount // Your total amount variable
             });
 
             // Delete from Cart
