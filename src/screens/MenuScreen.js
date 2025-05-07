@@ -62,7 +62,7 @@ const MenuScreen = () => {
                 .where('category', 'array-contains', productCategory) // Match categories
                 .get();
 
-            // Combine products from both queries
+            // Combine products from both the queries
             const products = [
                 ...querySnapshot.docs.map(doc => ({
                     id: doc.id,
@@ -104,16 +104,6 @@ const MenuScreen = () => {
             </View>
 
             <View style={styles.searchBtn}>
-                {/* <CustomButton
-                    title="Search"
-                    // btnColor={theme.searchBtnColor}
-                    btnColor={theme.customButtonBg}
-                    textColor={theme.customButtonText}
-                    onPress={() => fetchProducts(searchText)}
-                    size={0.7}
-                    radius={50}
-                    opacity={1}
-                /> */}
                 <TouchableOpacity style={styles.searchBtn} activeOpacity={0.8} onPress={() => fetchProducts(searchText)}>
                     {/* <Ionicons name="search" size={26} color={theme.customButtonBg} /> */}
                     <Ionicons name="search" size={26} color={"grey"} />
