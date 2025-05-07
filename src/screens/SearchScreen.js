@@ -112,22 +112,11 @@ const SearchScreen = () => {
                 />
             </View>
 
-            <View style={styles.searchBtn}>
-                {/* <CustomButton
-                    title="Search"
-                    // btnColor={theme.searchBtnColor}
-                    btnColor={theme.customButtonBg}
-                    textColor={theme.customButtonText}
-                    onPress={() => fetchProducts(searchText)}
-                    size={0.7}
-                    radius={50}
-                    opacity={1}
-                /> */}
+            {/* <View style={styles.searchBtn}> */}
                 <TouchableOpacity style={styles.searchBtn} activeOpacity={0.8} onPress={()=> fetchProducts(searchText)}>
-                    {/* <Ionicons name="search" size={26} color={theme.customButtonBg} /> */}
                     <Ionicons name="search" size={26} color={"grey"} />
                 </TouchableOpacity>
-            </View>
+            {/* </View> */}
 
             <View style={{ height: '72.2%', marginHorizontal: 9, backgroundColor: 'transparent', marginLeft: 7, }}>
                 <FlatList
@@ -192,11 +181,14 @@ const dynamicTheme = (theme) => ({
         marginTop: 40,
     },
     searchBtn: {
-        width: '30%',
         position: 'absolute',
-        top: "8.4%",
-        right: 14,
+        top: "7%",
+        right: "6.2%",
+        padding: 14,
         opacity: 0.72,
+        borderTopRightRadius: 16,
+        borderBottomRightRadius: 16,
+        // backgroundColor: theme.customButtonBg,
     },
     header: {
         fontSize: 28,

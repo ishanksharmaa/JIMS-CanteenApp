@@ -103,12 +103,11 @@ const MenuScreen = () => {
                 />
             </View>
 
-            <View style={styles.searchBtn}>
+            {/* <View style={styles.searchBtn}> */}
                 <TouchableOpacity style={styles.searchBtn} activeOpacity={0.8} onPress={() => fetchProducts(searchText)}>
-                    {/* <Ionicons name="search" size={26} color={theme.customButtonBg} /> */}
                     <Ionicons name="search" size={26} color={"grey"} />
                 </TouchableOpacity>
-            </View>
+            {/* </View> */}
 
 
             {/* <View style={{ height: '72.2%', marginHorizontal: 9, backgroundColor: 'transparent', marginLeft: 7, }}>
@@ -187,7 +186,8 @@ const dynamicTheme = (theme) => ({
     searchContainer: {
         marginHorizontal: 17,
         marginTop: 20,
-        marginBottom: 20,
+        marginBottom: 12,
+        // backgroundColor: 'red'
     },
     searchBar: {
         backgroundColor: theme.searchBg,
@@ -207,11 +207,14 @@ const dynamicTheme = (theme) => ({
         marginTop: 40,
     },
     searchBtn: {
-        width: '30%',
         position: 'absolute',
-        top: "16%",
-        right: 14,
+        top: "15.4%",
+        right: "6.2%",
         opacity: 0.72,
+        padding: 14,
+        borderTopRightRadius: 16,
+        borderBottomRightRadius: 16,
+        // backgroundColor: theme.customButtonBg,
     },
     header: {
         fontSize: 28,

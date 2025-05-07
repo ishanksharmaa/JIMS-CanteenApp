@@ -9,7 +9,7 @@ import { useUser } from "./UserContext";
 export const CartContext = createContext();
 
 export const CartProvider = ({ children }) => {
-    const { user, userEmail } = useUser();
+    const { user, userEmail, order } = useUser();
     const [cartItems, setCartItems] = useState([]);
     const [favItems, setFavItems] = useState([]);
     const [totalAmount, setTotalAmount] = useState(0);
@@ -55,8 +55,9 @@ export const CartProvider = ({ children }) => {
     }, [favorites]);
 
     useEffect(() => {
-        sumAmount(cartItems); // jab bhi cartItems change honge, totalAmount auto update
+        sumAmount(cartItems); // totalAmount auto update when cartItems change
     }, [cartItems]);
+
 
     const sumAmount = async (items) => {
         const total = items.reduce((sum, item) => sum + Number(item.amount || 0), 0);
@@ -74,7 +75,8 @@ export const CartProvider = ({ children }) => {
 
                 const userDocRef = doc(db, "Users", userId);
                 await updateDoc(userDocRef, {
-                    totalAmount: total
+                    totalAmount: total,
+                    billAmount: 0,
                 });
 
                 console.log("💾 Total amount updated in Firestore:", total);
@@ -83,6 +85,7 @@ export const CartProvider = ({ children }) => {
             console.error("🚫 Error updating totalAmount in Firestore:", error);
         }
     };
+
 
     const fetchProducts = async (setProductItems) => {
         try {
@@ -121,7 +124,6 @@ export const CartProvider = ({ children }) => {
             throw error;
         }
     };
-
 
 
     const fetchCart = async (email) => {
@@ -174,8 +176,6 @@ export const CartProvider = ({ children }) => {
             console.error("💥 Error fetching & cleaning cart:", error);
         }
     };
-
-
 
     const addedToCart = async (product) => {
         try {
@@ -304,7 +304,7 @@ export const CartProvider = ({ children }) => {
 
 
     const toggleFavoriteItem = async (title) => {
-        if(!user){
+        if (!user) {
             onAddtoCart("alert-circle", "Login required!", "or SignUp to continue", true, 2000)
             return;
         }
@@ -432,6 +432,61 @@ export const CartProvider = ({ children }) => {
         }
     };
 
+    const orderPlaced = async (userEmail) => {
+
+        if (!userEmail) return;
+
+        const db = getFirestore();
+        const usersRef = collection(db, "Users");
+        const q = query(usersRef, where("email", "==", userEmail));
+        const snapshot = await getDocs(q);
+
+        if (snapshot.empty) {
+            console.error("No user found with email:", userEmail);
+            throw new Error("User document not found");
+        }
+
+        // 2. Get the user ID from the document
+        const userDoc = snapshot.docs[0];
+        const userId = userDoc.id;
+        console.log("Found user ID:", userId);
+
+        // 3. Now update the document
+        const userRef = doc(db, "Users", userId);
+        console.log("Updating document at path:", userRef.path);
+
+        await updateDoc(userRef, {
+            order: "placed",
+            billAmount: totalAmount,
+            updatedAt: new Date().toISOString()
+        });
+
+        
+        // 4. Process cart items
+        const cartRef = collection(db, "Users", userId, "Cart");
+        const cartSnapshot = await getDocs(cartRef);
+
+        // Process each cart item
+        for (const cartDoc of cartSnapshot.docs) {
+            const orderRef = doc(db, "Users", userId, "Orders", cartDoc.id);
+            await setDoc(orderRef, {
+                ...cartDoc.data(),
+                orderedAt: new Date().toISOString(),
+                // orderId: orderId,
+                // billAmount: totalAmount // Your total amount variable
+            });
+
+            // Delete from Cart
+            await deleteDoc(cartDoc.ref);
+        }
+
+        // 9. Update local state
+        setCartItems([]);
+        setTotalAmount(0);
+        return true;
+    };
+
+
     return (
         <CartContext.Provider value={{
             cartItems,
@@ -456,6 +511,7 @@ export const CartProvider = ({ children }) => {
             singleProduct,
             setSingleProduct,
             fetchProductByTitle,
+            orderPlaced,
         }}>
             {children}
         </CartContext.Provider>

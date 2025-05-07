@@ -14,9 +14,11 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { useEffect } from "react";
 
 export const HeaderBackIcon = ({ title }) => {
-    // const { cartItems } = useCart();  // ✅ Cart Items Receive
+    const { cartItems, orderPlaced } = useCart();  // ✅ Cart Items Receive
     const { theme } = useTheme();
     const styles = dynamicTheme(theme);
+    // const cartEmpty = cartItems.length === 0 ? true : false;
+    const cartEmpty = false;
 
     return (
         <View style={styles.header}>
@@ -30,8 +32,8 @@ const CartScreen = () => {
     const { theme } = useTheme();
     const styles = dynamicTheme(theme);
     const navigation = useNavigation();
-    const { refreshUser, user } = useUser();
-    const { cartItems, fetchCart, totalAmount } = useCart();
+    const { refreshUser, user, userEmail } = useUser();
+    const { cartItems, fetchCart, totalAmount, orderPlaced } = useCart();
     const [splitBillVisible, setSplitBillVisible] = useState(false);
 
     useEffect(() => {
@@ -97,7 +99,7 @@ const CartScreen = () => {
                         <MaterialIcons name="call-split" size={29} color={theme.customButtonBg} />
                     </TouchableOpacity>
                     <View style={styles.buttonContainer}>
-                        <CustomButton btnColor={theme.customButtonBg} textColor={theme.customButtonText} title={`Order for ₹${totalAmount}`} onPress={() => alert("Order placed! (Functionality coming soon)")} />
+                        <CustomButton btnColor={theme.customButtonBg} textColor={theme.customButtonText} title={`Order for ₹${totalAmount}`} onPress={async () => orderPlaced(userEmail) } />
                     </View>
                 </View>
             )}
