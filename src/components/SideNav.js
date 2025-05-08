@@ -98,7 +98,7 @@ const SideNav = ({ isVisible, toggleVisibility }) => {
                 <View style={{ borderTopWidth: user ? 0 : 1.1, borderTopColor: theme.mode === 'dark' ? 'rgba(255, 255, 255, 0.093)' : 'rgba(0, 0, 0, 0.097)', marginHorizontal: lineDividerWidth }} />
                 <SettingItem icon={isDarkMode ? "color-palette-outline" : "color-palette"} label="Appearance" arrow={false} height={18} onPress={() => navigation.navigate("Appearance")} isFirst={user ? true : true} />
                 <SettingItem icon={isDarkMode ? "create-outline" : "create"} label="Edit Profile" arrow={false} height={18} onPress={() => navigation.navigate("UserInfo")} isFirst />
-                <SettingItem icon={isDarkMode ? "time-outline" : "time"} label="Order History" arrow={false} height={18} onPress={() => navigation.navigate("History")} isFirst />
+                <SettingItem icon={isDarkMode ? "notifications-outline" : "notifications"} label="Your Orders" arrow={false} height={18} onPress={() => navigation.navigate("Orders")} isFirst />
                 <SettingItem icon={isDarkMode ? "cog-outline" : "cog"} label="Settings" arrow={false} height={20} onPress={() => navigation.navigate("Settings")} isFirst />
 
                 <View style={{ borderTopWidth: 1.1, borderTopColor: theme.mode === 'dark' ? 'rgba(255, 255, 255, 0.093)' : 'rgba(0, 0, 0, 0.097)', marginHorizontal: lineDividerWidth }} />

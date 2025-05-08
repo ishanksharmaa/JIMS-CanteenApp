@@ -71,6 +71,7 @@ const OrderItem = ({ image, title, price, descr, quantity, qty, time, available,
                     </View>
                 )}
             </TouchableOpacity>
+                <Text style={[styles.descr, {position: 'absolute', right: 12, top: 8, textTransform: 'capitalize'}]}>{status ? "Ready" : "Pending..."}</Text>
             <View>
                 <Text style={styles.title}>{title}</Text>
                 <Text style={styles.descr}>{descr}</Text>
@@ -84,7 +85,7 @@ const OrderItem = ({ image, title, price, descr, quantity, qty, time, available,
 };
 
 const dynamicTheme = (theme, status) => {
-    const lightPrimaryColor = status === "pending" ? `${"#C40233"}24` : `${"#19860D"}24`; // Adds 20% opacity (hex 33)
+    const lightPrimaryColor = status ? `${"#19860D"}24` : `${"#C40233"}24`; // Adds 20% opacity (hex 33)
 
     return {
         orderItem: {
@@ -99,7 +100,7 @@ const dynamicTheme = (theme, status) => {
             // elevation: 3,
             shadowColor: theme.primaryColor,
             backgroundColor: lightPrimaryColor,
-            borderColor: status === "pending" ? "red" : "#19860D",
+            borderColor: status ? "#19860D" : "#C40233",
         },
         image: {
             width: 90,

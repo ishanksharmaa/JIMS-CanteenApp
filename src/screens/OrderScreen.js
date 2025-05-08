@@ -1,5 +1,5 @@
 import React, { useContext, useCallback, useState, useEffect } from "react";
-import { Text, View, FlatList, TouchableOpacity } from "react-native";
+import { Text, View, FlatList, TouchableOpacity, Alert, Modal, TextInput } from "react-native";
 import OrderItem from "../components/OrderItem";
 import { useTheme } from "../components/ThemeContext";
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -12,14 +12,18 @@ import SplitBill from "../components/SplitBill";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { HeaderBackIcon } from "./CartScreen";
+import ThreeDotMenu from "../components/ThreeDotMenu";
 
 const OrderScreen = () => {
     const { theme } = useTheme();
     const styles = dynamicTheme(theme);
     const navigation = useNavigation();
     const { refreshUser, user, userEmail } = useUser();
-    const { orderItems, fetchOrders, totalAmount, orderPlaced } = useCart();
+    const { orderItems, fetchOrders, orderCount, totalAmount, orderPlaced, onAddtoCart } = useCart();
     const [splitBillVisible, setSplitBillVisible] = useState(false);
+    const [showConfirmModal, setShowConfirmModal] = useState(false);
+    const [confirmationText, setConfirmationText] = useState('');
+
     // const isOrderEmpty = orderItems.length === 0 ? true : false;
     // const isOrderEmpty = false;
 
@@ -27,10 +31,70 @@ const OrderScreen = () => {
         fetchOrders(userEmail);
     }, []);
 
+    const handleRefresh = () => {
+        fetchOrders(userEmail);
+    };
+
+    const removeReadyItems = async () => {
+        await fetchOrders(userEmail, true); // Wait for deletion to complete
+        fetchOrders(userEmail); // Then refresh the list
+    };
+    const cancelOrders = () => {
+        if (orderCount > 0) {
+            setShowConfirmModal(true);
+        } else{
+            onAddtoCart("alert-circle", "Order List Empty!", "no order are there to cancel", true, 2000)
+        }
+    };
+
+    const menuItems = [
+        {
+            text: 'Refresh',
+            textColor: '#C40233',
+            icon: 'refresh',
+            iconColor: "#C40233",
+            onPress: handleRefresh,
+        },
+        {
+            text: 'Ready items',
+            textColor: theme.text,
+            icon: 'remove',
+            iconColor: theme.text,
+            onPress: removeReadyItems,
+        },
+        {
+            text: 'Cancel order',
+            textColor: theme.text,
+            icon: 'close-circle',
+            iconColor: theme.text,
+            onPress: cancelOrders,
+        },
+    ];
+
 
     return (
         <View style={styles.container}>
             <HeaderBackIcon title="Your Orders" />
+            <View style={{ position: 'absolute', top: 75, right: 20, zIndex: 200 }}>
+                <ThreeDotMenu
+                    icon="menu-outline"
+                    iconColor={theme.text}
+                    menuItems={menuItems}
+                    menuStyle={{
+                        backgroundColor: theme.background2,
+                        borderWidth: 1,
+                        borderColor: "grey",
+                    }}
+                    itemStyle={{
+                        // borderTopWidth: 0,
+                        // borderBottomColor: theme.text + '20'
+                    }}
+                    itemTextStyle={{
+                        color: theme.text
+                    }}
+                    style={styles.addIcon}
+                />
+            </View>
             {
                 user ? (
                     <Ionicons name="add" size={29} color={"transparent"} style={styles.addIcon} />
@@ -97,6 +161,63 @@ const OrderScreen = () => {
             )}
 
             <SplitBill visible={splitBillVisible} onClose={() => setSplitBillVisible(false)} totalAmount={totalAmount} /> */}
+
+            {showConfirmModal && (
+                <Modal
+                    transparent
+                    animationType="fade"
+                    visible={showConfirmModal}
+                    onRequestClose={() => setShowConfirmModal(false)}
+                >
+                    <View style={{ flex: 1, backgroundColor: '#000000aa', justifyContent: 'center', alignItems: 'center' }}>
+                        <View style={{ width: '85%', backgroundColor: theme.background, padding: 20, borderRadius: 10 }}>
+                            <Text style={{ color: theme.text, fontSize: 18, fontWeight: 'bold', marginBottom: 10 }}>Cancel Orders?</Text>
+                            <Text style={{ color: theme.text, marginBottom: 15 }}>
+                                Canteen staff might not be able to see your order list after this.{"\n\n"}You can get the REFUND from canteen.
+                            </Text>
+
+                            <TextInput
+                                placeholder="Type 'cancel order' to confirm"
+                                placeholderTextColor={"grey"}
+                                value={confirmationText}
+                                onChangeText={setConfirmationText}
+                                style={{
+                                    borderWidth: 1,
+                                    borderColor: "grey",
+                                    borderRadius: 5,
+                                    padding: 10,
+                                    marginBottom: 20,
+                                    // color: "grey",
+                                    color: theme.text,
+                                }}
+                            />
+
+                            <View style={{ flexDirection: 'row', justifyContent: 'flex-end', gap: 20 }}>
+                                <TouchableOpacity onPress={() => { setShowConfirmModal(false); setConfirmationText("") }}>
+                                    <Text style={{ color: theme.text, marginRight: 20 }}>No</Text>
+                                </TouchableOpacity>
+
+                                <TouchableOpacity
+                                    disabled={confirmationText.toLowerCase() !== 'cancel order'}
+                                    onPress={async () => {
+                                        await fetchOrders(userEmail, false, true); // cancel
+                                        fetchOrders(userEmail); // refresh
+                                        setShowConfirmModal(false);
+                                        setConfirmationText('');
+                                    }}
+                                >
+                                    <Text style={{
+                                        color: confirmationText.toLowerCase() === 'cancel order' ? '#C40233' : 'grey'
+                                    }}>
+                                        Yes
+                                    </Text>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                    </View>
+                </Modal>
+            )}
+
 
         </View>
     );

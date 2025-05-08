@@ -22,7 +22,7 @@ const AppearanceSetting = () => {
     const { theme, changeTheme, setPrimaryColor } = useTheme();
     const styles = dynamicTheme(theme);
     const navigation = useNavigation();
-    const { isMemeCatsEnabled, toggleMemeCat, isHeaderEnabled, toggleHeader, isNavHeaderEnabled, toggleNavHeader } = useMemeCat();
+    const { isMemeCatsEnabled, toggleMemeCat, isHeaderEnabled, toggleHeader, isNavHeaderEnabled, toggleNavHeader, isBottomNavColorEnabled, toggleBottomNavColor } = useMemeCat();
     const [isColorPickerVisible, setIsColorPickerVisible] = useState(false); // To control the visibility of the color picker
     const [color, setColor] = useState(theme.primaryColor);
     const [tempColor, setTempColor] = useState(color); // Temporary color to preview before saving
@@ -223,6 +223,15 @@ const AppearanceSetting = () => {
                 {/* Animation Section */}
                 <View style={styles.animationSection}>
                     <Section title="Toggle Styles">
+                        <SettingItem
+                            icon="color-wand"
+                            label="Apply colors to Bottom navigation bar"
+                            hasSwitch
+                            onPress={toggleBottomNavColor}
+                            switchValue={isBottomNavColorEnabled}
+                            height={17}
+                            isFirst
+                        />
                         <SettingItem
                             icon="phone-portrait"
                             label="Show top header background on Home"

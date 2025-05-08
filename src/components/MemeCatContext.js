@@ -7,6 +7,7 @@ export const MemeCatProvider = ({ children }) => {
     const [isMemeCatsEnabled, setIsMemeCatsEnabled] = useState(false);
     const [isHeaderEnabled, setIsHeaderEnabled] = useState(true);
     const [isNavHeaderEnabled, setIsNavHeaderEnabled] = useState(true);
+    const [isBottomNavColorEnabled, setIsBottomNavColorEnabled] = useState(true);
 
     // Load settings states from AsyncStorage when app starts
     useEffect(() => {
@@ -22,8 +23,12 @@ export const MemeCatProvider = ({ children }) => {
                 setIsHeaderEnabled(JSON.parse(savedHeader));
             }
             const savedNavHeader = await AsyncStorage.getItem("navHeaderEnabled");
-            if (savedHeader !== null) {
+            if (savedNavHeader !== null) {
                 setIsNavHeaderEnabled(JSON.parse(savedNavHeader));
+            }
+            const savedBottomNavColor = await AsyncStorage.getItem("bottomNavColorEnabled");
+            if (savedBottomNavColor !== null) {
+                setIsBottomNavColorEnabled(JSON.parse(savedBottomNavColor));
             }
         };
 
@@ -49,10 +54,16 @@ export const MemeCatProvider = ({ children }) => {
         setIsNavHeaderEnabled(newValue);
         await AsyncStorage.setItem("navHeaderEnabled", JSON.stringify(newValue));
     };
+    
+    const toggleBottomNavColor = async () => {
+        const newValue = !isBottomNavColorEnabled;
+        setIsBottomNavColorEnabled(newValue);
+        await AsyncStorage.setItem("bottomNavColorEnabled", JSON.stringify(newValue));
+    };
 
 
     return (
-        <MemeCatContext.Provider value={{ isMemeCatsEnabled, toggleMemeCat, isHeaderEnabled, toggleHeader, isNavHeaderEnabled, toggleNavHeader }}>
+        <MemeCatContext.Provider value={{ isMemeCatsEnabled, toggleMemeCat, isHeaderEnabled, toggleHeader, isNavHeaderEnabled, toggleNavHeader, isBottomNavColorEnabled, toggleBottomNavColor }}>
             {children}
         </MemeCatContext.Provider>
     );

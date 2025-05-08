@@ -62,7 +62,7 @@ import UserInfoScreen from "./src/screens/UserInfoScreen";
 import AppearanceSetting from "./src/screens/settings/AppearanceSetting";
 import AboutScreen from "./src/screens/settings/AboutScreen";
 import ImageCropScreen from "./src/screens/ImageCropScreen";
-import { MemeCatProvider } from "./src/components/MemeCatContext";
+import { MemeCatProvider, useMemeCat } from "./src/components/MemeCatContext";
 import { UserProvider } from './src/components/UserContext';
 // import SideNav from "./src/components/SideNav";
 
@@ -93,6 +93,7 @@ const useKeyboardVisibility = () => {
 
 const BottomTabs = () => {
   const { theme } = useTheme();
+  const { isBottomNavColorEnabled } = useMemeCat();
   const keyboardVisible = useKeyboardVisibility(); // Use the hook
   return (
     <Tab.Navigator
@@ -122,14 +123,15 @@ const BottomTabs = () => {
           fontWeight: "bold",
           paddingTop: 4,
         },
-        tabBarActiveTintColor: theme.tabBarIconActive,
+        // tabBarActiveTintColor: theme.tabBarIconActive,
+        tabBarActiveTintColor: isBottomNavColorEnabled ? theme.customButtonBg : theme.tabBarIconActive,
         tabBarInactiveTintColor: theme.tabBarIcon,
         tabBarIconStyle: { marginTop: 7 },
       }}
     >
       <Tab.Screen name="Home" component={HomeScreen} options={{ tabBarIcon: ({ color, size }) => <Ionicons name="home" color={color} size={size} /> }} />
       <Tab.Screen name="Favorites" component={FavoriteScreen} options={{ tabBarIcon: ({ color, size }) => <Ionicons name="heart" color={color} size={size} /> }} />
-      <Tab.Screen name="Menu" component={MenuScreen} options={{ tabBarIcon: ({ color, size }) => <Ionicons name="book" color={color} size={size} /> }} />
+      <Tab.Screen name="Menu" component={MenuScreen} options={{ tabBarIcon: ({ color, size }) => <Ionicons name="search" color={color} size={size} /> }} />
       {/* <Tab.Screen name="Cart" component={CartScreen} options={{ tabBarIcon: ({ color, size }) => <Ionicons name="cart" color={color} size={size} /> }} /> */}
       <Tab.Screen name="Settings" component={SettingsScreen} options={{ tabBarIcon: ({ color, size }) => <Ionicons name="cog" color={color} size={size + 3} /> }} />
     </Tab.Navigator>

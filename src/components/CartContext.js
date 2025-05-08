@@ -12,6 +12,7 @@ export const CartProvider = ({ children }) => {
     const { user, userEmail, order } = useUser();
     const [cartItems, setCartItems] = useState([]);
     const [orderItems, setOrderItems] = useState([]);
+    const [orderCount, setOrderCount] = useState([]);
     const [favItems, setFavItems] = useState([]);
     const [totalAmount, setTotalAmount] = useState(0);
     const [favorites, setFavorites] = useState([]);
@@ -180,11 +181,11 @@ export const CartProvider = ({ children }) => {
     };
 
 
-    const fetchOrders = async (email) => {
+    const fetchOrders = async (email, filter = false, cancel = false) => {
         try {
             if (!user) {
-                //setOrderItems([]);
                 onAddtoCart("person", "Login required!", "to add items into the cart", true);
+                return;
             };
 
             const db = getFirestore();
@@ -195,63 +196,83 @@ export const CartProvider = ({ children }) => {
             if (!snapshot.empty) {
                 const userDoc = snapshot.docs[0];
                 const userId = userDoc.id;
+                const ordersRef = collection(db, "Users", userId, "Orders");
+                const deletedCount = 0;
 
-                const cartRef = collection(db, "Users", userId, "Orders");
-                const cartSnap = await getDocs(cartRef);
+                // Clear all orders if cancel is true
+                if (cancel) {
+                    const cancelSnap = await getDocs(ordersRef);
+                    const cancelPromises = [];
 
+                    cancelSnap.docs.forEach(docSnap => {
+                        cancelPromises.push(deleteDoc(docSnap.ref));
+                    });
+
+                    await Promise.all(cancelPromises);
+                    onAddtoCart("checkmark", "Order Cancelled!", "All your orders are removed", false);
+
+                    // Clear local state immediately
+                    setOrderItems([]);
+                    sumAmount([]);
+                    return; // Exit after clearing all orders
+                }
+
+                // First pass - delete items if filtering
+                if (filter) {
+                    const deleteSnap = await getDocs(ordersRef);
+                    const deletePromises = [];
+
+                    deleteSnap.docs.forEach(docSnap => {
+                        const itemData = docSnap.data();
+                        if (itemData.status === true) {
+                            deletedCount++;
+                            deletePromises.push(deleteDoc(docSnap.ref));
+                            console.log(`🔥 Deleting order: ${itemData.title}`);
+                        }
+                    });
+
+                    await Promise.all(deletePromises);
+                }
+
+                // Second pass - get updated orders
+                const updatedSnap = await getDocs(ordersRef);
                 const productsRef = collection(db, "Products");
-
                 const validItems = [];
 
-                for (const docSnap of cartSnap.docs) {
+                for (const docSnap of updatedSnap.docs) {
                     const itemData = docSnap.data();
                     const productDoc = await getDocs(query(productsRef, where("name", "==", itemData.title)));
 
                     if (!productDoc.empty) {
-                        // validItems.push(itemData);
                         validItems.push({
                             ...itemData,
                             descr: itemData.descr,
                             available: itemData.available,
-                            qty: itemData.qty || 1,  // 👈 Add qty directly into item object
+                            qty: itemData.qty || 1,
                         });
                     } else {
-                        // product no longer exists, remove from cart
                         await deleteDoc(docSnap.ref);
-                        console.warn(`🗑️ Removed orphan cart item: ${itemData.title}`);
+                        console.warn(`🗑️ Removed orphan item: ${itemData.title}`);
                     }
                 }
 
                 setOrderItems(validItems);
+                setOrderCount(validItems.length);
                 sumAmount(validItems);
-            } else {
-                console.warn("😕 No matching user found for email:", email);
+
+                if (deletedCount > 0) {
+                    onAddtoCart("checkmark", "Success", "Ready items removed", false);
+                } else if (filter) {
+                    onAddtoCart("alert-circle", "No Ready Items!", "to be removed", true);
+                }
             }
         } catch (error) {
-            console.error("💥 Error fetching & cleaning cart:", error);
+            console.error("Error:", error);
+            onAddtoCart("alert", "Error", "Failed to process orders", true);
         }
     };
-    // const fetchOrders = async () => {
-    //     try {
-    //         setLoading(true);
-    //         const ordersRef = collection(firestore, "Users", userId, "Orders");
-    //         const ordersSnapshot = await getDocs(ordersRef);
 
-    //         const ordersData = [];
-    //         ordersSnapshot.forEach((doc) => {
-    //             ordersData.push({
-    //                 id: doc.id,
-    //                 ...doc.data()
-    //             });
-    //         });
 
-    //         setOrderItems(ordersData);
-    //     } catch (error) {
-    //         console.error("Error fetching orders:", error);
-    //     } finally {
-    //         setLoading(false);
-    //     }
-    // };
 
     const addedToCart = async (product) => {
         try {
@@ -543,7 +564,7 @@ export const CartProvider = ({ children }) => {
                 batch.set(orderDocRef, {
                     ...cartData,
                     orderedAt: new Date().toISOString(),
-                    status: "pending",
+                    status: false,
                     orderId: `${userId}_${Date.now()}`, // Unique order ID
                 });
 
@@ -600,6 +621,8 @@ export const CartProvider = ({ children }) => {
             setCartItems,
             orderItems,
             setOrderItems,
+            orderCount,
+            setOrderCount,
             favItems,
             setFavItems,
             addedToCart,
