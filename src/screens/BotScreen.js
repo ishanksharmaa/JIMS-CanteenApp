@@ -81,7 +81,7 @@ const BotScreen = () => {
 
             const botReply = response.data?.candidates?.[0]?.content?.parts?.[0]?.text ||
                 "Sorry, I couldn't understand that.";
-                
+
             setMessages(prevMessages => [{ type: "bot", text: botReply }, ...prevMessages]);
 
         } catch (error) {
@@ -89,7 +89,7 @@ const BotScreen = () => {
             setMessages(prevMessages => [{ type: "bot", text: "Error connecting to the assistant." }, ...prevMessages]);
 
         } finally {
-            setIsLoading(false); // End loading
+            setIsLoading(false); //End loading
             Keyboard.dismiss();
         }
     };
