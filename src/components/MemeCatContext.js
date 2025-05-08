@@ -8,7 +8,7 @@ export const MemeCatProvider = ({ children }) => {
     const [isHeaderEnabled, setIsHeaderEnabled] = useState(true);
     const [isNavHeaderEnabled, setIsNavHeaderEnabled] = useState(true);
 
-    // Load settings states from AsyncStorage when app starts
+    // Load settings states from AsyncStorage when the app starts
     useEffect(() => {
         const loadSettings = async () => {
             const savedMemeCat = await AsyncStorage.getItem("memeCatsEnabled");
