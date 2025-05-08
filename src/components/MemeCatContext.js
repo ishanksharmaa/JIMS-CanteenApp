@@ -7,7 +7,7 @@ export const MemeCatProvider = ({ children }) => {
     const [isMemeCatsEnabled, setIsMemeCatsEnabled] = useState(false);
     const [isHeaderEnabled, setIsHeaderEnabled] = useState(true);
     const [isNavHeaderEnabled, setIsNavHeaderEnabled] = useState(true);
-    const [isBottomNavColorEnabled, setIsBottomNavColorEnabled] = useState(true);
+    const [isBottomNavColorEnabled, setIsBottomNavColorEnabled] = useState(false);
 
     // Load settings states from AsyncStorage when app starts
     useEffect(() => {
