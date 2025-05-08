@@ -56,7 +56,7 @@ const BotScreen = () => {
             console.error("API Error:", error.response?.data || error.message);
             setMessages(prevMessages => [{ type: "bot", text: "Error connecting to the assistant." }, ...prevMessages]);
         } finally {
-            setIsLoading(false); // End loading
+            setIsLoading(false); //End loading
         }
     };
 
