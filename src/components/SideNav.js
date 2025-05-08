@@ -100,6 +100,7 @@ const SideNav = ({ isVisible, toggleVisibility }) => {
                 <SettingItem icon={isDarkMode ? "create-outline" : "create"} label="Edit Profile" arrow={false} height={18} onPress={() => navigation.navigate("UserInfo")} isFirst />
                 <SettingItem icon={isDarkMode ? "notifications-outline" : "notifications"} label="Your Orders" arrow={false} height={18} onPress={() => navigation.navigate("Orders")} isFirst />
                 <SettingItem icon={isDarkMode ? "cog-outline" : "cog"} label="Settings" arrow={false} height={20} onPress={() => navigation.navigate("Settings")} isFirst />
+                <SettingItem icon={isDarkMode ? "chatbubbles-outline" : "sparkles"} label="ChatBite AI" arrow={false} height={20} onPress={() => navigation.navigate("ChatBite")} isFirst />
 
                 <View style={{ borderTopWidth: 1.1, borderTopColor: theme.mode === 'dark' ? 'rgba(255, 255, 255, 0.093)' : 'rgba(0, 0, 0, 0.097)', marginHorizontal: lineDividerWidth }} />
                 <SettingItem icon={isDarkMode ? "mail-open-outline" : "mail-open"} label="Feedback" arrow={false} height={18} onPress={() => navigation.navigate("FAQ")} isFirst />

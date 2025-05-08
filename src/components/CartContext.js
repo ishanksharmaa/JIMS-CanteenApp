@@ -197,7 +197,7 @@ export const CartProvider = ({ children }) => {
                 const userDoc = snapshot.docs[0];
                 const userId = userDoc.id;
                 const ordersRef = collection(db, "Users", userId, "Orders");
-                const deletedCount = 0;
+                let deletedCount = 0;
 
                 // Clear all orders if cancel is true
                 if (cancel) {
@@ -261,14 +261,14 @@ export const CartProvider = ({ children }) => {
                 sumAmount(validItems);
 
                 if (deletedCount > 0) {
-                    onAddtoCart("checkmark", "Success", "Ready items removed", false);
+                    onAddtoCart("checkmark", "Removed Successfully!", "Ready items removed", false);
                 } else if (filter) {
                     onAddtoCart("alert-circle", "No Ready Items!", "to be removed", true);
                 }
             }
         } catch (error) {
             console.error("Error:", error);
-            onAddtoCart("alert", "Error", "Failed to process orders", true);
+            onAddtoCart("alert-circle", "Error", "Failed to process orders", true);
         }
     };
 

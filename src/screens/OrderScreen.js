@@ -36,7 +36,7 @@ const OrderScreen = () => {
     };
 
     const removeReadyItems = async () => {
-        await fetchOrders(userEmail, true); // Wait for deletion to complete
+        await fetchOrders(userEmail, true, false); // Wait for deletion to complete
         fetchOrders(userEmail); // Then refresh the list
     };
     const cancelOrders = () => {

@@ -77,7 +77,7 @@ const OrderItem = ({ image, title, price, descr, quantity, qty, time, available,
                 <Text style={styles.descr}>{descr}</Text>
                 {/* <Text style={styles.price}>{'₹ ' + price}</Text> */}
                 <Text style={styles.billAmount}>{`Total: ₹${price} X ${count} = ₹ ` + price * count}</Text>
-                <Text style={styles.descr}>{formatOrderDate(orderedAt)}</Text>
+                <Text style={styles.orderedAt}>{formatOrderDate(orderedAt)}</Text>
             </View>
         </View>
         // </Swipeable>
@@ -116,6 +116,11 @@ const dynamicTheme = (theme, status) => {
             textTransform: 'capitalize',
         },
         descr: {
+            fontSize: 12,
+            fontWeight: 400,
+            color: theme.text,
+        },
+        orderedAt: {
             fontSize: 12,
             fontWeight: 400,
             color: theme.text,
