@@ -157,7 +157,7 @@ const dynamicTheme = (theme) => ({
     },
     textInput: {
         flex: 1,
-        color: "white",
+        color: theme.text,
         paddingHorizontal: 10,
     },
     sendButton: {
