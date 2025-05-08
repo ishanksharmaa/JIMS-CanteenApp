@@ -114,7 +114,6 @@ const BotScreen = () => {
             onPress: () => changeTheme(theme.mode === "dark" ? "light" : "dark")
         },
         {
-            // text: chatDownEnabled ? 'Chat Upward' : 'Chat Downw',
             text: !chatDownEnabled ? 'Flow Upward' : 'Flow Down',
             // textColor: theme.text,
             textColor: theme.text,
