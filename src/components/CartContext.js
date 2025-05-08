@@ -183,7 +183,7 @@ export const CartProvider = ({ children }) => {
     const fetchOrders = async (email) => {
         try {
             if (!user) {
-                // setOrderItems([]);
+                //setOrderItems([]);
                 onAddtoCart("person", "Login required!", "to add items into the cart", true);
             };
 
