@@ -62,11 +62,7 @@ const BotScreen = () => {
     const sendPrompt = async () => {
         if (!prompt.trim()) return;
 
-        if (chatDownEnabled) {
-            setMessages(prevMessages => [{ type: "user", text: prompt }, ...prevMessages]);
-        } else {
-            setMessages(prevMessages => [...prevMessages, { type: "user", text: prompt }]);
-        }
+        setMessages(prevMessages => [{ type: "user", text: prompt }, ...prevMessages]);
         setPrompt("");
 
         setIsLoading(true);
@@ -85,19 +81,13 @@ const BotScreen = () => {
 
             const botReply = response.data?.candidates?.[0]?.content?.parts?.[0]?.text ||
                 "Sorry, I couldn't understand that.";
-            if (chatDownEnabled) {
-                setMessages(prevMessages => [{ type: "bot", text: botReply }, ...prevMessages]);
-            } else {
-                setMessages(prevMessages => [...prevMessages, { type: "bot", text: botReply }]);
-            }
+                
+            setMessages(prevMessages => [{ type: "bot", text: botReply }, ...prevMessages]);
 
         } catch (error) {
             console.error("API Error:", error.response?.data || error.message);
-            if (chatDownEnabled) {
-                setMessages(prevMessages => [{ type: "bot", text: "Error connecting to the assistant." }, ...prevMessages]);
-            } else {
-                setMessages(prevMessages => [...prevMessages, { type: "bot", text: "Error connecting to the assistant." }]);
-            }
+            setMessages(prevMessages => [{ type: "bot", text: "Error connecting to the assistant." }, ...prevMessages]);
+
         } finally {
             setIsLoading(false); // End loading
             Keyboard.dismiss();
@@ -164,7 +154,7 @@ const BotScreen = () => {
                 contentContainerStyle={styles.chatContainer}
                 keyboardShouldPersistTaps="handled"
                 scrollEnabled={true}
-                inverted={chatDownEnabled ? false : true}
+                inverted={chatDownEnabled}
             />
 
             <View style={[styles.inputBox, { marginBottom: keyboardVisible ? '37.5%' : 0 }]}>
@@ -210,13 +200,11 @@ const dynamicTheme = (theme, chatDownEnabled) => ({
         paddingTop: 0,
     },
     chatContainer: {
-        // paddingBottom: chatDownEnabled ? 100 : 0,
-        ...(chatDownEnabled ? { paddingBottom: 100 } : { paddingTop: 100 }),
+        ...(chatDownEnabled ? { paddingTop: 100 } : { paddingBottom: 100 }),
         // borderWidth: 2,
         borderColor: theme.text,
         flexGrow: 1,
         justifyContent: "flex-end",
-        // backgroundColor: 'red'
     },
     messageBubble: {
         margin: 8,
@@ -270,7 +258,7 @@ const dynamicTheme = (theme, chatDownEnabled) => ({
     overlay: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#0006' },
     alertBox: { backgroundColor: theme.background2, padding: 20, borderRadius: 12, width: "80%" },
     title: { fontWeight: 'bold', fontSize: 18, marginBottom: 10, color: theme.text },
-    alertText: {fontSize: 14, marginBottom: 5, color: theme.text },
+    alertText: { fontSize: 14, marginBottom: 5, color: theme.text },
     okBtn: { marginTop: 20, color: theme.primaryColor, textAlign: 'right' }
 
 });

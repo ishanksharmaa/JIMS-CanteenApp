@@ -5,7 +5,7 @@ import { useCart } from "./CartContext";
 const MemeCatContext = createContext();
 
 export const MemeCatProvider = ({ children }) => {
-    const [chatDownEnabled, setChatDownEnabled] = useState(true);
+    const [chatDownEnabled, setChatDownEnabled] = useState(false);
     const [isMemeCatsEnabled, setIsMemeCatsEnabled] = useState(false);
     const [isHeaderEnabled, setIsHeaderEnabled] = useState(true);
     const [isNavHeaderEnabled, setIsNavHeaderEnabled] = useState(true);
@@ -72,12 +72,6 @@ export const MemeCatProvider = ({ children }) => {
         const newValue = !chatDownEnabled;
         setChatDownEnabled(newValue);
         await AsyncStorage.setItem("chatDownEnabled", JSON.stringify(newValue));
-
-        if (newValue) {
-            onAddtoCart("arrow-up", "Chat flow Up-Down", "will appear in new messages", 3000, false);
-        } else {
-            onAddtoCart("arrow-down", "Chat flow Down-Up", "will appear in new messages", 3000, true);
-        }
     };
 
 
