@@ -34,7 +34,7 @@ const BotScreen = () => {
 
     useEffect(() => {
         if (scrollRef.current) {
-            scrollRef.current.scrollToEnd({ animated: true });
+            scrollRef.current.scrollToOffset({ offset: 0, animated: true });
         }
     }, [messages, isLoading]);
 
@@ -81,7 +81,7 @@ const BotScreen = () => {
 
             const botReply = response.data?.candidates?.[0]?.content?.parts?.[0]?.text ||
                 "Sorry, I couldn't understand that.";
-                
+
             setMessages(prevMessages => [{ type: "bot", text: botReply }, ...prevMessages]);
 
         } catch (error) {
@@ -94,9 +94,9 @@ const BotScreen = () => {
         }
     };
 
-    const renderItem = ({ item }) => (
+    const renderItem = ({ item, index }) => (
         <View style={[styles.messageBubble, item.type === "user" ? styles.userBubble : styles.botBubble]}>
-            {isLoading && item.type === "bot" && (
+            {isLoading && item.type === "bot" && index === 0 && (
                 <View style={styles.botBubble}>
                     <Text style={{ color: 'gray', fontSize: 20 }}>Thinking...</Text>
                 </View>
@@ -107,25 +107,38 @@ const BotScreen = () => {
 
     const menuItems = [
         {
-            text: theme.mode === "dark" ? 'Light Theme' : "Dark Theme",
+            text: theme.mode === "dark" ? 'Dark Theme' : "Light Theme",
             textColor: theme.text,
-            icon: theme.mode === "dark" ? "sunny" : "moon",
-            iconColor: theme.text,
+            icon: theme.mode === "dark" ? "moon" : "sunny",
+            iconColor: theme.primaryColor,
             onPress: () => changeTheme(theme.mode === "dark" ? "light" : "dark")
         },
         {
             // text: chatDownEnabled ? 'Chat Upward' : 'Chat Downw',
-            text: chatDownEnabled ? 'Flow Upward' : 'Flow Down',
+            text: !chatDownEnabled ? 'Flow Upward' : 'Flow Down',
+            // textColor: theme.text,
             textColor: theme.text,
-            icon: chatDownEnabled ? 'arrow-up' : 'arrow-down',
-            iconColor: chatDownEnabled ? theme.primaryColor : theme.text,
+            icon: !chatDownEnabled ? 'arrow-up' : 'arrow-down',
+            iconColor: !chatDownEnabled ? theme.primaryColor : theme.primaryColor,
             onPress: toggleInvertChat,
         },
     ];
 
     return (
         <View style={[styles.container]}>
-            <HeaderBackIcon title="ChatBite AI" />
+            {/* <HeaderBackIcon title="ChatBite AI" /> */}
+            <HeaderBackIcon
+                title={
+                    <Text>
+                        <Text style={{ color: theme.text }}>Chat</Text>
+                        <Text style={{ color: theme.text }}>Bite</Text>
+                        <Text style={{ color: theme.primaryColor }}>AI</Text>
+                        {/* <Text style={{ color: theme.primaryColor }}>Snack</Text> */}
+                        {/* <Text style={{ color: theme.text }}>Bot</Text> */}
+                    </Text>
+                }
+            />
+
             <View style={{ position: 'absolute', top: 72.5, right: 23 }}>
                 <ThreeDotMenu
                     icon="ellipsis-horizontal"
