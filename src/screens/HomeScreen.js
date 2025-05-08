@@ -279,10 +279,10 @@ const HomeScreen = () => {
 
                                 {/* Header Icons */}
                                 <View style={styles.headerIcons}>
-                                    <TouchableOpacity style={styles.iconBg}>
-                                        <Ionicons name="notifications-outline" size={23} color={theme.text} />
+                                    <TouchableOpacity style={styles.iconBg} activeOpacity={0.8} onPress={()=> navigation.navigate("Orders")} >
+                                        <Ionicons name="notifications-outline" size={23} color={theme.text}/>
                                     </TouchableOpacity>
-                                    <TouchableOpacity onPress={() => navigation.navigate("Cart")} style={styles.iconBg}>
+                                    <TouchableOpacity onPress={() => navigation.navigate("Cart")} style={styles.iconBg} activeOpacity={0.8} >
                                         <Ionicons name="cart-outline" size={23} color={theme.text} />
                                     </TouchableOpacity>
                                 </View> {/* headerIcons end */}

@@ -42,17 +42,6 @@ const FavoriteScreen = () => {
 
   // Fetch favorites based on title field
   useEffect(() => {
-    // if (!uid) {
-    //   return (
-    //     <View style={styles.container}>
-    //       <View style={styles.emptyContainer}>
-    //         <Ionicons name="log-in" size={80} color={theme.primaryColor} />
-    //         <Text style={styles.text}>Please login to view favorites</Text>
-    //       </View>
-    //     </View>
-    //   );
-    // }
-
     const unsubscribe = firestore()
       .collection("Users")
       .doc(uid)
@@ -118,8 +107,7 @@ const FavoriteScreen = () => {
           {user ? (
             <Text style={styles.text}>No Favorites Yet</Text>
           ) : (
-            // <Text style={styles.text}>Please Sign In to view favorites!</Text>
-            <Text style={[ styles.text, { textAlign: "center", marginTop: 12, fontSize: 18, fontWeight: "bold", color: theme.text }]}>
+            <Text style={[styles.text, { textAlign: "center", marginTop: 12, fontSize: 18, fontWeight: "bold", color: theme.text }]}>
               Please <Text onPress={() => navigation.navigate("Login")} style={{ fontWeight: "700", color: theme.primaryColor }}>SignIn</Text> to make items favorite!
             </Text>
           )}
@@ -149,6 +137,8 @@ const FavoriteScreen = () => {
                   quantity={item.quantity}
                   qty={item.qty}
                   amount={item.amount}
+                  time={item.time}
+                  available={item.available}
                   size={0.9} gapV={0} gapH={0}
                 />
               </View>

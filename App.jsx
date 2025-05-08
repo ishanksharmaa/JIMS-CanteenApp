@@ -53,6 +53,7 @@ import CartScreen from "./src/screens/CartScreen";
 import FavoriteScreen from "./src/screens/FavoriteScreen";
 import MenuScreen from "./src/screens/MenuScreen";
 import ProductScreen from "./src/screens/ProductScreen";
+import OrderScreen from "./src/screens/OrderScreen";
 import AddProductScreen from "./src/screens/AddProductScreen";
 import ProductsListScreen from "./src/screens/ProductsListScreen";
 import ProfileScreen from "./src/screens/ProfileScreen";
@@ -172,6 +173,7 @@ const AppContent = () => {
           <Stack.Screen name="Cart" component={CartScreen} />
           <Stack.Screen name="Profile" component={ProfileScreen} />
           <Stack.Screen name="ProductScreen" component={ProductScreen} />
+          <Stack.Screen name="Orders" component={OrderScreen} />
           <Stack.Screen name="Settings" component={SettingsScreen} />
           <Stack.Screen name="UserInfo" component={UserInfoScreen} />
           <Stack.Screen name="Appearance" component={AppearanceSetting} />

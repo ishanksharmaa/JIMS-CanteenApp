@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { getFirestore, collection, getDocs, setDoc, doc, query, where, deleteDoc, updateDoc } from "firebase/firestore";
+import { getFirestore, collection, getDocs, setDoc, doc, query, where, deleteDoc, updateDoc, writeBatch } from "firebase/firestore";
 import auth from "@react-native-firebase/auth";
 import Toast from 'react-native-toast-message';
 import firestore from '@react-native-firebase/firestore';
@@ -11,13 +11,14 @@ export const CartContext = createContext();
 export const CartProvider = ({ children }) => {
     const { user, userEmail, order } = useUser();
     const [cartItems, setCartItems] = useState([]);
+    const [orderItems, setOrderItems] = useState([]);
     const [favItems, setFavItems] = useState([]);
     const [totalAmount, setTotalAmount] = useState(0);
     const [favorites, setFavorites] = useState([]);
     // const [favoriteProducts, setFavoriteProducts] = useState([]);
-    const [quantities, setQuantities] = useState({});
     const isFavorite = (title) => favorites.includes(title);
     const isInCart = (title) => cartItems.some(item => item.title === title);
+    // const isInOrders = (title) => orderedItems.some(item => item.title === title);
     const [productItems, setProductItems] = useState([]);
     const [singleProduct, setSingleProduct] = useState([]);
 
@@ -39,6 +40,7 @@ export const CartProvider = ({ children }) => {
             loadFavorites();
         } else {
             setCartItems([]);
+            setOrderItems([]);
             setFavItems([]);
         }
     }, [user]);
@@ -176,6 +178,80 @@ export const CartProvider = ({ children }) => {
             console.error("💥 Error fetching & cleaning cart:", error);
         }
     };
+
+
+    const fetchOrders = async (email) => {
+        try {
+            if (!user) {
+                // setOrderItems([]);
+                onAddtoCart("person", "Login required!", "to add items into the cart", true);
+            };
+
+            const db = getFirestore();
+            const userRef = collection(db, "Users");
+            const q = query(userRef, where("email", "==", email));
+            const snapshot = await getDocs(q);
+
+            if (!snapshot.empty) {
+                const userDoc = snapshot.docs[0];
+                const userId = userDoc.id;
+
+                const cartRef = collection(db, "Users", userId, "Orders");
+                const cartSnap = await getDocs(cartRef);
+
+                const productsRef = collection(db, "Products");
+
+                const validItems = [];
+
+                for (const docSnap of cartSnap.docs) {
+                    const itemData = docSnap.data();
+                    const productDoc = await getDocs(query(productsRef, where("name", "==", itemData.title)));
+
+                    if (!productDoc.empty) {
+                        // validItems.push(itemData);
+                        validItems.push({
+                            ...itemData,
+                            descr: itemData.descr,
+                            available: itemData.available,
+                            qty: itemData.qty || 1,  // 👈 Add qty directly into item object
+                        });
+                    } else {
+                        // product no longer exists, remove from cart
+                        await deleteDoc(docSnap.ref);
+                        console.warn(`🗑️ Removed orphan cart item: ${itemData.title}`);
+                    }
+                }
+
+                setOrderItems(validItems);
+                sumAmount(validItems);
+            } else {
+                console.warn("😕 No matching user found for email:", email);
+            }
+        } catch (error) {
+            console.error("💥 Error fetching & cleaning cart:", error);
+        }
+    };
+    // const fetchOrders = async () => {
+    //     try {
+    //         setLoading(true);
+    //         const ordersRef = collection(firestore, "Users", userId, "Orders");
+    //         const ordersSnapshot = await getDocs(ordersRef);
+
+    //         const ordersData = [];
+    //         ordersSnapshot.forEach((doc) => {
+    //             ordersData.push({
+    //                 id: doc.id,
+    //                 ...doc.data()
+    //             });
+    //         });
+
+    //         setOrderItems(ordersData);
+    //     } catch (error) {
+    //         console.error("Error fetching orders:", error);
+    //     } finally {
+    //         setLoading(false);
+    //     }
+    // };
 
     const addedToCart = async (product) => {
         try {
@@ -433,57 +509,88 @@ export const CartProvider = ({ children }) => {
     };
 
     const orderPlaced = async (userEmail) => {
-
         if (!userEmail) return;
 
-        const db = getFirestore();
-        const usersRef = collection(db, "Users");
-        const q = query(usersRef, where("email", "==", userEmail));
-        const snapshot = await getDocs(q);
+        try {
+            const db = getFirestore();
 
-        if (snapshot.empty) {
-            console.error("No user found with email:", userEmail);
-            throw new Error("User document not found");
-        }
+            // 1. Get user reference
+            const usersRef = collection(db, "Users");
+            const q = query(usersRef, where("email", "==", userEmail));
+            const snapshot = await getDocs(q);
 
-        // 2. Get the user ID from the document
-        const userDoc = snapshot.docs[0];
-        const userId = userDoc.id;
-        console.log("Found user ID:", userId);
+            if (snapshot.empty) {
+                console.error("No user found with email:", userEmail);
+                throw new Error("User document not found");
+            }
 
-        // 3. Now update the document
-        const userRef = doc(db, "Users", userId);
-        console.log("Updating document at path:", userRef.path);
+            const userDoc = snapshot.docs[0];
+            const userId = userDoc.id;
 
-        await updateDoc(userRef, {
-            order: "placed",
-            billAmount: totalAmount,
-            updatedAt: new Date().toISOString()
-        });
+            // 2. Process cart items to orders
+            const cartRef = collection(db, "Users", userId, "Cart");
+            const ordersRef = collection(db, "Users", userId, "Orders");
+            const cartSnapshot = await getDocs(cartRef);
 
-        
-        // 4. Process cart items
-        const cartRef = collection(db, "Users", userId, "Cart");
-        const cartSnapshot = await getDocs(cartRef);
+            const newOrderedItems = [];
+            const batch = writeBatch(db);
 
-        // Process each cart item
-        for (const cartDoc of cartSnapshot.docs) {
-            const orderRef = doc(db, "Users", userId, "Orders", cartDoc.id);
-            await setDoc(orderRef, {
-                ...cartDoc.data(),
-                orderedAt: new Date().toISOString(),
-                // orderId: orderId,
-                // billAmount: totalAmount // Your total amount variable
+            // Process each cart item
+            for (const cartDoc of cartSnapshot.docs) {
+                const cartData = cartDoc.data();
+                const orderDocRef = doc(ordersRef, cartDoc.id);
+
+                batch.set(orderDocRef, {
+                    ...cartData,
+                    orderedAt: new Date().toISOString(),
+                    status: "pending",
+                    orderId: `${userId}_${Date.now()}`, // Unique order ID
+                });
+
+                newOrderedItems.push({
+                    id: cartDoc.id,
+                    ...cartData
+                });
+
+                // Delete from cart
+                batch.delete(cartDoc.ref);
+            }
+
+            // Update user document
+            const userDocRef = doc(db, "Users", userId);
+            batch.update(userDocRef, {
+                order: "placed",
+                billAmount: totalAmount,
+                updatedAt: new Date().toISOString()
             });
 
-            // Delete from Cart
-            await deleteDoc(cartDoc.ref);
-        }
+            // Commit all changes
+            await batch.commit();
 
-        // 9. Update local state
-        setCartItems([]);
-        setTotalAmount(0);
-        return true;
+            // Update local state
+            setOrderItems(prev => [...prev, ...newOrderedItems]);
+            setCartItems([]);
+            setTotalAmount(0);
+
+            return true;
+        } catch (error) {
+            console.error("Error placing order:", error);
+            throw error;
+        }
+    };
+
+    // utils/dateFormatter.js
+    const formatOrderDate = (isoString) => {
+        const date = new Date(isoString);
+
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const year = date.getFullYear();
+
+        const hours = String(date.getHours()).padStart(2, '0');
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+
+        return `${day}-${month}-${year}  ${hours}:${minutes}`;
     };
 
 
@@ -491,6 +598,8 @@ export const CartProvider = ({ children }) => {
         <CartContext.Provider value={{
             cartItems,
             setCartItems,
+            orderItems,
+            setOrderItems,
             favItems,
             setFavItems,
             addedToCart,
@@ -498,6 +607,7 @@ export const CartProvider = ({ children }) => {
             addedToFav,
             removedFromFav,
             fetchCart,
+            fetchOrders,
             updateQuantity,
             totalAmount,
             onAddtoCart,
@@ -512,6 +622,7 @@ export const CartProvider = ({ children }) => {
             setSingleProduct,
             fetchProductByTitle,
             orderPlaced,
+            formatOrderDate,
         }}>
             {children}
         </CartContext.Provider>
