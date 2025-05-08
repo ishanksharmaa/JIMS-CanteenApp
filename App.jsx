@@ -134,7 +134,7 @@ const BottomTabs = () => {
       <Tab.Screen name="Favorites" component={FavoriteScreen} options={{ tabBarIcon: ({ color, size }) => <Ionicons name="heart" color={color} size={size} /> }} />
       <Tab.Screen name="Menu" component={MenuScreen} options={{ tabBarIcon: ({ color, size }) => <Ionicons name="search" color={color} size={size} /> }} />
       {/* <Tab.Screen name="Settings" component={SettingsScreen} options={{ tabBarIcon: ({ color, size }) => <Ionicons name="cog" color={color} size={size + 3} /> }} /> */}
-      <Tab.Screen name="ChatBite" component={BotScreen} options={{ tabBarIcon: ({ color, size }) => <Ionicons name="chatbubbles-outline" color={color} size={size + 3} />, tabBarStyle: {display: 'none'}, }} />
+      <Tab.Screen name="ChatBite" component={BotScreen} options={{ tabBarIcon: ({ color, size }) => <Ionicons name="chatbubbles-outline" color={color} size={size + 3} />, tabBarStyle: { display: 'none' }, }} />
     </Tab.Navigator>
   );
 };
@@ -194,17 +194,17 @@ const AppContent = () => {
 
 const App = () => {
   return (
-    <MemeCatProvider>
-      <ThemeProvider>
-        <ImageProvider>
-          <UserProvider>
-            <CartProvider>
+    <ThemeProvider>
+      <ImageProvider>
+        <UserProvider>
+          <CartProvider>
+            <MemeCatProvider>
               <AppContent />  {/* ✅ Wrapping here so `useTheme()` works properly */}
-            </CartProvider>
-          </UserProvider>
-        </ImageProvider>
-      </ThemeProvider>
-    </MemeCatProvider>
+            </MemeCatProvider>
+          </CartProvider>
+        </UserProvider>
+      </ImageProvider>
+    </ThemeProvider>
   );
 };
 
