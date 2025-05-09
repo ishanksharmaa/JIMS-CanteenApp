@@ -8,6 +8,7 @@ import { HeaderBackIcon } from "./CartScreen";
 import ThemeToggle from "../components/ThemeToggle";
 import { useMemeCat } from "../components/MemeCatContext";
 import ThreeDotMenu from "../components/ThreeDotMenu";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Initialize sound module
 Sound.setCategory('Playback');
@@ -24,18 +25,22 @@ const BotScreen = () => {
     const [showAlert, setShowAlert] = useState(true);
     const [isSoundModalVisible, setIsSoundModalVisible] = useState(false);
 
-    const [selectedSentSound, setSelectedSentSound] = useState('switch');
-    const [selectedReceivedSound, setSelectedReceivedSound] = useState('winxp');
+    const [selectedSentSound, setSelectedSentSound] = useState('step1');
+    const [selectedReceivedSound, setSelectedReceivedSound] = useState('mint');
+    const [previewSound, setPreviewSound] = useState(null);
 
     const soundOptions = [
         { name: 'switch', file: require('../../assets/sounds/switch.mp3') },
-        { name: 'push', file: require('../../assets/sounds/push.mp3') },
+        { name: 'ripple', file: require('../../assets/sounds/push.mp3') },
         { name: 'mint', file: require('../../assets/sounds/mint.mp3') },
-        { name: 'step1', file: require('../../assets/sounds/step1.mp3') },
-        { name: 'step', file: require('../../assets/sounds/step.mp3') },
+        { name: 'drop', file: require('../../assets/sounds/step1.mp3') },
+        { name: 'cartoon', file: require('../../assets/sounds/step.mp3') },
         { name: 'pop', file: require('../../assets/sounds/pop.mp3') },
-        { name: 'duck', file: require('../../assets/sounds/duck.mp3') },
-        { name: 'winxp', file: require('../../assets/sounds/winxp.mp3') },
+        { name: 'quack', file: require('../../assets/sounds/duck.mp3') },
+        { name: 'win xp', file: require('../../assets/sounds/winxp.mp3') },
+        { name: 'wiwi cat', file: require('../../assets/sounds/wiwi.mp3') },
+        { name: 'ewiwiwi', file: require('../../assets/sounds/ewiwi.mp3') },
+        { name: 'oiiaii', file: require('../../assets/sounds/oiiaii.mp3') },
         // Add more as needed
     ];
 
@@ -43,33 +48,45 @@ const BotScreen = () => {
     const sentSoundRef = useRef(null);
     const receivedSoundRef = useRef(null);
 
-    // Load sounds
+    // Load sounds and preferences
     useEffect(() => {
-        // Sent sound
-        sentSoundRef.current = new Sound(
-            // require('../../assets/sounds/step.mp3'),
-            require('../../assets/sounds/switch.mp3'),
-            Sound.MAIN_BUNDLE,
-            (error) => {
-                if (error) {
-                    console.log('Failed to load sent sound', error);
-                    return;
-                }
-            }
-        );
+        const loadSoundPreferences = async () => {
+            try {
+                // Load saved sound preferences
+                const savedSentSound = await AsyncStorage.getItem('selectedSentSound');
+                const savedReceivedSound = await AsyncStorage.getItem('selectedReceivedSound');
 
-        // Received sound
-        receivedSoundRef.current = new Sound(
-            require('../../assets/sounds/winxp.mp3'),
-            // require('../../assets/sounds/step.mp3'),
-            Sound.MAIN_BUNDLE,
-            (error) => {
-                if (error) {
-                    console.log('Failed to load received sound', error);
-                    return;
+                // Update state with saved values or defaults
+                if (savedSentSound) setSelectedSentSound(savedSentSound);
+                if (savedReceivedSound) setSelectedReceivedSound(savedReceivedSound);
+
+                // Initialize sounds with saved preferences or defaults
+                const sentSoundFile = soundOptions.find(s => s.name === (savedSentSound || 'switch'))?.file;
+                const receivedSoundFile = soundOptions.find(s => s.name === (savedReceivedSound || 'winxp'))?.file;
+
+                // Release any existing sounds
+                if (sentSoundRef.current) sentSoundRef.current.release();
+                if (receivedSoundRef.current) receivedSoundRef.current.release();
+
+                // Create new sound instances
+                if (sentSoundFile) {
+                    sentSoundRef.current = new Sound(sentSoundFile, Sound.MAIN_BUNDLE, (error) => {
+                        if (error) console.log('Failed to load sent sound', error);
+                    });
                 }
+
+                if (receivedSoundFile) {
+                    receivedSoundRef.current = new Sound(receivedSoundFile, Sound.MAIN_BUNDLE, (error) => {
+                        if (error) console.log('Failed to load received sound', error);
+                    });
+                }
+
+            } catch (error) {
+                console.log('Error loading sound preferences:', error);
             }
-        );
+        };
+
+        loadSoundPreferences();
 
         // Cleanup on unmount
         return () => {
@@ -77,6 +94,51 @@ const BotScreen = () => {
             if (receivedSoundRef.current) receivedSoundRef.current.release();
         };
     }, []);
+
+    // Load sounds
+    // useEffect(() => {
+    //     // Sent sound
+    //     sentSoundRef.current = new Sound(
+    //         // require('../../assets/sounds/step.mp3'),
+    //         require('../../assets/sounds/step1.mp3'),
+    //         Sound.MAIN_BUNDLE,
+    //         (error) => {
+    //             if (error) {
+    //                 console.log('Failed to load sent sound', error);
+    //                 return;
+    //             }
+    //         }
+    //     );
+
+    //     // Received sound
+    //     receivedSoundRef.current = new Sound(
+    //         require('../../assets/sounds/mint.mp3'),
+    //         // require('../../assets/sounds/step.mp3'),
+    //         Sound.MAIN_BUNDLE,
+    //         (error) => {
+    //             if (error) {
+    //                 console.log('Failed to load received sound', error);
+    //                 return;
+    //             }
+    //         }
+    //     );
+
+    //     // Cleanup on unmount
+    //     return () => {
+    //         if (sentSoundRef.current) sentSoundRef.current.release();
+    //         if (receivedSoundRef.current) receivedSoundRef.current.release();
+    //         if (previewSound) previewSound.release();
+    //     };
+    // }, []);
+
+    const saveSoundPreferences = async (sentSound, receivedSound) => {
+        try {
+            await AsyncStorage.setItem('selectedSentSound', sentSound);
+            await AsyncStorage.setItem('selectedReceivedSound', receivedSound);
+        } catch (error) {
+            console.log('Error saving sound preferences:', error);
+        }
+    };
 
     const playSentSound = () => {
         if (sentSoundRef.current) {
@@ -175,9 +237,9 @@ const BotScreen = () => {
         }
     };
 
-    const renderItem = ({ item, index }) => (
+    const renderItem = ({ item }) => (
         <View style={[styles.messageBubble, item.type === "user" ? styles.userBubble : styles.botBubble]}>
-            {isLoading && item.type === "bot" && index === 0 && (
+            {isLoading && item.type === "bot" && (
                 <View style={styles.botBubble}>
                     <Text style={{ color: 'gray', fontSize: 20 }}>Thinking...</Text>
                 </View>
@@ -202,7 +264,7 @@ const BotScreen = () => {
             onPress: toggleInvertChat,
         },
         {
-            text: 'Select sounds',
+            text: 'Select sound',
             textColor: theme.text,
             icon: 'musical-note',
             iconColor: theme.text,
@@ -225,7 +287,7 @@ const BotScreen = () => {
                 }
             />
 
-            <View style={{ position: 'absolute', top: 72.5, right: 23 }}>
+            <View style={{ position: 'absolute', top: 70, right: 22, padding: 1.5 }}>
                 <ThreeDotMenu
                     icon="ellipsis-horizontal"
                     iconColor={theme.text}
@@ -267,7 +329,7 @@ const BotScreen = () => {
                     returnKeyType="send"
                 />
                 <TouchableOpacity onPress={sendPrompt} style={styles.sendButton}>
-                    <Ionicons name="send" size={26} color={theme.primaryColor} />
+                    <Ionicons name="sparkles" size={26} color={theme.primaryColor} />
                 </TouchableOpacity>
             </View>
             {showAlert && (
@@ -293,7 +355,20 @@ const BotScreen = () => {
                 <View style={{ flex: 1, backgroundColor: '#000000aa', justifyContent: 'center', padding: 20 }}>
                     <View style={{ backgroundColor: theme.background1, borderRadius: 10, padding: 15 }}>
                         <Text style={{ color: theme.text, fontSize: 18, marginBottom: 10, fontWeight: 'bold' }}>Select Sent Sound:</Text>
-                        <TouchableOpacity activeOpacity={0.8} onPress={()=> setIsSoundModalVisible(false)} style={{position: 'absolute', top: 10, right: 10}}>
+                        // Update the close button handler:
+                        <TouchableOpacity
+                            activeOpacity={0.8}
+                            onPress={() => {
+                                // Revert to saved sounds when closing without Done
+                                AsyncStorage.multiGet(['selectedSentSound', 'selectedReceivedSound'])
+                                    .then(([[, sentSound], [, receivedSound]]) => {
+                                        setSelectedSentSound(sentSound || 'step1');
+                                        setSelectedReceivedSound(receivedSound || 'mint');
+                                        setIsSoundModalVisible(false);
+                                    });
+                            }}
+                            style={{ position: 'absolute', top: 10, right: 10 }}
+                        >
                             <Ionicons name="close" size={24} color={theme.text} />
                         </TouchableOpacity>
                         <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
@@ -309,10 +384,20 @@ const BotScreen = () => {
                                     }}
                                     onPress={() => {
                                         setSelectedSentSound(sound.name);
-                                        const s = new Sound(sound.file, Sound.MAIN_BUNDLE, () => s.play());
+                                        // Release any existing preview sound
+                                        if (previewSound) {
+                                            previewSound.release();
+                                        }
+                                        // Play preview
+                                        const s = new Sound(sound.file, Sound.MAIN_BUNDLE, (error) => {
+                                            if (!error) {
+                                                s.play(() => s.release());
+                                            }
+                                        });
+                                        setPreviewSound(s);
                                     }}
                                 >
-                                    <Text style={{ color: theme.text }}>{sound.name}</Text>
+                                    <Text style={{ color: selectedSentSound === sound.name ? "#eee" : theme.text, }}>{sound.name}</Text>
                                 </TouchableOpacity>
                             ))}
                         </View>
@@ -331,7 +416,17 @@ const BotScreen = () => {
                                     }}
                                     onPress={() => {
                                         setSelectedReceivedSound(sound.name);
-                                        const s = new Sound(sound.file, Sound.MAIN_BUNDLE, () => s.play());
+                                        // Release any existing preview sound
+                                        if (previewSound) {
+                                            previewSound.release();
+                                        }
+                                        // Play preview
+                                        const s = new Sound(sound.file, Sound.MAIN_BUNDLE, (error) => {
+                                            if (!error) {
+                                                s.play(() => s.release());
+                                            }
+                                        });
+                                        setPreviewSound(s);
                                     }}
                                 >
                                     <Text style={{ color: theme.text }}>{sound.name}</Text>
@@ -340,10 +435,30 @@ const BotScreen = () => {
                         </View>
 
                         <TouchableOpacity
-                            onPress={() => {
-                                setIsSoundModalVisible(false);
-                                sentSoundRef.current = new Sound(soundOptions.find(s => s.name === selectedSentSound).file, Sound.MAIN_BUNDLE);
-                                receivedSoundRef.current = new Sound(soundOptions.find(s => s.name === selectedReceivedSound).file, Sound.MAIN_BUNDLE);
+                            onPress={async () => {
+                                try {
+                                    // Save preferences
+                                    await saveSoundPreferences(selectedSentSound, selectedReceivedSound);
+
+                                    // Release old sounds
+                                    if (sentSoundRef.current) sentSoundRef.current.release();
+                                    if (receivedSoundRef.current) receivedSoundRef.current.release();
+
+                                    // Load new sounds
+                                    const sentSound = soundOptions.find(s => s.name === selectedSentSound);
+                                    const receivedSound = soundOptions.find(s => s.name === selectedReceivedSound);
+
+                                    if (sentSound) {
+                                        sentSoundRef.current = new Sound(sentSound.file, Sound.MAIN_BUNDLE);
+                                    }
+                                    if (receivedSound) {
+                                        receivedSoundRef.current = new Sound(receivedSound.file, Sound.MAIN_BUNDLE);
+                                    }
+
+                                    setIsSoundModalVisible(false);
+                                } catch (error) {
+                                    console.log('Error updating sounds:', error);
+                                }
                             }}
                             style={{ marginTop: 15, alignSelf: 'flex-end' }}
                         >
@@ -425,7 +540,7 @@ const dynamicTheme = (theme, chatDownEnabled) => ({
     alertBox: { backgroundColor: theme.background2, padding: 20, borderRadius: 12, width: "80%" },
     title: { fontWeight: 'bold', fontSize: 18, marginBottom: 10, color: theme.text },
     alertText: { fontSize: 14, marginBottom: 5, color: theme.text },
-    okBtn: { marginTop: 20, color: theme.primaryColor, textAlign: 'right' }
+    okBtn: { marginTop: 20, color: theme.primaryColor, textAlign: 'right', padding: 10 }
 
 });
 
