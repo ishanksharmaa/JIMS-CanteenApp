@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { View, TextInput, TouchableOpacity, Text, FlatList, Keyboard, Modal } from "react-native";
+import Sound from 'react-native-sound';
 import axios from "axios";
 import { useTheme } from "../components/ThemeContext";
 import Ionicons from "react-native-vector-icons/Ionicons";
@@ -7,6 +8,9 @@ import { HeaderBackIcon } from "./CartScreen";
 import ThemeToggle from "../components/ThemeToggle";
 import { useMemeCat } from "../components/MemeCatContext";
 import ThreeDotMenu from "../components/ThreeDotMenu";
+
+// Initialize sound module
+Sound.setCategory('Playback');
 
 const BotScreen = () => {
     const scrollRef = useRef(null);
@@ -18,6 +22,81 @@ const BotScreen = () => {
     const [keyboardVisible, setKeyboardVisible] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [showAlert, setShowAlert] = useState(true);
+    const [isSoundModalVisible, setIsSoundModalVisible] = useState(false);
+
+    const [selectedSentSound, setSelectedSentSound] = useState('switch');
+    const [selectedReceivedSound, setSelectedReceivedSound] = useState('winxp');
+
+    const soundOptions = [
+        { name: 'switch', file: require('../../assets/sounds/switch.mp3') },
+        { name: 'push', file: require('../../assets/sounds/push.mp3') },
+        { name: 'mint', file: require('../../assets/sounds/mint.mp3') },
+        { name: 'step1', file: require('../../assets/sounds/step1.mp3') },
+        { name: 'step', file: require('../../assets/sounds/step.mp3') },
+        { name: 'pop', file: require('../../assets/sounds/pop.mp3') },
+        { name: 'duck', file: require('../../assets/sounds/duck.mp3') },
+        { name: 'winxp', file: require('../../assets/sounds/winxp.mp3') },
+        // Add more as needed
+    ];
+
+    // Audio objects
+    const sentSoundRef = useRef(null);
+    const receivedSoundRef = useRef(null);
+
+    // Load sounds
+    useEffect(() => {
+        // Sent sound
+        sentSoundRef.current = new Sound(
+            // require('../../assets/sounds/step.mp3'),
+            require('../../assets/sounds/switch.mp3'),
+            Sound.MAIN_BUNDLE,
+            (error) => {
+                if (error) {
+                    console.log('Failed to load sent sound', error);
+                    return;
+                }
+            }
+        );
+
+        // Received sound
+        receivedSoundRef.current = new Sound(
+            require('../../assets/sounds/winxp.mp3'),
+            // require('../../assets/sounds/step.mp3'),
+            Sound.MAIN_BUNDLE,
+            (error) => {
+                if (error) {
+                    console.log('Failed to load received sound', error);
+                    return;
+                }
+            }
+        );
+
+        // Cleanup on unmount
+        return () => {
+            if (sentSoundRef.current) sentSoundRef.current.release();
+            if (receivedSoundRef.current) receivedSoundRef.current.release();
+        };
+    }, []);
+
+    const playSentSound = () => {
+        if (sentSoundRef.current) {
+            sentSoundRef.current.play((success) => {
+                if (!success) {
+                    console.log('Failed to play sent sound');
+                }
+            });
+        }
+    };
+
+    const playReceivedSound = () => {
+        if (receivedSoundRef.current) {
+            receivedSoundRef.current.play((success) => {
+                if (!success) {
+                    console.log('Failed to play received sound');
+                }
+            });
+        }
+    };
 
     useEffect(() => {
         setShowAlert(true);
@@ -62,6 +141,7 @@ const BotScreen = () => {
     const sendPrompt = async () => {
         if (!prompt.trim()) return;
 
+        playSentSound();
         setMessages(prevMessages => [{ type: "user", text: prompt }, ...prevMessages]);
         setPrompt("");
 
@@ -82,6 +162,7 @@ const BotScreen = () => {
             const botReply = response.data?.candidates?.[0]?.content?.parts?.[0]?.text ||
                 "Sorry, I couldn't understand that.";
 
+            playReceivedSound();
             setMessages(prevMessages => [{ type: "bot", text: botReply }, ...prevMessages]);
 
         } catch (error) {
@@ -114,13 +195,19 @@ const BotScreen = () => {
             onPress: () => changeTheme(theme.mode === "dark" ? "light" : "dark")
         },
         {
-            // text: chatDownEnabled ? 'Chat Upward' : 'Chat Downw',
             text: !chatDownEnabled ? 'Flow Upward' : 'Flow Down',
             // textColor: theme.text,
             textColor: theme.text,
             icon: !chatDownEnabled ? 'arrow-up' : 'arrow-down',
             iconColor: !chatDownEnabled ? theme.primaryColor : theme.primaryColor,
             onPress: toggleInvertChat,
+        },
+        {
+            text: 'Select sounds',
+            textColor: theme.text,
+            icon: 'musical-note',
+            iconColor: theme.text,
+            onPress: () => setIsSoundModalVisible(true),
         },
     ];
 
@@ -200,6 +287,73 @@ const BotScreen = () => {
                     </View>
                 </Modal>
             )}
+
+            {/* Sound selection Modal */}
+
+            <Modal visible={isSoundModalVisible} transparent animationType="fade">
+                <View style={{ flex: 1, backgroundColor: '#000000aa', justifyContent: 'center', padding: 20 }}>
+                    <View style={{ backgroundColor: theme.background1, borderRadius: 10, padding: 15 }}>
+                        <Text style={{ color: theme.text, fontSize: 18, marginBottom: 10, fontWeight: 'bold' }}>Select Sent Sound:</Text>
+                        <TouchableOpacity activeOpacity={0.8} onPress={()=> setIsSoundModalVisible(false)} style={{position: 'absolute', top: 10, right: 10}}>
+                            <Ionicons name="close" size={24} color={theme.text} />
+                        </TouchableOpacity>
+                        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
+                            {soundOptions.map((sound, index) => (
+                                <TouchableOpacity
+                                    key={`sent-${index}`}
+                                    style={{
+                                        width: '48%',
+                                        padding: 10,
+                                        backgroundColor: selectedSentSound === sound.name ? theme.primaryColor : theme.background2,
+                                        borderRadius: 8,
+                                        marginBottom: 8,
+                                    }}
+                                    onPress={() => {
+                                        setSelectedSentSound(sound.name);
+                                        const s = new Sound(sound.file, Sound.MAIN_BUNDLE, () => s.play());
+                                    }}
+                                >
+                                    <Text style={{ color: theme.text }}>{sound.name}</Text>
+                                </TouchableOpacity>
+                            ))}
+                        </View>
+
+                        <Text style={{ color: theme.text, fontSize: 18, marginVertical: 10, fontWeight: 'bold' }}>Select Received Sound:</Text>
+                        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
+                            {soundOptions.map((sound, index) => (
+                                <TouchableOpacity
+                                    key={`received-${index}`}
+                                    style={{
+                                        width: '48%',
+                                        padding: 10,
+                                        backgroundColor: selectedReceivedSound === sound.name ? theme.primaryColor : theme.background2,
+                                        borderRadius: 8,
+                                        marginBottom: 8,
+                                    }}
+                                    onPress={() => {
+                                        setSelectedReceivedSound(sound.name);
+                                        const s = new Sound(sound.file, Sound.MAIN_BUNDLE, () => s.play());
+                                    }}
+                                >
+                                    <Text style={{ color: theme.text }}>{sound.name}</Text>
+                                </TouchableOpacity>
+                            ))}
+                        </View>
+
+                        <TouchableOpacity
+                            onPress={() => {
+                                setIsSoundModalVisible(false);
+                                sentSoundRef.current = new Sound(soundOptions.find(s => s.name === selectedSentSound).file, Sound.MAIN_BUNDLE);
+                                receivedSoundRef.current = new Sound(soundOptions.find(s => s.name === selectedReceivedSound).file, Sound.MAIN_BUNDLE);
+                            }}
+                            style={{ marginTop: 15, alignSelf: 'flex-end' }}
+                        >
+                            <Text style={{ color: theme.primaryColor, fontWeight: 'bold' }}>Done</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </Modal>
+
 
         </View>
     );
