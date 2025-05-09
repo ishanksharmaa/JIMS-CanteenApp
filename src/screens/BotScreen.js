@@ -196,7 +196,6 @@ const BotScreen = () => {
         },
         {
             text: !chatDownEnabled ? 'Flow Upward' : 'Flow Down',
-            // textColor: theme.text,
             textColor: theme.text,
             icon: !chatDownEnabled ? 'arrow-up' : 'arrow-down',
             iconColor: !chatDownEnabled ? theme.primaryColor : theme.primaryColor,
