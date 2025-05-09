@@ -232,7 +232,7 @@ const BotScreen = () => {
             setMessages(prevMessages => [{ type: "bot", text: "Error connecting to the assistant." }, ...prevMessages]);
 
         } finally {
-            setIsLoading(false); // End loading
+            setIsLoading(false); //End loading
             Keyboard.dismiss();
         }
     };
