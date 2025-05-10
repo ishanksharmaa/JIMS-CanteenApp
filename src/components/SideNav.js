@@ -103,7 +103,7 @@ const SideNav = ({ isVisible, toggleVisibility }) => {
                 <SettingItem icon={isDarkMode ? "chatbubbles-outline" : "chatbubbles"} label="ChatBite AI" arrow={false} height={20} onPress={() => navigation.navigate("ChatBite")} isFirst />
 
                 <View style={{ borderTopWidth: 1.1, borderTopColor: theme.mode === 'dark' ? 'rgba(255, 255, 255, 0.093)' : 'rgba(0, 0, 0, 0.097)', marginHorizontal: lineDividerWidth }} />
-                <SettingItem icon={isDarkMode ? "mail-open-outline" : "mail-open"} label="Feedback" arrow={false} height={18} onPress={() => navigation.navigate("FAQ")} isFirst />
+                {/* <SettingItem icon={isDarkMode ? "mail-open-outline" : "mail-open"} label="Feedback" arrow={false} height={18} onPress={() => navigation.navigate("FAQ")} isFirst /> */}
                 <SettingItem icon={isDarkMode ? "people-outline" : "people"} label="Contact Us" arrow={false} height={18} onPress={() => navigation.navigate("ContactUs")} isFirst />
                 {/* <SettingItem icon={isDarkMode ? "help-circle-outline" : "help-circle"} label="About" arrow={false} height={18} onPress={() => navigation.navigate("UserInfo")} isFirst /> */}
                 <SettingItem icon={isDarkMode ? "information-circle-outline" : "information-circle"} label="About" arrow={false} height={18} onPress={() => navigation.navigate("About")} isFirst />
@@ -143,7 +143,7 @@ const dynamicTheme = (theme, headerBg, themeIconColor, isNavHeaderEnabled) => ({
         backgroundColor: isNavHeaderEnabled ? headerBg : 'transparent',
         borderBottomRightRadius: 50,
         borderTopRightRadius: 100,
-        borderBottomRightRadius: 100,
+        borderBottomRightRadius: 1000,
         // backgroundColor: theme.mode === 'dark' ? theme.primaryColor : theme.customButtonBg,
         // marginTop: 40,
     },
