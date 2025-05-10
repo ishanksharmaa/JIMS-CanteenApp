@@ -14,7 +14,6 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { useEffect } from "react";
 
 export const HeaderBackIcon = ({ title }) => {
-    // const { cartItems, orderPlaced } = useCart();  // ✅ Cart Items Receive
     const { theme } = useTheme();
     const styles = dynamicTheme(theme);
 
@@ -31,7 +30,7 @@ const CartScreen = () => {
     const styles = dynamicTheme(theme);
     const navigation = useNavigation();
     const { refreshUser, user, userEmail } = useUser();
-    const { cartItems, fetchCart, totalAmount, orderPlaced } = useCart();
+    const { cartItems, fetchCart, totalAmount, orderPlaced, handlingPayment } = useCart();
     const [splitBillVisible, setSplitBillVisible] = useState(false);
     const isCartEmpty = cartItems.length === 0 ? true : false;
     // const isCartEmpty = false;
@@ -101,7 +100,7 @@ const CartScreen = () => {
                         <MaterialIcons name="call-split" size={29} color={theme.customButtonBg} />
                     </TouchableOpacity>
                     <View style={styles.buttonContainer}>
-                        <CustomButton btnColor={theme.customButtonBg} textColor={theme.customButtonText} title={`Order for ₹${totalAmount}`} onPress={async () => isCartEmpty ? null : orderPlaced(userEmail)} />
+                        <CustomButton btnColor={theme.customButtonBg} textColor={theme.customButtonText} title={`Order for ₹${totalAmount}`} onPress={async () => handlingPayment(true, totalAmount)} />
                     </View>
                 </View>
             )}

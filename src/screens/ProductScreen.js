@@ -17,7 +17,7 @@ const ProductScreen = () => {
   const route = useRoute();
   const { image, title, price, descr, quantity, qty, amount, time, available } = route.params;
   const { theme } = useTheme();
-  const { addedToCart, toggleFavoriteItem, isFavorite, cartItems, removedFromCart, user, updateQuantity, onAddtoCart, fetchProductByTitle, singleProduct, setSingleProduct } = useCart();
+  const { addedToCart, toggleFavoriteItem, isFavorite, cartItems, removedFromCart, user, updateQuantity, onAddtoCart, fetchProductByTitle, handlingPayment, singleProduct, setSingleProduct } = useCart();
   const styles = dynamicTheme(theme, available);
   const navigation = useNavigation();
   const { refreshUser } = useUser();
@@ -162,7 +162,7 @@ const ProductScreen = () => {
       bounceBag();
       updateQuantity(title, 1)
     } else {
-      const product = { image, title, price, descr, quantity, qty: 1, amount: price };
+      const product = { image, title, price, descr, quantity, qty: count, amount: price * count };
       addedToCart(product);
       bounceBag();
       updateQuantity(title, count);
@@ -171,12 +171,6 @@ const ProductScreen = () => {
     refreshUser();
   };
 
-  const handlePayment = ()=>{
-    if(!user){
-      onAddtoCart("alert-circle", "Login required!", "or SignUp to continue", true, 2000);
-      return;
-    }
-  };
 
   const displayImage = productData?.image || image;
   const displayTitle = productData?.title || title;
@@ -185,6 +179,7 @@ const ProductScreen = () => {
   const displayQuantity = productData?.quantity || quantity;
   const displayTime = productData?.time || time;
   const displayAvailable = productData?.available || available;
+  const product = { image, title, price, descr, quantity, qty: count, amount: price * count };
 
 
   return (
@@ -311,7 +306,7 @@ const ProductScreen = () => {
 
 
                 <View style={styles.buttonContainer}>
-                  <CustomButton btnColor={theme.customButtonBg} textColor={theme.customButtonText} title={`Order for ₹${(parseFloat(price) * count).toFixed(0)}`} onPress={handlePayment} />
+                  <CustomButton btnColor={theme.customButtonBg} textColor={theme.customButtonText} title={`Order for ₹${(parseFloat(price) * count).toFixed(0)}`} onPress={() => handlingPayment(false, (parseFloat(price) * count).toFixed(0), product)} />
                 </View>
               </>
             )}

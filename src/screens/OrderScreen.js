@@ -42,7 +42,7 @@ const OrderScreen = () => {
     const cancelOrders = () => {
         if (orderCount > 0) {
             setShowConfirmModal(true);
-        } else{
+        } else {
             onAddtoCart("alert-circle", "Order List Empty!", "no order are there to cancel", true, 2000)
         }
     };
@@ -58,7 +58,7 @@ const OrderScreen = () => {
         {
             text: 'Ready items',
             textColor: theme.text,
-            icon: 'remove',
+            icon: 'remove-circle',
             iconColor: theme.text,
             onPress: removeReadyItems,
         },
@@ -198,7 +198,8 @@ const OrderScreen = () => {
                                 </TouchableOpacity>
 
                                 <TouchableOpacity
-                                    disabled={confirmationText.toLowerCase() !== 'cancel order'}
+                                    // disabled={confirmationText.trim().toLowerCase() !== 'cancelorder'}
+                                    disabled={confirmationText?.replace(/\s/g, '').toLowerCase() !== 'cancelorder'}
                                     onPress={async () => {
                                         await fetchOrders(userEmail, false, true); // cancel
                                         fetchOrders(userEmail); // refresh
@@ -207,7 +208,7 @@ const OrderScreen = () => {
                                     }}
                                 >
                                     <Text style={{
-                                        color: confirmationText.toLowerCase() === 'cancel order' ? '#C40233' : 'grey'
+                                        color: confirmationText?.replace(/\s/g, '').toLowerCase() === 'cancelorder' ? '#C40233' : 'grey'
                                     }}>
                                         Yes
                                     </Text>

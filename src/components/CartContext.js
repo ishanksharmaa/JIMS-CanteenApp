@@ -5,6 +5,10 @@ import Toast from 'react-native-toast-message';
 import firestore from '@react-native-firebase/firestore';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useUser } from "./UserContext";
+// import RazorpayCheckout from 'razorpay-react-native';
+import RazorpayCheckout from 'react-native-razorpay';
+// import { useNavigation, useFocusEffect } from "@react-navigation/native";
+
 
 export const CartContext = createContext();
 
@@ -22,6 +26,7 @@ export const CartProvider = ({ children }) => {
     // const isInOrders = (title) => orderedItems.some(item => item.title === title);
     const [productItems, setProductItems] = useState([]);
     const [singleProduct, setSingleProduct] = useState([]);
+    // const navigation = useNavigation();
 
 
     useEffect(() => {
@@ -356,6 +361,41 @@ export const CartProvider = ({ children }) => {
         }
     };
 
+    const addedToOrders = async (product) => {
+        try {
+            // const alreadyExists = cartItems.some(item => item.title === product.title);
+            // if (alreadyExists) {
+            //     // alert(`⚠️ ${product.title.charAt(0).toUpperCase() + product.title.slice(1) } already in cart!`);
+            //     alert(`⚠️ ${product.title.toUpperCase()} already in cart!\n\nIncrease product quantity from the cart.`);
+            //     return;
+            // }
+
+            const db = getFirestore();
+            const userRef = collection(db, "Users");
+            const q = query(userRef, where("email", "==", userEmail));
+            const snapshot = await getDocs(q);
+
+            if (!snapshot.empty) {
+                const userDoc = snapshot.docs[0];
+                const uid = userDoc.id;
+
+                const productRef = doc(db, "Users", uid, "Orders", product.title);
+                await setDoc(productRef, product);
+
+                setOrderItems((prev) => {
+                    const updated = [...prev, product];
+                    sumAmount(updated);
+                    return updated;
+                });
+
+                // onAddtoCart("cart", product.title, "Added to cart", false)
+                console.log("✅ Product added to Firestore cart");
+            }
+        } catch (error) {
+            console.error("🔥 Error adding to Cart:", error);
+        }
+    };
+
     const updateQuantity = async (itemTitle, newQuantity) => {
         if (!isInCart) {
             return;
@@ -529,7 +569,7 @@ export const CartProvider = ({ children }) => {
         }
     };
 
-    const orderPlaced = async (userEmail) => {
+    const orderPlaced = async (userEmail, fromCart, product) => {
         if (!userEmail) return;
 
         try {
@@ -556,25 +596,47 @@ export const CartProvider = ({ children }) => {
             const newOrderedItems = [];
             const batch = writeBatch(db);
 
-            // Process each cart item
-            for (const cartDoc of cartSnapshot.docs) {
-                const cartData = cartDoc.data();
-                const orderDocRef = doc(ordersRef, cartDoc.id);
+            if (fromCart) {
+
+                // Process each cart item
+                for (const cartDoc of cartSnapshot.docs) {
+                    const cartData = cartDoc.data();
+                    const orderDocRef = doc(ordersRef, cartDoc.id);
+
+                    batch.set(orderDocRef, {
+                        ...cartData,
+                        orderedAt: new Date().toISOString(),
+                        status: false,
+                        orderId: `${userId}_${Date.now()}`, // Unique order ID
+                    });
+
+                    newOrderedItems.push({
+                        id: cartDoc.id,
+                        ...cartData
+                    });
+
+                    // Delete from cart
+                    batch.delete(cartDoc.ref);
+                }
+            }
+            else {
+                // Generate a new order document reference
+                // const orderDocRef = doc(ordersRef, product.title.toLowerCase());
+                const orderDocRef = doc(ordersRef);
 
                 batch.set(orderDocRef, {
-                    ...cartData,
-                    orderedAt: new Date().toISOString(),
+                    ...product, // directly spread product details
+                    // orderedAt: new Date().toISOString(),
+                    orderedAt: formatOrderDate(new Date().toISOString()),
                     status: false,
-                    orderId: `${userId}_${Date.now()}`, // Unique order ID
+                    orderId: `${userId}_${formatOrderDate(Date.now())}`
                 });
 
+                // Track locally if needed
                 newOrderedItems.push({
-                    id: cartDoc.id,
-                    ...cartData
+                    id: product.title,
+                    ...product
                 });
-
-                // Delete from cart
-                batch.delete(cartDoc.ref);
             }
 
             // Update user document
@@ -592,6 +654,8 @@ export const CartProvider = ({ children }) => {
             setOrderItems(prev => [...prev, ...newOrderedItems]);
             setCartItems([]);
             setTotalAmount(0);
+
+            // navigation.navigate("Orders");
 
             return true;
         } catch (error) {
@@ -613,6 +677,54 @@ export const CartProvider = ({ children }) => {
 
         return `${day}-${month}-${year}  ${hours}:${minutes}`;
     };
+
+
+    //RAZORPAY TEST MODE FUNCTION
+
+    const RAZORPAY_KEY_ID = 'rzp_test_lx2EcEurRJmjQa';
+
+    const handlePayment = (payingAmount, fromCart, product) => {
+        const options = {
+            description: 'Canteen Order Payment',
+            image: require('../../assets/app_logo.jpeg'), // optional logo
+            currency: 'INR',
+            key: RAZORPAY_KEY_ID,
+            amount: payingAmount * 100, // = ₹100 (in paise)
+            name: 'JIMS Canteen',
+            prefill: {
+                email: 'user@gmail.com',
+                contact: '9876543xxx',
+                name: 'Ishank Sharma',
+            },
+            theme: { color: '#E53935' },
+        };
+
+        RazorpayCheckout.open(options)
+            .then((data) => {
+                console.log('✅ Payment Success:', data.razorpay_payment_id);
+                alert('Payment Successful!');
+                // You can save payment ID in Firestore or confirm order here
+                orderPlaced(userEmail, fromCart, product);
+            })
+            .catch((error) => {
+                console.log(`❌ Error: ${error.code} | ${error.description}`);
+                alert('Payment Failed. Try again.');
+            });
+
+    };
+
+    const handlingPayment = (fromCart, payingAmount, product) => {
+        if (!user) {
+            onAddtoCart("alert-circle", "Login required!", "or SignUp to continue", true, 2000);
+            return;
+        }
+        if (fromCart && cartItems.length === 0) {
+            onAddtoCart("alert-circle", "Cart is Empty!", "first add items in the cart.", true, 2000);
+            return;
+        }
+        handlePayment(payingAmount, fromCart, product);
+    };
+
 
 
     return (
@@ -646,6 +758,8 @@ export const CartProvider = ({ children }) => {
             fetchProductByTitle,
             orderPlaced,
             formatOrderDate,
+            handlePayment,
+            handlingPayment,
         }}>
             {children}
         </CartContext.Provider>

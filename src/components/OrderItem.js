@@ -56,7 +56,7 @@ const OrderItem = ({ image, title, price, descr, quantity, qty, time, available,
         // >
         <View style={styles.orderItem}>
             <TouchableOpacity
-                onPress={() => navigation.navigate("ProductScreen", { image, title, price, descr, quantity, qty: 1, amount: price, time, available })}
+                onPress={null}
                 activeOpacity={0.8} >
                 {image ? (
                     <Image
@@ -77,7 +77,8 @@ const OrderItem = ({ image, title, price, descr, quantity, qty, time, available,
                 <Text style={styles.descr}>{descr}</Text>
                 {/* <Text style={styles.price}>{'₹ ' + price}</Text> */}
                 <Text style={styles.billAmount}>{`Total: ₹${price} X ${count} = ₹ ` + price * count}</Text>
-                <Text style={styles.orderedAt}>{formatOrderDate(orderedAt)}</Text>
+                {/* <Text style={styles.orderedAt}>{formatOrderDate(orderedAt)}</Text> */}
+                <Text style={styles.orderedAt}>{orderedAt}</Text>
             </View>
         </View>
         // </Swipeable>
