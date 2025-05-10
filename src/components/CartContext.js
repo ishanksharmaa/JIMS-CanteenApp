@@ -620,7 +620,7 @@ export const CartProvider = ({ children }) => {
                 }
             }
             else {
-                // Generate a new order document reference
+                // Generate a new order document reference.
                 // const orderDocRef = doc(ordersRef, product.title.toLowerCase());
                 const orderDocRef = doc(ordersRef);
 
