@@ -12,7 +12,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import auth from '@react-native-firebase/auth';
 
 
-const { width, height } = Dimensions.get('window'); // Full screen width & height
+const { width, height } = Dimensions.get('window'); //Full screen width & height
 
 const SideNav = ({ isVisible, toggleVisibility }) => {
     const [slideAnim] = useState(new Animated.Value(-width / 1.5));
