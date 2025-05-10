@@ -46,7 +46,6 @@ import SplashScreen from "./src/screens/SplashScreen";
 import GetStartedScreen from "./src/screens/GetStartedScreen";
 import LoginScreen from "./src/screens/LoginScreen";
 import SignUpScreen from "./src/screens/SignUpScreen";
-import UsernameScreen from "./src/screens/UsernameScreen";
 import HomeScreen from "./src/screens/HomeScreen";
 import SearchScreen from "./src/screens/SearchScreen";
 import CartScreen from "./src/screens/CartScreen";
@@ -61,6 +60,7 @@ import SettingsScreen from "./src/screens/SettingsScreen";
 import UserInfoScreen from "./src/screens/UserInfoScreen";
 import AppearanceSetting from "./src/screens/settings/AppearanceSetting";
 import AboutScreen from "./src/screens/settings/AboutScreen";
+import ContactUsScreen from "./src/screens/settings/ContactUsScreen";
 import BotScreen from "./src/screens/BotScreen";
 import ImageCropScreen from "./src/screens/ImageCropScreen";
 import { MemeCatProvider, useMemeCat } from "./src/components/MemeCatContext";
@@ -168,7 +168,6 @@ const AppContent = () => {
           <Stack.Screen name="GetStarted" component={GetStartedScreen} />
           <Stack.Screen name="Login" component={LoginScreen} />
           <Stack.Screen name="SignUp" component={SignUpScreen} />
-          <Stack.Screen name="UsernameScreen" component={UsernameScreen} />
           <Stack.Screen name="Home" component={BottomTabs} />
           <Stack.Screen name="SearchPage" component={SearchScreen} />
           <Stack.Screen name="Favorites" component={FavoriteScreen} />
@@ -181,6 +180,7 @@ const AppContent = () => {
           <Stack.Screen name="UserInfo" component={UserInfoScreen} />
           <Stack.Screen name="Appearance" component={AppearanceSetting} />
           <Stack.Screen name="About" component={AboutScreen} />
+          <Stack.Screen name="ContactUs" component={ContactUsScreen} />
           <Stack.Screen name="ChatBite" component={BotScreen} />
           <Stack.Screen name="ImageCrop" component={ImageCropScreen} />
           <Stack.Screen name="AddProductScreen" component={AddProductScreen} />
