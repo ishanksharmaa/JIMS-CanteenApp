@@ -152,7 +152,7 @@ export default function ContactUsScreen({ navigation }) {
                             {/* Divider */}
                             <View style={[styles.divider, { backgroundColor: theme.loginInput || '#eee' }]} />
 
-                            {/* Feedback Section */}
+                            {/* Feedback Section*/}
                             <View style={styles.section}>
                                 <Text style={[styles.sectionTitle, { color: theme.text }]}>
                                     Share your thoughts 🧠
