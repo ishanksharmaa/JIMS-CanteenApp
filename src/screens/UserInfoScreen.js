@@ -134,7 +134,7 @@ const UserInfoScreen = ({ navigation }) => {
                     // const currentData = userDoc.data();
 
                     // Use image from state if available, otherwise keep existing
-                    const profilePicToSave = image || userDoc.data().profilePic;
+                    const profilePicToSave = image || userDoc.data()?.profilePic || null;
                     // const profilePicToSave = image || currentData.profilePic;
 
                     await updateDoc(doc(db, "Users", userIdToUpdate), {
@@ -232,7 +232,7 @@ const UserInfoScreen = ({ navigation }) => {
                 <View style={styles.header}>
                     <TouchableOpacity
                         style={styles.closeButton}
-                        onPress={() => navigation.goBack()}
+                        onPress={() => isUserFresh ? navigation.replace("Home") : navigation.goBack()}
                     >
                         <Ionicons name="close" size={30} color={theme.text} />
                     </TouchableOpacity>
@@ -245,7 +245,7 @@ const UserInfoScreen = ({ navigation }) => {
                     <Text style={styles.headerTitle}>Edit Profile</Text>
                 )}
 
-                {(!isKeyboardVisible && !isUserFresh) && (
+                {!isKeyboardVisible && (
                     <TouchableOpacity onPress={pickImage} activeOpacity={0.85} style={styles.imageContainer}>
                         <Image source={image ? { uri: image } : require("../../assets/banana_cat.jpg")} style={styles.profileImage} />
                         <Ionicons name="create-outline" size={30} color={theme.primaryColor} style={styles.editIcon} />

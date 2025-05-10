@@ -84,7 +84,8 @@ const SignUpScreen = ({ navigation }) => {
                         // navigation.replace("UserInfo", { isUserFresh: true });
                         navigation.reset({
                             index: 0,
-                            routes: [{ name: "UserInfo" }, {name: "Home"}],
+                            // routes: [{ name: "UserInfo" }, {name: "Home"}],
+                            routes: [{ name: "UserInfo", params: { isUserFresh: true } }],
                         });
                     })
                     .catch((error) => {
