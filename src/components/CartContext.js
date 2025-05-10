@@ -615,7 +615,7 @@ export const CartProvider = ({ children }) => {
                         ...cartData
                     });
 
-                    // Delete from cart
+                    // Delete from cart.
                     batch.delete(cartDoc.ref);
                 }
             }
