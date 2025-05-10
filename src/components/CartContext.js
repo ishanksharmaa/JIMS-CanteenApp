@@ -601,7 +601,7 @@ export const CartProvider = ({ children }) => {
                 // Process each cart item
                 for (const cartDoc of cartSnapshot.docs) {
                     const cartData = cartDoc.data();
-                    const orderDocRef = doc(ordersRef, cartDoc.id);
+                    const orderDocRef = doc(ordersRef);
 
                     batch.set(orderDocRef, {
                         ...cartData,
