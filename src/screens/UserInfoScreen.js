@@ -133,7 +133,7 @@ const UserInfoScreen = ({ navigation }) => {
                     const userIdToUpdate = userDoc.id;
                     // const currentData = userDoc.data();
 
-                    // Use image from state if available, otherwise keep existing
+                    // Use image from state if available, otherwise keep existing.
                     const profilePicToSave = image || userDoc.data()?.profilePic || null;
                     // const profilePicToSave = image || currentData.profilePic;
 
