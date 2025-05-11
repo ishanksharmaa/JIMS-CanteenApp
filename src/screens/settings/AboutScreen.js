@@ -69,7 +69,7 @@ const AboutScreen = () => {
                 }}>
                     <Text style={styles.heading}>The App 📱</Text>
                     <Image
-                        source={require('../../../assets/app_logo.jpeg')} // Your image path
+                        source={require('../../../assets/app_logo.jpeg')} // Your image path here
                         style={styles.appLogo}
                     />
                 </View>
