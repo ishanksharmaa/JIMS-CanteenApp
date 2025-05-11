@@ -224,15 +224,6 @@ const AppearanceSetting = () => {
                 <View style={styles.animationSection}>
                     <Section title="Toggle Styles">
                         <SettingItem
-                            icon="color-wand"
-                            label="Apply colors to Bottom navigation bar"
-                            hasSwitch
-                            onPress={toggleBottomNavColor}
-                            switchValue={isBottomNavColorEnabled}
-                            height={17}
-                            isFirst
-                        />
-                        <SettingItem
                             icon="phone-portrait"
                             label="Show top header background on Home"
                             hasSwitch
@@ -241,13 +232,22 @@ const AppearanceSetting = () => {
                             height={17}
                             isFirst
                         />
+                            <SettingItem
+                                icon="color-fill"
+                                label="Side-Nav header color"
+                                hasSwitch
+                                onPress={toggleNavHeader}
+                                switchValue={isNavHeaderEnabled}
+                                height={17}
+                            />
                         <SettingItem
-                            icon="color-fill"
-                            label="Side-Nav top header color"
+                            icon="color-wand"
+                            label="Apply colors to Bottom navigation bar"
                             hasSwitch
-                            onPress={toggleNavHeader}
-                            switchValue={isNavHeaderEnabled}
+                            onPress={toggleBottomNavColor}
+                            switchValue={isBottomNavColorEnabled}
                             height={17}
+                            isFirst
                         />
                         <SettingItem
                             icon="logo-octocat"

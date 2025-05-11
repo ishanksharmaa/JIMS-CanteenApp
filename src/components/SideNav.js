@@ -140,6 +140,7 @@ const dynamicTheme = (theme, headerBg, themeIconColor, isNavHeaderEnabled) => ({
         paddingHorizontal: 20,
         height: '20%',
         width: "91%",
+        // backgroundColor: isNavHeaderEnabled ? `${headerBg}90` : 'transparent',
         backgroundColor: isNavHeaderEnabled ? headerBg : 'transparent',
         borderBottomRightRadius: 50,
         borderTopRightRadius: 100,

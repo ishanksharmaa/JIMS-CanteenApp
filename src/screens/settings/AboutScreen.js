@@ -67,7 +67,7 @@ const AboutScreen = () => {
                     flexDirection: 'row', alignItems: 'center',
                     justifyContent: 'space-between'
                 }}>
-                    <Text style={styles.heading}>The App 📱</Text>
+                    <Text style={styles.heading}>The App </Text>
                     <Image
                         source={require('../../../assets/app_logo.jpeg')} // Your image path
                         style={styles.appLogo}
