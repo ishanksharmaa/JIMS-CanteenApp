@@ -26,6 +26,7 @@ export const CartProvider = ({ children }) => {
     // const isInOrders = (title) => orderedItems.some(item => item.title === title);
     const [productItems, setProductItems] = useState([]);
     const [singleProduct, setSingleProduct] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
     // const navigation = useNavigation();
 
 
@@ -192,6 +193,7 @@ export const CartProvider = ({ children }) => {
                 onAddtoCart("person", "Login required!", "to add items into the cart", true);
                 return;
             };
+            setIsLoading(true);
 
             const db = getFirestore();
             const userRef = collection(db, "Users");
@@ -270,10 +272,14 @@ export const CartProvider = ({ children }) => {
                 } else if (filter) {
                     onAddtoCart("alert-circle", "No Ready Items!", "to be removed", true);
                 }
+
+                return validItems;
             }
         } catch (error) {
             console.error("Error:", error);
             onAddtoCart("alert-circle", "Error", "Failed to process orders", true);
+        } finally {
+            setIsLoading(false);
         }
     };
 

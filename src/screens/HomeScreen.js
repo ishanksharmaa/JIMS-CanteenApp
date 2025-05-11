@@ -71,7 +71,7 @@ const HomeScreen = () => {
     // const [productItems, setProductItems] = useState([]);
     const navigation = useNavigation();
     const { theme, toggleTheme } = useTheme();
-    const { fetchProducts, productItems, setProductItems } = useCart();
+    const { fetchProducts, productItems, setProductItems, cartItems, orderItems } = useCart();
     const { profileImage } = useImage();
     const { isMemeCatsEnabled, isHeaderEnabled } = useMemeCat();
     const styles = dynamicTheme(theme, isHeaderEnabled);
@@ -279,10 +279,20 @@ const HomeScreen = () => {
 
                                 {/* Header Icons */}
                                 <View style={styles.headerIcons}>
-                                    <TouchableOpacity style={styles.iconBg} activeOpacity={0.8} onPress={()=> navigation.navigate("Orders")} >
-                                        <Ionicons name="notifications-outline" size={23} color={theme.text}/>
+                                    <TouchableOpacity style={styles.iconBg} activeOpacity={0.8} onPress={() => navigation.navigate("Orders")} >
+                                        {orderItems.length > 0 && (
+                                            <View style={styles.cartNumber}>
+                                                <Text style={{ color: '#eee', fontSize: 10 }}>{orderItems.length}</Text>
+                                            </View>
+                                        )}
+                                        <Ionicons name="notifications-outline" size={23} color={theme.text} />
                                     </TouchableOpacity>
                                     <TouchableOpacity onPress={() => navigation.navigate("Cart")} style={styles.iconBg} activeOpacity={0.8} >
+                                        {cartItems.length > 0 && (
+                                            <View style={styles.cartNumber}>
+                                                <Text style={{ color: '#eee', fontSize: 10 }}>{cartItems.length}</Text>
+                                            </View>
+                                        )}
                                         <Ionicons name="cart-outline" size={23} color={theme.text} />
                                     </TouchableOpacity>
                                 </View> {/* headerIcons end */}
@@ -412,6 +422,19 @@ const dynamicTheme = (theme, isHeaderEnabled) => ({
         paddingRight: 3,
         justifyContent: 'space-between',
         // justifyContent: 'flex-end',
+    },
+    cartNumber: {
+        // color: '#eee',
+        backgroundColor: '#C40233',
+        borderRadius: '50%',
+        width: 18,
+        height: 18,
+        justifyContent: 'center',
+        alignItems: 'center',
+        position: 'absolute',
+        top: -4.4,
+        right: -4.3,
+
     },
     searchBar: {
         backgroundColor: theme.searchBg,
