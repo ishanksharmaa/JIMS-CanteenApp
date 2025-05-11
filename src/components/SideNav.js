@@ -122,7 +122,7 @@ const dynamicTheme = (theme, headerBg, themeIconColor, isNavHeaderEnabled) => ({
         top: 0,
         bottom: 0,
         left: 0,
-        width: width / 1.5, // Half of screen width
+        width: width / 1.5, // Half of the screen width
         height: height,    // Full screen height
         backgroundColor: theme.screenBg,
         // backgroundColor: theme.background,
